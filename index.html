@@ -52,19 +52,10 @@
         </div>
 
         <!-- Lang switch -->
-        <nav class="flex items-center gap-2" aria-label="Langue">
-          <a id="langFr" href="#"
-            class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 rounded-full text-sm font-semibold ring-1 ring-black/10 bg-white text-[#223256] hover:bg-[#61BDCC]/15 transition">
-            FR
-          </a>
-          <a id="langEn" href="#"
-            class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 rounded-full text-sm font-semibold ring-1 ring-black/10 bg-white text-[#223256] hover:bg-[#61BDCC]/15 transition">
-            EN
-          </a>
-          <a id="langEs" href="#"
-            class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 rounded-full text-sm font-semibold ring-1 ring-black/10 bg-white text-[#223256] hover:bg-[#61BDCC]/15 transition">
-            ES
-          </a>
+        <nav class="flex items-center gap-6 text-sm font-semibold tracking-wide" aria-label="Langue">
+          <a id="langFr" href="#" class="langLink pb-1 transition">FR</a>
+          <a id="langEn" href="#" class="langLink pb-1 transition">EN</a>
+          <a id="langEs" href="#" class="langLink pb-1 transition">ES</a>
         </nav>
         
       </div>
@@ -470,35 +461,35 @@
       };
 
       const applyLangButtons = () => {
-        const links = listing.langLinks || {};
-        const current = String(listing.lang || "fr").toLowerCase();
-
-        const map = [
-          { id: "langFr", code: "fr", href: links.fr || "#" },
-          { id: "langEn", code: "en", href: links.en || "#" },
-          { id: "langEs", code: "es", href: links.es || "#" }
-        ];
-
-        map.forEach((item) => {
-          const node = document.getElementById(item.id);
-          if (!node) return;
-
-          node.href = item.href;
-
-          const active = item.code === current;
-
-          node.classList.remove("bg-white", "hover:bg-[#61BDCC]/15", "ring-black/10");
-          node.classList.remove("bg-[#61BDCC]", "ring-[#61BDCC]");
-
-          if (active) {
-            node.classList.add("bg-[#61BDCC]", "ring-[#61BDCC]");
-          } else {
-            node.classList.add("bg-white", "hover:bg-[#61BDCC]/15", "ring-black/10");
-          }
-        });
-      };
-
-      applyLangButtons();
+          const links = listing.langLinks || {};
+          const current = String(listing.lang || "fr").toLowerCase();
+        
+          const map = [
+            { id: "langFr", code: "fr", href: links.fr || "#" },
+            { id: "langEn", code: "en", href: links.en || "#" },
+            { id: "langEs", code: "es", href: links.es || "#" }
+          ];
+        
+          map.forEach((item) => {
+            const node = document.getElementById(item.id);
+            if (!node) return;
+        
+            node.href = item.href;
+        
+            const active = item.code === current;
+        
+            node.classList.remove("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
+            node.classList.remove("text-[#223256]/35", "hover:text-[#223256]/60");
+        
+            if (active) {
+              node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
+            } else {
+              node.classList.add("text-[#223256]/35", "hover:text-[#223256]/60");
+            }
+          });
+        };
+        
+        applyLangButtons();
 
       setText("locationLine", listing.location || "");
       setText("title", listing.title || "");
