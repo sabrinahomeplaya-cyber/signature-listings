@@ -8,17 +8,12 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
-
-        <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+        <link rel="icon" type="image/png" href="favicon.png">
         <script src="https://cdn.tailwindcss.com"></script>
 
         <style>
           @media (min-width: 1024px) {
-            #agentCard {
-              position: sticky !important;
-              top: 150px !important; 
-              z-index: 30;
-            }
+            #agentCard { position: sticky !important; top: 150px !important; z-index: 30; }
           }
           html { scroll-padding-top: 120px; }
         </style>
@@ -27,12 +22,12 @@
   <body class="bg-white text-[#223256]">
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <img src="logo-site.png" alt="Signature SC Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
+        <img src="logo-site.png" alt="Signature SC" class="h-20 sm:h-28 w-auto object-contain" />
         
-        <div class="flex gap-6 font-semibold text-xl sm:text-2xl tracking-tighter">
+        <div class="flex gap-6 font-semibold text-xl sm:text-2xl tracking-tighter uppercase">
             <a href="villa-diane.html" class="text-[#61BDCC] border-b-2 border-[#61BDCC]">FR</a>
-            <a href="en/villa-diane.html" class="text-[#223256]/30 hover:text-[#223256] transition-colors">EN</a>
-            <a href="es/villa-diane.html" class="text-[#223256]/30 hover:text-[#223256] transition-colors">ES</a>
+            <a href="en/villa-diane.html" class="text-[#223256]/30 hover:text-[#223256]">EN</a>
+            <a href="es/villa-diane.html" class="text-[#223256]/30 hover:text-[#223256]">ES</a>
         </div>
       </div>
     </header>
@@ -41,11 +36,13 @@
       <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
         <div class="relative">
           <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
-          <button id="prevMain" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-4 py-3 shadow">‹</button>
-          <button id="nextMain" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-4 py-3 shadow">›</button>
+          <button id="prevMain" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 ring-1 ring-black/10 shadow px-4 py-3">‹</button>
+          <button id="nextMain" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 ring-1 ring-black/10 shadow px-4 py-3">›</button>
         </div>
-        <div class="px-4 py-4 border-t border-black/5">
+        <div class="px-4 py-4 border-t border-black/5 flex items-center gap-3">
+          <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2">‹</button>
           <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+          <button id="stripRight" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2">›</button>
         </div>
       </section>
 
@@ -53,107 +50,170 @@
         <section class="lg:col-span-8">
           <div class="grid sm:grid-cols-12 gap-4 items-start">
             <div class="sm:col-span-8">
-              <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Puerto Aventuras, Quintana Roo</div>
-              <h1 class="text-2xl sm:text-3xl font-semibold mt-2 uppercase">Propriété de Prestige face à la Mer</h1>
+              <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Puerto Aventuras, Mexico</div>
+              <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2 uppercase"></h1>
             </div>
-
-            <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
-              <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
-              <div class="text-3xl font-semibold mt-2 text-[#223256] tracking-tight">$1,990,000 USD</div>
-              <div class="text-base text-[#223256]/40 line-through mt-1">$2,400,000 USD</div>
+            <div class="sm:col-span-4 text-left sm:text-right">
+              <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Prix</div>
+              <div id="price" class="text-3xl font-semibold mt-2"></div>
+              <div id="priceOld" class="text-base text-[#223256]/40 line-through mt-1"></div>
             </div>
           </div>
 
           <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
             <div class="flex items-center gap-3 mb-8">
               <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-              <div class="text-sm tracking-widest text-[#223256]/80 font-bold uppercase">Détails</div>
+              <div class="text-sm tracking-widest font-bold uppercase">Détails</div>
             </div>
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6 text-[#223256]">
-                <div class="rounded-2xl bg-neutral-50 p-5">
-                    <div class="text-xs opacity-70">Chambres</div>
-                    <div class="text-xl font-semibold mt-2">4</div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
+                <div class="text-xs opacity-70 uppercase">Chambres</div>
+                <div id="beds" class="text-xl font-semibold mt-2"></div>
+              </div>
+              <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
+                <div class="text-xs opacity-70 uppercase">Salles de bain</div>
+                <div id="baths" class="text-xl font-semibold mt-2"></div>
+              </div>
+              <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
+                <div class="text-xs opacity-70 uppercase">Construction</div>
+                <div id="construction" class="text-xl font-semibold mt-2"></div>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
+                    <span class="opacity-70 uppercase">HOA</span>
+                    <span id="hoa" class="font-semibold"></span>
                 </div>
-                <div class="rounded-2xl bg-neutral-50 p-5">
-                    <div class="text-xs opacity-70">Salles de bain</div>
-                    <div class="text-xl font-semibold mt-2">4.5</div>
-                </div>
-                <div class="rounded-2xl bg-neutral-50 p-5">
-                    <div class="text-xs opacity-70">Construction</div>
-                    <div class="text-xl font-semibold mt-2">1300 m²</div>
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
+                    <span class="opacity-70 uppercase">Predial</span>
+                    <span id="predial" class="font-semibold"></span>
                 </div>
             </div>
           </div>
 
-          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-8 bg-neutral-50/50">
+          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-8 bg-[#f4ea98]/10">
             <div class="flex items-center gap-3 mb-6">
               <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-              <div class="text-sm tracking-widest text-[#223256]/80 font-bold uppercase">Description</div>
+              <div class="text-sm tracking-widest font-bold uppercase">L'Expérience</div>
             </div>
-            <p class="text-[15px] leading-7 text-[#223256]/90 text-justify">
-                Située au cœur de la prestigieuse communauté sécurisée de Puerto Aventuras, cette vaste propriété incarne l'élégance tropicale absolue. Édifiée sur un terrain luxuriant de 850 m², elle offre une intimité rare et un accès privilégié aux plages de la Riviera Maya. Pensée pour célébrer la douceur de vivre caribéenne, la villa s'ouvre sur de majestueux espaces extérieurs, une vaste piscine privée et un jardin paysager méticuleusement entretenu.
-            </p>
+            <div id="description" class="text-[15px] leading-7 text-justify text-[#223256]/90 whitespace-pre-line"></div>
           </div>
         </section>
 
-        <aside class="lg:col-span-4 mb-8 lg:mb-0">
-          <div id="agentCard" class="rounded-3xl bg-[#223256] text-white p-8 shadow-xl overflow-hidden">
+        <aside class="lg:col-span-4">
+          <div id="agentCard" class="rounded-3xl bg-[#223256] text-white p-8 shadow-xl">
             <div class="flex items-center gap-4 mb-8">
-              <div class="shrink-0 h-48 w-32 rounded-xl overflow-hidden shadow-lg">
-                <img src="agent.jpg" alt="Sabrina Crémona" class="h-full w-full object-cover" />
-              </div>
-              <div class="flex-1 text-center">
-                <img src="logo-contact.png" alt="Logo" class="h-16 w-auto mx-auto mb-2 contrast-125" />
+              <img src="agent.jpg" class="h-48 w-32 rounded-xl object-cover shadow-lg" onerror="this.style.display='none';" />
+              <div class="flex-1 flex flex-col items-center">
+                <img src="logo-contact.png" class="h-16 w-auto mb-2 contrast-125" />
                 <div class="text-base font-bold">Sabrina Crémona</div>
-                <div class="text-xs font-light text-white/60 mt-1">Real Estate Advisor</div>
+                <div class="text-xs opacity-60 uppercase font-light mt-1">Real Estate Advisor</div>
               </div>
             </div>
             <div class="grid gap-3">
-              <a href="https://wa.me/529842696189" class="bg-[#61BDCC] text-[#223256] text-center py-4 rounded-full font-bold text-sm shadow-lg shadow-[#61BDCC]/20 hover:opacity-90 transition">WhatsApp</a>
-              <a href="mailto:Sales@signature-sc.com" class="bg-white text-[#223256] text-center py-4 rounded-full font-bold text-sm hover:bg-neutral-100 transition">Email</a>
+              <a id="waBtn" href="#" class="bg-[#61BDCC] text-[#223256] text-center py-4 rounded-full font-bold text-sm shadow-lg">WhatsApp</a>
+              <a id="mailBtn" href="#" class="bg-white text-[#223256] text-center py-4 rounded-full font-bold text-sm">Email</a>
             </div>
           </div>
         </aside>
       </div>
     </main>
 
-    <script>
-      const images = [
-        "https://d1v2p1s05qqabi.cloudfront.net/12418428/1730416261.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418429/1730416262.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418430/1730416263.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418431/1730416263.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418432/1730416264.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418433/1730416264.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418434/1730416265.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418435/1730416265.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418436/1730416266.jpg",
-        "https://d1v2p1s05qqabi.cloudfront.net/12418437/1730416266.jpg"
-      ];
-      let current = 0;
-      const mainImg = document.getElementById('mainImg');
-      const strip = document.getElementById('strip');
-      
-      function update(idx) {
-        current = (idx + images.length) % images.length;
-        mainImg.src = images[current];
-        document.querySelectorAll('.thumb').forEach((t, i) => {
-            t.classList.toggle('ring-2', i === current);
-            t.classList.toggle('ring-[#61BDCC]', i === current);
-        });
-      }
+    <footer class="mt-12 bg-[#223256] text-white">
+      <div class="max-w-6xl mx-auto px-4 py-10">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="flex items-start gap-1">
+              <span style="font-family: 'Allura', cursive;" class="text-4xl">Signature</span>
+              <span class="text-[10px] font-bold uppercase mt-1">SC</span>
+            </div>
+            <div class="text-xs opacity-75 mt-1 lowercase uppercase">Luxury Real Estate | Riviera Maya</div>
+          </div>
+          <div class="text-xs opacity-70">© <span id="yearNow"></span> Signature SC. All rights reserved.</div>
+        </div>
+      </div>
+    </footer>
 
-      images.forEach((url, i) => {
+    <div id="modal" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4">
+      <div class="relative w-full max-w-6xl">
+        <button id="closeBtn" class="absolute -top-12 right-0 text-white uppercase text-xs tracking-widest">Fermer</button>
+        <img id="modalImg" class="w-full max-h-[80vh] object-contain rounded-xl" />
+        <div class="mt-4 flex justify-between">
+          <button id="prevBtn" class="text-white text-sm uppercase tracking-widest">Précédent</button>
+          <div id="counter" class="text-white text-xs"></div>
+          <button id="nextBtn" class="text-white text-sm uppercase tracking-widest">Suivant</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const listing = {
+        title: "Villa Diane | Prestige Tropical",
+        price: "$1,990,000 USD",
+        priceOld: "$2,400,000 USD",
+        beds: "4",
+        baths: "4.5",
+        construction: "1,300 m²",
+        hoa: "$1,600.00 MXN / mois",
+        predial: "$11,000.00 MXN / an",
+        description: `Située au cœur de la prestigieuse communauté sécurisée de Puerto Aventuras, cette vaste propriété incarne l'élégance tropicale absolue. Édifiée sur un terrain luxuriant de 850 m², elle offre une intimité rare et un accès privilégié aux plages de la Riviera Maya.\n\nPensée pour célébrer la douceur de vivre caribéenne, la villa s'ouvre sur de majestueux espaces extérieurs, une vaste piscine privée et un jardin paysager méticuleusement entretenu.`,
+        images: [
+          "https://d1v2p1s05qqabi.cloudfront.net/12418428/1730416261.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418429/1730416262.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418430/1730416263.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418431/1730416263.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418432/1730416264.jpg"
+        ]
+      };
+
+      const el = (id) => document.getElementById(id);
+      el("title").textContent = listing.title;
+      el("price").textContent = listing.price;
+      el("priceOld").textContent = listing.priceOld;
+      el("beds").textContent = listing.beds;
+      el("baths").textContent = listing.baths;
+      el("construction").textContent = listing.construction;
+      el("hoa").textContent = listing.hoa;
+      el("predial").textContent = listing.predial;
+      el("description").textContent = listing.description;
+      el("yearNow").textContent = new Date().getFullYear();
+
+      const state = { index: 0, photos: listing.images };
+      const mainImg = el("mainImg");
+      const strip = el("strip");
+
+      const update = (idx) => {
+        state.index = (idx + state.photos.length) % state.photos.length;
+        mainImg.src = state.photos[state.index];
+        Array.from(document.querySelectorAll('.thumb')).forEach((t, i) => {
+          t.classList.toggle('ring-2', i === state.index);
+          t.classList.toggle('ring-[#61BDCC]', i === state.index);
+        });
+      };
+
+      state.photos.forEach((url, i) => {
         const btn = document.createElement('button');
-        btn.className = "thumb shrink-0 rounded-xl overflow-hidden ring-1 ring-black/5 transition";
-        btn.onclick = () => update(i);
+        btn.className = "thumb shrink-0 rounded-xl overflow-hidden ring-1 ring-black/5 bg-white";
         btn.innerHTML = `<img src="${url}" class="h-20 w-32 object-cover">`;
+        btn.onclick = () => update(i);
         strip.appendChild(btn);
       });
       update(0);
 
-      document.getElementById('prevMain').onclick = () => update(current - 1);
-      document.getElementById('nextMain').onclick = () => update(current + 1);
+      el('prevMain').onclick = () => update(state.index - 1);
+      el('nextMain').onclick = () => update(state.index + 1);
+      el('stripLeft').onclick = () => strip.scrollBy({ left: -300, behavior: 'smooth' });
+      el('stripRight').onclick = () => strip.scrollBy({ left: 300, behavior: 'smooth' });
+
+      // MODAL LOGIC
+      mainImg.onclick = () => { el("modal").classList.remove("hidden"); el("modalImg").src = state.photos[state.index]; el("counter").textContent = (state.index + 1) + " / " + state.photos.length; };
+      el("closeBtn").onclick = () => el("modal").classList.add("hidden");
+      el("prevBtn").onclick = () => { update(state.index - 1); el("modalImg").src = state.photos[state.index]; el("counter").textContent = (state.index + 1) + " / " + state.photos.length; };
+      el("nextBtn").onclick = () => { update(state.index + 1); el("modalImg").src = state.photos[state.index]; el("counter").textContent = (state.index + 1) + " / " + state.photos.length; };
+      
+      // CONTACT BUTTONS
+      el("waBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, je souhaite des informations sur : " + listing.title);
+      el("mailBtn").href = "mailto:Sales@signature-sc.com?subject=Information Listing&body=Bonjour Sabrina, je souhaite organiser une visite pour " + listing.title;
     </script>
   </body>
 </html>
