@@ -4,26 +4,20 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Signature SC | Villa Diane Preview</title>
-        
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
         <link rel="icon" type="image/png" href="favicon.png">
         <script src="https://cdn.tailwindcss.com"></script>
-
         <style>
-          @media (min-width: 1024px) {
-            #agentCard { position: sticky !important; top: 150px !important; z-index: 30; }
-          }
+          @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
           html { scroll-padding-top: 120px; }
         </style>
     </head>
-
   <body class="bg-white text-[#223256]">
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <img src="logo-site.png" alt="Signature SC" class="h-20 sm:h-28 w-auto object-contain" />
-        
         <div class="flex gap-6 font-semibold text-xl sm:text-2xl tracking-tighter uppercase">
             <a href="villa-diane.html" class="text-[#61BDCC] border-b-2 border-[#61BDCC]">FR</a>
             <a href="en/villa-diane.html" class="text-[#223256]/30 hover:text-[#223256]">EN</a>
@@ -35,7 +29,7 @@
     <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
       <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
         <div class="relative">
-          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
+          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Main" />
           <button id="prevMain" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 ring-1 ring-black/10 shadow px-4 py-3">‹</button>
           <button id="nextMain" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 ring-1 ring-black/10 shadow px-4 py-3">›</button>
         </div>
@@ -54,7 +48,7 @@
               <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2 uppercase"></h1>
             </div>
             <div class="sm:col-span-4 text-left sm:text-right">
-              <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Prix</div>
+              <div class="text-xs tracking-widest text-[#223256]/70 uppercase font-bold">Prix</div>
               <div id="price" class="text-3xl font-semibold mt-2"></div>
               <div id="priceOld" class="text-base text-[#223256]/40 line-through mt-1"></div>
             </div>
@@ -63,7 +57,7 @@
           <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
             <div class="flex items-center gap-3 mb-8">
               <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-              <div class="text-sm tracking-widest font-bold uppercase">Détails</div>
+              <div class="text-sm tracking-widest font-bold uppercase">Spécifications</div>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
@@ -75,19 +69,21 @@
                 <div id="baths" class="text-xl font-semibold mt-2"></div>
               </div>
               <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
+                <div class="text-xs opacity-70 uppercase">Étages</div>
+                <div id="floors" class="text-xl font-semibold mt-2"></div>
+              </div>
+              <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
+                <div class="text-xs opacity-70 uppercase">Terrain</div>
+                <div id="lot" class="text-xl font-semibold mt-2"></div>
+              </div>
+              <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
                 <div class="text-xs opacity-70 uppercase">Construction</div>
                 <div id="construction" class="text-xl font-semibold mt-2"></div>
               </div>
-            </div>
-            <div class="grid sm:grid-cols-2 gap-4 text-sm">
-                <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
-                    <span class="opacity-70 uppercase">HOA</span>
-                    <span id="hoa" class="font-semibold"></span>
-                </div>
-                <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
-                    <span class="opacity-70 uppercase">Predial</span>
-                    <span id="predial" class="font-semibold"></span>
-                </div>
+              <div class="rounded-2xl bg-neutral-50 p-5 ring-1 ring-black/5">
+                <div class="text-xs opacity-70 uppercase">Âge</div>
+                <div id="age" class="text-xl font-semibold mt-2"></div>
+              </div>
             </div>
           </div>
 
@@ -103,16 +99,16 @@
         <aside class="lg:col-span-4">
           <div id="agentCard" class="rounded-3xl bg-[#223256] text-white p-8 shadow-xl">
             <div class="flex items-center gap-4 mb-8">
-              <img src="agent.jpg" class="h-48 w-32 rounded-xl object-cover shadow-lg" onerror="this.style.display='none';" />
+              <img src="agent.jpg" class="h-48 w-32 rounded-xl object-cover" />
               <div class="flex-1 flex flex-col items-center">
                 <img src="logo-contact.png" class="h-16 w-auto mb-2 contrast-125" />
                 <div class="text-base font-bold">Sabrina Crémona</div>
-                <div class="text-xs opacity-60 uppercase font-light mt-1">Real Estate Advisor</div>
+                <div class="text-xs opacity-60 uppercase font-light mt-1 text-center">Real Estate Advisor</div>
               </div>
             </div>
             <div class="grid gap-3">
               <a id="waBtn" href="#" class="bg-[#61BDCC] text-[#223256] text-center py-4 rounded-full font-bold text-sm shadow-lg">WhatsApp</a>
-              <a id="mailBtn" href="#" class="bg-white text-[#223256] text-center py-4 rounded-full font-bold text-sm">Email</a>
+              <a id="mailBtn" href="#" class="bg-white text-[#223256] text-center py-4 rounded-full font-bold text-sm shadow-md">Email</a>
             </div>
           </div>
         </aside>
@@ -120,43 +116,44 @@
     </main>
 
     <footer class="mt-12 bg-[#223256] text-white">
-      <div class="max-w-6xl mx-auto px-4 py-10">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="max-w-6xl mx-auto px-4 py-12 border-t border-white/5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <div class="flex items-start gap-1">
               <span style="font-family: 'Allura', cursive;" class="text-4xl">Signature</span>
               <span class="text-[10px] font-bold uppercase mt-1">SC</span>
             </div>
-            <div class="text-xs opacity-75 mt-1 lowercase uppercase">Luxury Real Estate | Riviera Maya</div>
+            <div class="text-xs opacity-60 mt-1 uppercase tracking-tighter">Luxury Real Estate | Riviera Maya</div>
           </div>
-          <div class="text-xs opacity-70">© <span id="yearNow"></span> Signature SC. All rights reserved.</div>
+          <div class="text-[10px] opacity-40 uppercase tracking-widest">© <span id="yearNow"></span> Signature SC. All rights reserved.</div>
         </div>
       </div>
     </footer>
 
-    <div id="modal" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" class="absolute -top-12 right-0 text-white uppercase text-xs tracking-widest">Fermer</button>
-        <img id="modalImg" class="w-full max-h-[80vh] object-contain rounded-xl" />
-        <div class="mt-4 flex justify-between">
-          <button id="prevBtn" class="text-white text-sm uppercase tracking-widest">Précédent</button>
-          <div id="counter" class="text-white text-xs"></div>
-          <button id="nextBtn" class="text-white text-sm uppercase tracking-widest">Suivant</button>
+    <div id="modal" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4">
+      <div class="relative w-full max-w-5xl">
+        <button id="closeBtn" class="absolute -top-10 right-0 text-white text-xs uppercase tracking-widest">Fermer</button>
+        <img id="modalImg" class="w-full max-h-[85vh] object-contain rounded-lg" />
+        <div class="mt-4 flex justify-between items-center text-white/70 text-[10px] uppercase tracking-widest">
+          <button id="prevBtn">Précédent</button>
+          <div id="counter"></div>
+          <button id="nextBtn">Suivant</button>
         </div>
       </div>
     </div>
 
     <script>
       const listing = {
-        title: "Villa Diane | Prestige Tropical",
+        title: "Villa Diane | Mayan Riviera Prestige",
         price: "$1,990,000 USD",
         priceOld: "$2,400,000 USD",
         beds: "4",
         baths: "4.5",
-        construction: "1,300 m²",
-        hoa: "$1,600.00 MXN / mois",
-        predial: "$11,000.00 MXN / an",
-        description: `Située au cœur de la prestigieuse communauté sécurisée de Puerto Aventuras, cette vaste propriété incarne l'élégance tropicale absolue. Édifiée sur un terrain luxuriant de 850 m², elle offre une intimité rare et un accès privilégié aux plages de la Riviera Maya.\n\nPensée pour célébrer la douceur de vivre caribéenne, la villa s'ouvre sur de majestueux espaces extérieurs, une vaste piscine privée et un jardin paysager méticuleusement entretenu.`,
+        floors: "2",
+        lot: "1,300 m²",
+        construction: "850 m²",
+        age: "15 Ans",
+        description: `Située au cœur de la prestigieuse communauté sécurisée de Puerto Aventuras, cette vaste propriété incarne l'élégance tropicale absolue.\n\nPensée pour célébrer la douceur de vivre caribéenne, la villa s'ouvre sur de majestueux espaces extérieurs, une vaste piscine privée et un jardin paysager méticuleusement entretenu.`,
         images: [
           "https://d1v2p1s05qqabi.cloudfront.net/12418428/1730416261.jpg",
           "https://d1v2p1s05qqabi.cloudfront.net/12418429/1730416262.jpg",
@@ -172,9 +169,10 @@
       el("priceOld").textContent = listing.priceOld;
       el("beds").textContent = listing.beds;
       el("baths").textContent = listing.baths;
+      el("floors").textContent = listing.floors;
+      el("lot").textContent = listing.lot;
       el("construction").textContent = listing.construction;
-      el("hoa").textContent = listing.hoa;
-      el("predial").textContent = listing.predial;
+      el("age").textContent = listing.age;
       el("description").textContent = listing.description;
       el("yearNow").textContent = new Date().getFullYear();
 
@@ -193,7 +191,7 @@
 
       state.photos.forEach((url, i) => {
         const btn = document.createElement('button');
-        btn.className = "thumb shrink-0 rounded-xl overflow-hidden ring-1 ring-black/5 bg-white";
+        btn.className = "thumb shrink-0 rounded-xl overflow-hidden ring-1 ring-black/5";
         btn.innerHTML = `<img src="${url}" class="h-20 w-32 object-cover">`;
         btn.onclick = () => update(i);
         strip.appendChild(btn);
@@ -205,15 +203,13 @@
       el('stripLeft').onclick = () => strip.scrollBy({ left: -300, behavior: 'smooth' });
       el('stripRight').onclick = () => strip.scrollBy({ left: 300, behavior: 'smooth' });
 
-      // MODAL LOGIC
       mainImg.onclick = () => { el("modal").classList.remove("hidden"); el("modalImg").src = state.photos[state.index]; el("counter").textContent = (state.index + 1) + " / " + state.photos.length; };
       el("closeBtn").onclick = () => el("modal").classList.add("hidden");
       el("prevBtn").onclick = () => { update(state.index - 1); el("modalImg").src = state.photos[state.index]; el("counter").textContent = (state.index + 1) + " / " + state.photos.length; };
       el("nextBtn").onclick = () => { update(state.index + 1); el("modalImg").src = state.photos[state.index]; el("counter").textContent = (state.index + 1) + " / " + state.photos.length; };
       
-      // CONTACT BUTTONS
-      el("waBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, je souhaite des informations sur : " + listing.title);
-      el("mailBtn").href = "mailto:Sales@signature-sc.com?subject=Information Listing&body=Bonjour Sabrina, je souhaite organiser une visite pour " + listing.title;
+      el("waBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, je souhaite des informations sur Villa Diane.");
+      el("mailBtn").href = "mailto:Sales@signature-sc.com?subject=Information Listing&body=Bonjour Sabrina, je souhaite organiser une visite pour Villa Diane.";
     </script>
   </body>
 </html>
