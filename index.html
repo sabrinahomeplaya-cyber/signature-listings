@@ -50,6 +50,22 @@
             class="h-20 sm:h-28 w-auto object-contain"
           />
         </div>
+
+        <!-- Lang switch -->
+        <nav class="flex items-center gap-2" aria-label="Langue">
+          <a id="langFr" href="#"
+            class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 rounded-full text-sm font-semibold ring-1 ring-black/10 bg-white text-[#223256] hover:bg-[#61BDCC]/15 transition">
+            FR
+          </a>
+          <a id="langEn" href="#"
+            class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 rounded-full text-sm font-semibold ring-1 ring-black/10 bg-white text-[#223256] hover:bg-[#61BDCC]/15 transition">
+            EN
+          </a>
+          <a id="langEs" href="#"
+            class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 rounded-full text-sm font-semibold ring-1 ring-black/10 bg-white text-[#223256] hover:bg-[#61BDCC]/15 transition">
+            ES
+          </a>
+        </nav>
         
       </div>
     </header>
@@ -346,6 +362,12 @@
 
     <script>
       const listing = {
+        lang: "fr",
+        langLinks: {
+          fr: "./",
+          en: "./en.html",
+          es: "./es.html"
+        },
         area: "Puerto Aventuras",
         location: "Puerto Aventuras, Mexico.",
         title: "House for sale in front of the Marina in Puerto Aventuras",
@@ -447,6 +469,37 @@
         if (node) node.textContent = value || "";
       };
 
+      const applyLangButtons = () => {
+        const links = listing.langLinks || {};
+        const current = String(listing.lang || "fr").toLowerCase();
+
+        const map = [
+          { id: "langFr", code: "fr", href: links.fr || "#" },
+          { id: "langEn", code: "en", href: links.en || "#" },
+          { id: "langEs", code: "es", href: links.es || "#" }
+        ];
+
+        map.forEach((item) => {
+          const node = document.getElementById(item.id);
+          if (!node) return;
+
+          node.href = item.href;
+
+          const active = item.code === current;
+
+          node.classList.remove("bg-white", "hover:bg-[#61BDCC]/15", "ring-black/10");
+          node.classList.remove("bg-[#61BDCC]", "ring-[#61BDCC]");
+
+          if (active) {
+            node.classList.add("bg-[#61BDCC]", "ring-[#61BDCC]");
+          } else {
+            node.classList.add("bg-white", "hover:bg-[#61BDCC]/15", "ring-black/10");
+          }
+        });
+      };
+
+      applyLangButtons();
+
       setText("locationLine", listing.location || "");
       setText("title", listing.title || "");
       setText("price", listing.price ? listing.price + " " + (listing.currency || "") : "");
@@ -481,7 +534,6 @@
           (listing.price ? "Prix : " + listing.price + (listing.currency ? " " + listing.currency : "") + "\n" : "") +
           (liveUrl ? "Lien : " + liveUrl : "");
 
-        // WhatsApp (format international, sans +, sans espaces)
         const phone = "529842696189";
 
         waBtn.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
@@ -652,13 +704,12 @@
       el("yearNow").textContent = String(new Date().getFullYear());
 
       // FORCE LE HAUT DE PAGE AU CHARGEMENT
-      // On utilise 'load' pour s'assurer que les images et le contenu sont là
-      window.addEventListener('load', function() {
+      window.addEventListener("load", function() {
         setTimeout(function() {
           window.scrollTo({
             top: 0,
             left: 0,
-            behavior: 'instant' // 'instant' évite l'effet de glissement visuel au départ
+            behavior: "instant"
           });
         }, 10);
       });
