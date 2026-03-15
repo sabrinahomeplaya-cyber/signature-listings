@@ -69,6 +69,7 @@
             <div class="sm:col-span-8">
               <div class="text-xs tracking-widest text-[#223256]/70" id="locationLine"></div>
               <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2"></h1>
+              <p id="subtitle" class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1"></p>
             </div>
             <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
               <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
@@ -190,7 +191,8 @@
         },
         area: "Puerto Aventuras",
         location: "Puerto Aventuras, Mexique.",
-        title: "Casa Xaman Ek — Résidence de luxe face à la marina",
+        title: "Casa Xaman Ek",
+        subtitle: "Résidence de luxe face à la marina",
         price: "$3,500,000",
         priceOld: "",
         currency: "USD",
@@ -281,6 +283,7 @@ Puerto Aventuras est l'une des communautés les plus établies de la Riviera May
 
       setText("locationLine", listing.location);
       setText("title", listing.title);
+      setText("subtitle", listing.subtitle || "");
       setText("price", listing.price + " " + listing.currency);
       setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
       setText("beds", listing.beds);
