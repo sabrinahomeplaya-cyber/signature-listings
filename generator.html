@@ -391,7 +391,25 @@
 
     .btn-download:hover { background: rgba(34,50,86,0.12); }
 
-    .btn-publish {
+    .btn-preview-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: white;
+      border: 1.5px solid rgba(34,50,86,0.18);
+      padding: 9px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-preview-tab:hover { background: var(--cream); border-color: var(--navy); }
+
+
       display: flex;
       align-items: center;
       gap: 6px;
@@ -598,6 +616,9 @@
       </button>
       <button class="btn-download" onclick="downloadCode()">
         ↓ Télécharger
+      </button>
+      <button class="btn-preview-tab" id="btn-preview-tab" onclick="openInNewTab()">
+        ↗ Nouvel onglet
       </button>
       <button class="btn-publish" id="btn-publish" onclick="publishToGitHub()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
@@ -828,7 +849,7 @@ function buildTemplate(data) {
             </div>
             <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
           </div>
-          <div class="text-xs text-white/70">© <span id="yearNow"></span>  Signature ˢᶜ Tous droits réservés.</div>
+          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés</div>
         </div>
       </div>
     </footer>
@@ -1235,7 +1256,14 @@ function downloadCode() {
   a.click();
 }
 
-async function publishToGitHub() {
+function openInNewTab() {
+  if (!generatedCode) return;
+  const blob = new Blob([generatedCode], { type: 'text/html; charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+}
+
+
   if (!generatedCode) return;
 
   const btn = document.getElementById('btn-publish');
