@@ -710,17 +710,21 @@ function buildTemplate(data) {
     </header>
 
     <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-      <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+      <section class="overflow-hidden bg-white">
         <div class="relative">
           <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
-          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent"><span class="text-lg font-semibold">‹</span></button>
-          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant"><span class="text-lg font-semibold">›</span></button>
+          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 transition" aria-label="Précédent" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L10 14L18 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><\/svg>
+          <\/button>
+          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 transition" aria-label="Suivant" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L18 14L10 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><\/svg>
+          <\/button>
         </div>
         <div class="px-4 sm:px-6 py-4 border-t border-black/5">
           <div class="flex items-center gap-3">
-            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à gauche">‹</button>
+            <button id="stripLeft" type="button" class="shrink-0 px-2 py-2 hover:opacity-60 transition" aria-label="Défiler à gauche" style="background:none;border:none;cursor:pointer;color:#223256;font-size:1.1rem">‹<\/button>
             <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à droite">›</button>
+            <button id="stripRight" type="button" class="shrink-0 px-2 py-2 hover:opacity-60 transition" aria-label="Défiler à droite" style="background:none;border:none;cursor:pointer;color:#223256;font-size:1.1rem">›<\/button>
           </div>
         </div>
       </section>
@@ -976,7 +980,7 @@ function buildTemplate(data) {
           const btn = document.createElement("button");
           btn.type = "button";
           btn.setAttribute("data-thumb", "1");
-          btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white";
+          btn.className = "shrink-0 overflow-hidden ring-1 ring-black/5 hover:ring-[#61BDCC] transition bg-white";
           btn.addEventListener("click", () => setMain(idx));
           const img = document.createElement("img");
           img.src = url; img.alt = "Photo " + (idx + 1);
