@@ -391,6 +391,25 @@
 
     .btn-download:hover { background: rgba(34,50,86,0.12); }
 
+    .btn-publish {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: white;
+      background: #2d6a4f;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-publish:hover:not(:disabled) { background: #245a42; }
+    .btn-publish:disabled { opacity: 0.6; cursor: not-allowed; }
+
     .copy-toast {
       position: fixed;
       bottom: 28px;
@@ -579,6 +598,10 @@
       </button>
       <button class="btn-download" onclick="downloadCode()">
         ↓ Télécharger
+      </button>
+      <button class="btn-publish" id="btn-publish" onclick="publishToGitHub()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Publier
       </button>
     </div>
   </div>
@@ -1049,7 +1072,7 @@ Structure JSON attendue :
   "lot": "Xm²",
   "hoa": "montant si disponible sinon vide",
   "predial": "montant si disponible sinon vide",
-  "description": "description complète traduite en ${langLabel}, ton élégant et luxueux",
+  "description": "belle description originale en ${langLabel} — 3 à 4 paragraphes, ton luxueux et élégant, style Signature SC, à partir des informations disponibles. Ne pas traduire mot pour mot, rédiger comme un texte de présentation haut de gamme.",
   "highlights": ["point fort 1", "point fort 2", "point fort 3", "point fort 4"],
   "images": ["url_image_1", "url_image_2", ...],
   "lat": "latitude si disponible sinon vide",
@@ -1070,7 +1093,7 @@ Extrait toutes les informations et retourne le JSON.`;
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
+        max_tokens: 8000,
         tools: [{
           "type": "web_search_20250305",
           "name": "web_search"
@@ -1208,7 +1231,52 @@ function downloadCode() {
   a.click();
 }
 
-function showStatus(type, text) {
+async function publishToGitHub() {
+  if (!generatedCode) return;
+
+  const btn = document.getElementById('btn-publish');
+  btn.disabled = true;
+  btn.textContent = 'Publication…';
+
+  const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
+  const message = `Add listing: ${currentSlug} (${currentLang})`;
+
+  try {
+    const res = await fetch('/api/github-publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path, content: generatedCode, message })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || 'Erreur GitHub');
+
+    // Success toast
+    const toast = document.getElementById('copy-toast');
+    toast.textContent = '✓ Publié sur listing.signature-sc.com/' + path;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+      toast.textContent = '✓ Code copié dans le presse-papiers';
+    }, 4000);
+
+    btn.textContent = '✓ Publié';
+    btn.style.background = '#1a3d2e';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier';
+      btn.style.background = '';
+    }, 5000);
+
+  } catch (err) {
+    alert('Erreur lors de la publication : ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier';
+  }
+}
+
+
   const bar = document.getElementById('status-bar');
   const spinner = document.getElementById('status-spinner');
   const statusText = document.getElementById('status-text');
