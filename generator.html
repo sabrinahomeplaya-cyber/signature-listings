@@ -849,7 +849,7 @@ function buildTemplate(data) {
             </div>
             <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
           </div>
-          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés</div>
+          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés.</div>
         </div>
       </div>
     </footer>
@@ -1264,9 +1264,8 @@ function openInNewTab() {
 }
 
 
+async function publishToGitHub() {
   if (!generatedCode) return;
-
-  const btn = document.getElementById('btn-publish');
   btn.disabled = true;
   btn.textContent = 'Publication…';
 
@@ -1310,7 +1309,7 @@ function openInNewTab() {
 
 
 function showStatus(type, text) {
-  const bar = document.getElementById('status-bar');
+  const bar = document.getElementById('status-bar');ffoo
   const spinner = document.getElementById('status-spinner');
   const statusText = document.getElementById('status-text');
   bar.className = 'status-bar ' + type;
