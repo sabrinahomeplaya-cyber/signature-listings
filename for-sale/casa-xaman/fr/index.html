@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Signature SC | Casa Xaman Ek — Puerto Aventuras</title>
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+          @media (min-width: 1024px) {
+            #agentCard {
+              position: sticky !important;
+              top: 150px !important; 
+              z-index: 30;
+            }
+          }
+          #contact-block {
+            margin-bottom: 40px;
+            scroll-margin-top: 100px;
+          }
+          html {
+            scroll-padding-top: 120px; 
+          }
+        </style>
+    </head>
+
+  <body class="bg-white text-[#223256]">
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center">
+          <img src="/logo-site.png" alt="Signature SC Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
+        </div>
+        <nav class="flex items-center gap-4" aria-label="Langue">
+          <a id="langFr" href="/for-sale/casa-xaman/fr/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
+          <a id="langEn" href="/for-sale/casa-xaman/en/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
+          <a id="langEs" href="/for-sale/casa-xaman/es/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
+      <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+        <div class="relative">
+          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
+          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent"><span class="text-lg font-semibold">‹</span></button>
+          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant"><span class="text-lg font-semibold">›</span></button>
+        </div>
+        <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+          <div class="flex items-center gap-3">
+            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à gauche">‹</button>
+            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à droite">›</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="mt-8 grid lg:grid-cols-12 gap-8">
+        <section class="lg:col-span-8">
+          <div class="grid sm:grid-cols-12 gap-4 items-start">
+            <div class="sm:col-span-8">
+              <div class="text-xs tracking-widest text-[#223256]/70" id="locationLine"></div>
+              <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2"></h1>
+            </div>
+            <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
+              <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
+              <div class="text-3xl font-semibold mt-2" id="price"></div>
+              <div class="text-base text-[#223256]/60 line-through mt-1" id="priceOld"></div>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
+            <div class="flex items-center gap-3 mb-8">
+              <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+              <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div id="beds" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Garage</div><div id="garage" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div id="year" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div id="construction" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div id="lot" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">HOA</span><span id="hoa" class="font-semibold text-[#223256]"></span></div>
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">Predial</span><span id="predial" class="font-semibold text-[#223256]"></span></div>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
+              <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+            </div>
+            <div id="description" class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto"></div>
+            <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
+              <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
+              <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+            </div>
+          </div>
+
+          <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
+              <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
+            </div>
+            <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
+              <iframe src="https://maps.google.com/maps?ll=20.4968,-87.2364&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
+              <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
+              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
+            </div>
+            <div class="mt-4 text-xs text-[#223256]/60 text-center">*La localisation exacte est fournie lors de la visite.</div>
+          </div>
+        </section>
+
+        <aside id="agent" class="lg:col-span-4 mb-8 lg:mb-0 scroll-mt-32">
+          <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
+            <div class="p-8">
+              <div class="flex items-center gap-4 mb-8">
+                <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
+                  <img src="/agent.jpg" alt="Agent" class="h-full w-full object-cover" onerror="this.style.display='none';" />
+                </div>
+                <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
+                  <img src="/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
+                  <div class="text-left px-2">
+                    <div id="agentName" class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis"></div>
+                    <div id="agentRole" class="text-sm font-light text-white/60 mt-1"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="grid gap-3">
+                <a id="waBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">WhatsApp</a>
+                <a id="mailBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">Email</a>
+                <a id="visitBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="mt-4 bg-[#223256] text-white">
+      <div class="max-w-6xl mx-auto px-4 py-10">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="flex items-start gap-1">
+              <span style="font-family: 'Allura', cursive;" class="text-4xl text-white leading-none">Signature</span>
+              <span class="text-[10px] font-sans font-bold text-white/90 uppercase mt-1">SC</span>
+            </div>
+            <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
+          </div>
+          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature SC. Tous droits réservés.</div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="modal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/80"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-6xl">
+          <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
+          <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
+            <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
+            <div id="counter" class="text-xs text-white/80"></div>
+            <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const listing = {
+        lang: "fr",
+        langLinks: {
+          fr: "/for-sale/casa-xaman/fr/",
+          en: "/for-sale/casa-xaman/en/",
+          es: "/for-sale/casa-xaman/es/"
+        },
+        area: "Puerto Aventuras",
+        location: "Puerto Aventuras, Mexique.",
+        title: "Casa Xaman Ek — Résidence de luxe face à la marina",
+        price: "$3,500,000",
+        priceOld: "",
+        currency: "USD",
+        beds: "5",
+        baths: "6",
+        garage: "2",
+        year: "2020",
+        construction: "603.87 m²",
+        lot: "750 m²",
+        hoa: "",
+        predial: "",
+        source: "https://howesrealty.com/es/property/casa-xaman-ek-puerto-aventuras-for-sale-marina/",
+        publicUrl: "https://listing.signature-sc.com/for-sale/casa-xaman/fr/",
+        description: `Nichée dans la prestigieuse Phase 4 de Puerto Aventuras, Casa Xaman Ek est une résidence d'exception avec accès direct à la marina depuis son muelle privé. Entourée de cenotes et de La Caleta, plage naturelle et privée accessible à pied, cette villa incarne l'équilibre rare entre intimité, nature et luxe côtier.
+
+Conçue sur deux niveaux, la propriété déploie 603 m² de construction pour une surface habitable totale de près de 1 400 m². Cinq chambres en suite, dont une suite principale avec douche intérieure et extérieure, hammam et balcon panoramique sur le canal. L'architecture contemporaine optimise la lumière naturelle et les volumes, créant des espaces aussi beaux à vivre qu'à recevoir.
+
+La villa est entièrement meublée et équipée : cuisine professionnelle, système audio SONOS intérieur et extérieur, panneaux solaires, électroménager haut de gamme et BBQ en terrasse. Depuis le ponton privé, partez en mer à tout moment. La piscine, le jardin et les espaces extérieurs complètent un art de vivre pensé pour ceux qui aiment le nautisme, le golf et la nature préservée.
+
+Puerto Aventuras est l'une des communautés les plus établies de la Riviera Maya : sécurité 24h/24, école bilingue, marina, restaurants, beach club et parcours de golf à quelques minutes. Un investissement d'exception dans l'un des marchés les plus recherchés du Mexique.`,
+        highlights: [
+          "Muelle privé avec accès direct à la marina",
+          "Entièrement meublée et équipée",
+          "Panneaux solaires et domotique intégrée",
+          "Plage privée La Caleta à quelques pas",
+          "Communauté sécurisée 24h/24",
+          "5 chambres en suite sur 2 niveaux"
+        ],
+        images: [
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO1.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO2.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO3.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO4.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO5.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO6.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO7.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO8.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO9.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO10.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO11.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO12.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO13.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO14.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO15.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO16.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO17.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO18.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO19.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO20.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO21.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO22-1.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO23.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO24.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO25.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO26.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO27.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO28.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO29.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO30.jpg",
+          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO31.jpg"
+        ]
+      };
+
+      const agent = {
+        name: "Sabrina Crémona",
+        role: "Real Estate Advisor",
+        email: "Sales@signature-sc.com"
+      };
+
+      const el = (id) => document.getElementById(id);
+      const simplifyMoney = (s) => (s || "").replace(/\.00\b/g, "").replace(/,00\b/g, "");
+      const setText = (id, value) => { const node = el(id); if (node) node.textContent = value || ""; };
+
+      // Lang buttons
+      const langMap = [
+        { id: "langFr", code: "fr" },
+        { id: "langEn", code: "en" },
+        { id: "langEs", code: "es" }
+      ];
+      langMap.forEach(item => {
+        const node = el(item.id);
+        if (!node) return;
+        const active = item.code === listing.lang;
+        node.classList.remove("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]", "text-[#223256]/35", "hover:text-[#223256]/60");
+        if (active) node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
+        else node.classList.add("text-[#223256]/35", "hover:text-[#223256]/60");
+      });
+
+      setText("locationLine", listing.location);
+      setText("title", listing.title);
+      setText("price", listing.price + " " + listing.currency);
+      setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
+      setText("beds", listing.beds);
+      setText("baths", listing.baths);
+      setText("garage", listing.garage);
+      setText("year", listing.year);
+      setText("construction", listing.construction);
+      setText("lot", listing.lot);
+      setText("hoa", simplifyMoney(listing.hoa));
+      setText("predial", simplifyMoney(listing.predial));
+      setText("description", listing.description);
+      setText("agentName", agent.name);
+      setText("agentRole", agent.role);
+
+      // WhatsApp / Email buttons
+      const buildWaText = (type) => {
+        const intro = type === 'visit'
+          ? "Bonjour Sabrina, je souhaite organiser une visite pour ce bien."
+          : "Bonjour Sabrina, je souhaite obtenir des informations sur ce bien :";
+        return intro + "\n\nTitre : " + listing.title + "\nPrix : " + listing.price + " " + listing.currency + "\nLien : " + listing.publicUrl;
+      };
+
+      const waBtn = el("waBtn");
+      if (waBtn) { waBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('info')); waBtn.target = "_blank"; }
+
+      const visitBtn = el("visitBtn");
+      if (visitBtn) { visitBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('visit')); visitBtn.target = "_blank"; }
+
+      const mailBtn = el("mailBtn");
+      if (mailBtn) {
+        const subject = "Demande d'informations — " + listing.title;
+        const body = "Bonjour Sabrina,\n\nJe souhaite obtenir des informations sur ce bien :\nTitre : " + listing.title + "\nPrix : " + listing.price + " " + listing.currency + "\nLien : " + listing.publicUrl + "\n\nMerci,";
+        mailBtn.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(agent.email) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        mailBtn.target = "_blank";
+      }
+
+      // Highlights
+      const highlightsEl = el("highlights");
+      if (highlightsEl) {
+        highlightsEl.innerHTML = "";
+        listing.highlights.forEach(t => {
+          const li = document.createElement("li");
+          li.className = "flex items-start gap-2";
+          li.innerHTML = "<span class='mt-1 h-2 w-2 rounded-full bg-[#61BDCC]'></span><span class='text-[#223256]/90'>" + t + "</span>";
+          highlightsEl.appendChild(li);
+        });
+      }
+
+      // Gallery
+      const photos = listing.images.filter(Boolean);
+      const state = { index: 0, photos };
+      const mainImg = el("mainImg");
+      const strip = el("strip");
+
+      const highlightThumb = () => {
+        Array.from(document.querySelectorAll("[data-thumb]")).forEach((n, i) => {
+          if (i === state.index) n.classList.add("ring-2", "ring-[#61BDCC]");
+          else n.classList.remove("ring-2", "ring-[#61BDCC]");
+        });
+      };
+
+      const setMain = (idx) => {
+        if (!state.photos.length || !mainImg) return;
+        state.index = (idx + state.photos.length) % state.photos.length;
+        mainImg.src = state.photos[state.index];
+        highlightThumb();
+      };
+
+      if (strip) {
+        strip.innerHTML = "";
+        state.photos.forEach((url, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.setAttribute("data-thumb", "1");
+          btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white";
+          btn.addEventListener("click", () => setMain(idx));
+          const img = document.createElement("img");
+          img.src = url; img.alt = "Photo " + (idx + 1);
+          img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
+          btn.appendChild(img); strip.appendChild(btn);
+        });
+      }
+
+      if (state.photos.length) setMain(0);
+
+      const scrollStrip = (dir) => { if (strip) strip.scrollBy({ left: dir * 320, behavior: "smooth" }); };
+      el("stripLeft")?.addEventListener("click", () => scrollStrip(-1));
+      el("stripRight")?.addEventListener("click", () => scrollStrip(1));
+      el("prevMain")?.addEventListener("click", () => setMain(state.index - 1));
+      el("nextMain")?.addEventListener("click", () => setMain(state.index + 1));
+
+      const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
+      const closeModal = () => el("modal").classList.add("hidden");
+      const renderModal = () => {
+        el("modalImg").src = state.photos[state.index] || "";
+        el("counter").textContent = state.photos.length ? (state.index + 1) + " / " + state.photos.length : "";
+      };
+      const prev = () => { setMain(state.index - 1); renderModal(); };
+      const next = () => { setMain(state.index + 1); renderModal(); };
+
+      if (mainImg) mainImg.addEventListener("click", openModal);
+      el("closeBtn")?.addEventListener("click", closeModal);
+      el("prevBtn")?.addEventListener("click", prev);
+      el("nextBtn")?.addEventListener("click", next);
+      document.addEventListener("keydown", (e) => {
+        if (el("modal").classList.contains("hidden")) return;
+        if (e.key === "Escape") closeModal();
+        if (e.key === "ArrowLeft") prev();
+        if (e.key === "ArrowRight") next();
+      });
+
+      el("yearNow").textContent = String(new Date().getFullYear());
+      window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0, behavior: "instant" }), 10));
+    </script>
+  </body>
+</html>
