@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Signature SC | Home facing the Marina — Puerto Aventuras</title>
+        <title>Signature SC | Villa Prestige — Puerto Aventuras</title>
         
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,10 +17,19 @@
 
         <style>
           @media (min-width: 1024px) {
-            #agentCard { position: sticky !important; top: 150px !important; z-index: 30; }
+            #agentCard {
+              position: sticky !important;
+              top: 150px !important; 
+              z-index: 30;
+            }
           }
-          #contact-block { margin-bottom: 40px; scroll-margin-top: 100px; }
-          html { scroll-padding-top: 120px; }
+          #contact-block {
+            margin-bottom: 40px;
+            scroll-margin-top: 100px;
+          }
+          html {
+            scroll-padding-top: 120px; 
+          }
         </style>
     </head>
 
@@ -30,10 +39,10 @@
         <div class="flex items-center">
           <img src="/logo-site.png" alt="Signature SC Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
         </div>
-        <nav class="flex items-center gap-6" aria-label="Langue">
-          <a id="langFr" href="#" class="text-xl sm:text-2xl font-semibold tracking-tighter">FR</a>
-          <a id="langEn" href="#" class="text-xl sm:text-2xl font-semibold tracking-tighter uppercase">EN</a>
-          <a id="langEs" href="#" class="text-xl sm:text-2xl font-semibold tracking-tighter uppercase">ES</a>
+        <nav class="flex items-center gap-4" aria-label="Langue">
+          <a id="langFr" href="/for-sale/villa-prestige/fr/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
+          <a id="langEn" href="/for-sale/villa-prestige/en/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
+          <a id="langEs" href="/for-sale/villa-prestige/es/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
         </nav>
       </div>
     </header>
@@ -42,14 +51,14 @@
       <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
         <div class="relative">
           <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
-          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition"><span class="text-lg font-semibold">‹</span></button>
-          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition"><span class="text-lg font-semibold">›</span></button>
+          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent"><span class="text-lg font-semibold">‹</span></button>
+          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant"><span class="text-lg font-semibold">›</span></button>
         </div>
         <div class="px-4 sm:px-6 py-4 border-t border-black/5">
           <div class="flex items-center gap-3">
-            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">‹</button>
+            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à gauche">‹</button>
             <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">›</button>
+            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à droite">›</button>
           </div>
         </div>
       </section>
@@ -58,59 +67,59 @@
         <section class="lg:col-span-8">
           <div class="grid sm:grid-cols-12 gap-4 items-start">
             <div class="sm:col-span-8">
-              <div class="text-xs tracking-widest text-[#223256]/70 uppercase" id="locationLine"></div>
-              <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2 uppercase tracking-tight"></h1>
+              <div class="text-xs tracking-widest text-[#223256]/70" id="locationLine"></div>
+              <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2"></h1>
               <p id="subtitle" class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1"></p>
             </div>
             <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
-              <div class="text-xs tracking-widest text-[#223256]/70 font-bold">PRIX</div>
+              <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
               <div class="text-3xl font-semibold mt-2" id="price"></div>
-              <div class="text-base text-[#223256]/30 line-through mt-1 italic" id="priceOld"></div>
+              <div class="text-base text-[#223256]/60 line-through mt-1" id="priceOld"></div>
             </div>
           </div>
 
           <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
             <div class="flex items-center gap-3 mb-8">
               <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-              <div class="text-sm tracking-widest text-[#223256]/80 font-bold">DÉTAILS</div>
+              <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70 uppercase">Chambres</div><div id="beds" class="text-xl font-semibold mt-2"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70 uppercase">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70 uppercase">Garage</div><div id="garage" class="text-xl font-semibold mt-2"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70 uppercase">Année</div><div id="year" class="text-xl font-semibold mt-2"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70 uppercase">Construction</div><div id="construction" class="text-xl font-semibold mt-2"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70 uppercase">Terrain</div><div id="lot" class="text-xl font-semibold mt-2"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div id="beds" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Garage</div><div id="garage" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div id="year" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div id="construction" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div id="lot" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
             </div>
             <div class="grid sm:grid-cols-2 gap-4 text-sm">
-              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 uppercase font-medium">HOA</span><span id="hoa" class="font-semibold"></span></div>
-              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 uppercase font-medium">Predial</span><span id="predial" class="font-semibold"></span></div>
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">HOA</span><span id="hoa" class="font-semibold text-[#223256]"></span></div>
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">Predial</span><span id="predial" class="font-semibold text-[#223256]"></span></div>
             </div>
           </div>
 
-          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-8 bg-[#f4ea98]/10">
-            <div class="flex items-center gap-3 mb-6">
+          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+            <div class="flex items-center gap-3">
               <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-              <div class="text-sm tracking-widest text-[#223256]/80 font-bold uppercase">Description</div>
+              <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
             </div>
-            <div id="description" class="text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto italic"></div>
-            <div class="mt-8 rounded-2xl bg-white/80 ring-1 ring-black/5 p-6">
-              <div class="text-xs tracking-widest text-[#223256]/70 font-bold mb-4 uppercase">Points Forts</div>
-              <ul id="highlights" class="text-sm grid sm:grid-cols-2 gap-3"></ul>
+            <div id="description" class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto"></div>
+            <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
+              <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
+              <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
             </div>
           </div>
 
           <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
             <div class="flex items-center gap-3 mb-6">
               <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-              <div class="text-sm tracking-widest text-[#223256] font-bold uppercase">Localisation</div>
+              <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
             </div>
             <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14949.771141416955!2d-87.234673!3d20.491374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4e24395460543f%3A0x808080808080808!2sPuerto%20Aventuras%2C%20Mexico!5e0!3m2!1sfr!2smx!4v1626431234567!5m2!1sfr!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
+              <iframe src="https://maps.google.com/maps?ll=20.4968,-87.2364&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
               <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
-              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none uppercase">Marina Front</div>
+              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
             </div>
-            <div class="mt-4 text-xs text-[#223256]/50 text-center italic">*La localisation exacte est fournie lors de la visite.</div>
+            <div class="mt-4 text-xs text-[#223256]/60 text-center">*La localisation exacte est fournie lors de la visite.</div>
           </div>
         </section>
 
@@ -118,21 +127,21 @@
           <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
             <div class="p-8">
               <div class="flex items-center gap-4 mb-8">
-                <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg border border-white/5">
-                  <img src="/agent.jpg" alt="Sabrina Crémona" class="h-full w-full object-cover" />
+                <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
+                  <img src="/agent.jpg" alt="Agent" class="h-full w-full object-cover" onerror="this.style.display='none';" />
                 </div>
                 <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
-                  <img src="/logo-contact.png" alt="Signature SC" class="h-20 w-auto object-contain mb-2 contrast-[1.05]" />
-                  <div class="text-center">
-                    <div id="agentName" class="text-base font-bold text-white tracking-tight"></div>
-                    <div id="agentRole" class="text-[10px] font-light text-white/60 mt-1 uppercase tracking-widest"></div>
+                  <img src="/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
+                  <div class="text-left px-2">
+                    <div id="agentName" class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis"></div>
+                    <div id="agentRole" class="text-sm font-light text-white/60 mt-1"></div>
                   </div>
                 </div>
               </div>
               <div class="grid gap-3">
-                <a id="waBtn" href="#" class="inline-flex justify-center items-center rounded-full px-5 py-4 bg-[#61BDCC] text-[#223256] font-bold text-sm shadow-lg shadow-[#61BDCC]/20 hover:opacity-90 transition">WhatsApp</a>
-                <a id="mailBtn" href="#" class="inline-flex justify-center items-center rounded-full px-5 py-4 bg-white text-[#223256] font-bold text-sm shadow-lg hover:bg-neutral-50 transition">Email</a>
-                <a id="visitBtn" href="#" class="inline-flex justify-center items-center rounded-full px-5 py-4 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
+                <a id="waBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">WhatsApp</a>
+                <a id="mailBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">Email</a>
+                <a id="visitBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
               </div>
             </div>
           </div>
@@ -140,29 +149,34 @@
       </div>
     </main>
 
-    <footer class="mt-12 bg-[#223256] text-white">
-      <div class="max-w-6xl mx-auto px-4 py-12">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8">
+    <footer class="mt-4 bg-[#223256] text-white">
+      <div class="max-w-6xl mx-auto px-4 py-10">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div class="flex items-start gap-1">
-              <span style="font-family: 'Allura', cursive;" class="text-5xl text-white leading-none">Signature</span>
-              <span class="text-[10px] font-bold text-white/90 uppercase mt-2">SC</span>
+              <span style="font-family: 'Allura', cursive;" class="text-4xl text-white leading-none">Signature</span>
+              <span class="text-[10px] font-sans font-bold text-white/90 uppercase mt-1">SC</span>
             </div>
-            <div class="text-[10px] tracking-widest text-white/50 mt-2 uppercase">Luxury Real Estate | Riviera Maya</div>
+            <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
           </div>
-          <div class="text-[10px] tracking-widest text-white/40 uppercase font-light text-right">© <span id="yearNow"></span> Signature SC Real Estate. <br>Tous droits réservés.</div>
+          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés.</div>
         </div>
       </div>
     </footer>
 
-    <div id="modal" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" type="button" class="absolute -top-12 right-0 text-white uppercase text-[10px] tracking-widest font-bold">Fermer</button>
-        <img id="modalImg" class="w-full max-h-[82vh] object-contain rounded-2xl" alt="" />
-        <div class="mt-6 flex items-center justify-between text-white/60 text-[10px] tracking-widest uppercase font-bold">
-          <button id="prevBtn">Précédent</button>
-          <div id="counter"></div>
-          <button id="nextBtn">Suivant</button>
+    <div id="modal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/80"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-6xl">
+          <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
+          <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
+            <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
+            <div id="counter" class="text-xs text-white/80"></div>
+            <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
+          </div>
         </div>
       </div>
     </div>
@@ -170,122 +184,208 @@
     <script>
       const listing = {
         lang: "fr",
+        langLinks: {
+          fr: "/for-sale/villa-prestige/fr/",
+          en: "/for-sale/villa-prestige/en/",
+          es: "/for-sale/villa-prestige/es/"
+        },
         area: "Puerto Aventuras",
-        location: "Puerto Aventuras, Mexico",
-        title: "Villa Avant-Garde Marina",
-        subtitle: "Architecture moderne face aux canaux",
-        price: "$1,975,000",
-        priceOld: "$2,395,000",
+        location: "Puerto Aventuras, Quintana Roo, Mexique.",
+        title: "Villa de Luxe",
+        subtitle: "Résidence de prestige au cœur de la Riviera Maya",
+        price: "$2,400,000",
+        priceOld: "",
         currency: "USD",
-        beds: "5",
-        baths: "6",
-        garage: "4",
-        year: "2017",
-        construction: "506 m²",
-        lot: "750 m²",
-        hoa: "$1,600 MXN / mois",
-        predial: "$11,000 MXN / an",
-        publicUrl: "https://listing.signature-sc.com/lhn6578.html",
-        description: `Cette résidence de luxe exclusive face à la marina est située dans la phase la plus établie de Puerto Aventuras. Son design intelligent et ultra-moderne en fait une propriété unique pour ceux qui recherchent confort, intimité et un investissement solide au cœur de la Riviera Maya.
+        beds: "4",
+        baths: "4.5",
+        garage: "-",
+        year: "15 Ans",
+        construction: "1,300 m²",
+        lot: "850 m²",
+        hoa: "$2,016 USD",
+        predial: "-",
+        source: "https://caribbeanrealtors.com.mx/property/home-for-sale-in-puerto-aventuras-mayan-riviera-lhn6578",
+        publicUrl: "https://listing.signature-sc.com/for-sale/villa-prestige/fr/",
+        description: `Située dans la prestigieuse communauté sécurisée de Puerto Aventuras, cette magnifique résidence offre un cadre de vie exceptionnel sur la Riviera Maya. Avec ses 1 300 m² de construction sur un terrain luxuriant de 850 m², elle allie élégance, confort et intimité.
 
-La villa dispose de cinq chambres spacieuses, dont deux situées au rez-de-chaussée pour une accessibilité optimale. L'architecture contemporaine maximise la lumière naturelle grâce à d'immenses baies vitrées résistantes aux ouragans, créant des volumes fluides et aérés.
+La propriété dispose de 4 chambres spacieuses et de 4 salles de bain attenantes, idéales pour accueillir famille et invités. Ses espaces de vie ouverts, baignés de lumière naturelle, s'ouvrent sur de vastes terrasses couvertes. 
 
-Entièrement domotisée, cette "Smart House" permet de contrôler la sécurité et les ambiances depuis votre smartphone. À l'extérieur, le ponton privé sur le canal et la piscine à débordement complètent un art de vivre résolument tourné vers le nautisme. Une opportunité rare de posséder une signature architecturale sur le front de marina.`,
+À l'extérieur, profitez d'un somptueux jardin paysager et d'une piscine privée pensée pour célébrer la douceur de vivre caribéenne. Parfaitement entretenue, cette villa offre des finitions de qualité et un accès privilégié aux commodités exclusives de la marina, de la plage et du golf de Puerto Aventuras.`,
         highlights: [
-          "Quai privé direct sur la Marina",
-          "Système Smart Home intégral",
-          "Baies vitrées anti-cycloniques",
-          "Piscine privée face au canal",
-          "Vendu entièrement meublé",
-          "Sécurité contrôlée 24/7"
+          "Vaste piscine privée et solarium",
+          "Magnifique jardin paysager tropical",
+          "4 grandes chambres spacieuses",
+          "Terrasses couvertes pour la réception",
+          "Communauté hautement sécurisée",
+          "À proximité immédiate de la Marina"
         ],
         images: [
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT1.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT3.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT5.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT8.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT10.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT15.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT20.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT25.jpeg",
-          "https://howesrealty.com/wp-content/uploads/2025/03/CASA-AVANT30.jpeg"
+          "https://d1v2p1s05qqabi.cloudfront.net/12418428/1730416261.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418429/1730416262.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418430/1730416263.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418431/1730416263.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418432/1730416264.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418433/1730416264.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418434/1730416265.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418435/1730416265.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418436/1730416266.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418437/1730416266.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418438/1730416267.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418439/1730416267.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418440/1730416268.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418441/1730416268.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418442/1730416268.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418443/1730416269.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418444/1730416269.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418445/1730416270.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418446/1730416270.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418447/1730416271.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418448/1730416271.jpg",
+          "https://d1v2p1s05qqabi.cloudfront.net/12418449/1730416272.jpg"
         ]
       };
 
-      const agent = { name: "Sabrina Crémona", role: "Real Estate Advisor", email: "Sales@signature-sc.com" };
-      const el = (id) => document.getElementById(id);
-      const setText = (id, value) => { if (el(id)) el(id).textContent = value || ""; };
+      const agent = {
+        name: "Sabrina Crémona",
+        role: "Real Estate Advisor",
+        email: "Sales@signature-sc.com"
+      };
 
-      // Lang Switch
-      const langMap = [{ id: "langFr", code: "fr" }, { id: "langEn", code: "en" }, { id: "langEs", code: "es" }];
+      const el = (id) => document.getElementById(id);
+      const simplifyMoney = (s) => (s || "").replace(/\.00\b/g, "").replace(/,00\b/g, "");
+      const setText = (id, value) => { const node = el(id); if (node) node.textContent = value || ""; };
+
+      // Lang buttons
+      const langMap = [
+        { id: "langFr", code: "fr" },
+        { id: "langEn", code: "en" },
+        { id: "langEs", code: "es" }
+      ];
       langMap.forEach(item => {
-        const node = el(item.id); if (!node) return;
-        if (item.code === listing.lang) node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
-        else node.classList.add("text-[#223256]/30", "hover:text-[#223256]");
+        const node = el(item.id);
+        if (!node) return;
+        const active = item.code === listing.lang;
+        node.classList.remove("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]", "text-[#223256]/35", "hover:text-[#223256]/60");
+        if (active) node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
+        else node.classList.add("text-[#223256]/35", "hover:text-[#223256]/60");
       });
 
       setText("locationLine", listing.location);
       setText("title", listing.title);
-      setText("subtitle", listing.subtitle);
+      setText("subtitle", listing.subtitle || "");
       setText("price", listing.price + " " + listing.currency);
-      setText("priceOld", listing.priceOld + " " + listing.currency);
+      setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
       setText("beds", listing.beds);
       setText("baths", listing.baths);
       setText("garage", listing.garage);
       setText("year", listing.year);
       setText("construction", listing.construction);
       setText("lot", listing.lot);
-      setText("hoa", listing.hoa);
-      setText("predial", listing.predial);
+      setText("hoa", simplifyMoney(listing.hoa));
+      setText("predial", simplifyMoney(listing.predial));
       setText("description", listing.description);
       setText("agentName", agent.name);
       setText("agentRole", agent.role);
 
-      // WhatsApp & Email logic
-      const buildMsg = (v) => (v ? "visite" : "informations") + " : " + listing.title + "\nLien : " + listing.publicUrl;
-      el("waBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, je souhaite des " + buildMsg(false));
-      el("visitBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, je souhaite organiser une " + buildMsg(true));
-      el("mailBtn").href = "mailto:" + agent.email + "?subject=Signature SC - " + listing.title + "&body=Bonjour Sabrina, je souhaite des infos sur ce bien : " + listing.publicUrl;
-
-      // Highlights
-      listing.highlights.forEach(t => {
-        const li = document.createElement("li"); li.className = "flex items-start gap-2";
-        li.innerHTML = "<span class='mt-1.5 h-1.5 w-1.5 rounded-full bg-[#61BDCC] shrink-0'></span><span class='text-[#223256]/90'>" + t + "</span>";
-        el("highlights").appendChild(li);
-      });
-
-      // Gallery Logic
-      const photos = listing.images;
-      let idx = 0;
-      const update = (i) => {
-        idx = (i + photos.length) % photos.length;
-        el("mainImg").src = photos[idx];
-        Array.from(document.querySelectorAll("[data-thumb]")).forEach((n, k) => n.style.opacity = k === idx ? "1" : "0.5");
+      // WhatsApp / Email buttons
+      const buildWaText = (type) => {
+        const intro = type === 'visit'
+          ? "Bonjour Sabrina, je souhaite organiser une visite pour ce bien."
+          : "Bonjour Sabrina, je souhaite obtenir des informations sur ce bien :";
+        return intro + "\n\nTitre : " + listing.title + "\nPrix : " + listing.price + " " + listing.currency + "\nLien : " + listing.publicUrl;
       };
 
-      photos.forEach((url, i) => {
-        const btn = document.createElement("button");
-        btn.setAttribute("data-thumb", "1");
-        btn.className = "shrink-0 rounded-xl overflow-hidden bg-neutral-100 transition-opacity duration-300";
-        btn.innerHTML = `<img src="${url}" class="h-20 w-32 object-cover">`;
-        btn.onclick = () => update(i);
-        el("strip").appendChild(btn);
+      const waBtn = el("waBtn");
+      if (waBtn) { waBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('info')); waBtn.target = "_blank"; }
+
+      const visitBtn = el("visitBtn");
+      if (visitBtn) { visitBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('visit')); visitBtn.target = "_blank"; }
+
+      const mailBtn = el("mailBtn");
+      if (mailBtn) {
+        const subject = "Demande d'informations — " + listing.title;
+        const body = "Bonjour Sabrina,\n\nJe souhaite obtenir des informations sur ce bien :\nTitre : " + listing.title + "\nPrix : " + listing.price + " " + listing.currency + "\nLien : " + listing.publicUrl + "\n\nMerci,";
+        mailBtn.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(agent.email) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        mailBtn.target = "_blank";
+      }
+
+      // Highlights
+      const highlightsEl = el("highlights");
+      if (highlightsEl) {
+        highlightsEl.innerHTML = "";
+        listing.highlights.forEach(t => {
+          const li = document.createElement("li");
+          li.className = "flex items-start gap-2";
+          li.innerHTML = "<span class='mt-1 h-2 w-2 rounded-full bg-[#61BDCC]'></span><span class='text-[#223256]/90'>" + t + "</span>";
+          highlightsEl.appendChild(li);
+        });
+      }
+
+      // Gallery
+      const photos = listing.images.filter(Boolean);
+      const state = { index: 0, photos };
+      const mainImg = el("mainImg");
+      const strip = el("strip");
+
+      const highlightThumb = () => {
+        Array.from(document.querySelectorAll("[data-thumb]")).forEach((n, i) => {
+          if (i === state.index) n.classList.add("ring-2", "ring-[#61BDCC]");
+          else n.classList.remove("ring-2", "ring-[#61BDCC]");
+        });
+      };
+
+      const setMain = (idx) => {
+        if (!state.photos.length || !mainImg) return;
+        state.index = (idx + state.photos.length) % state.photos.length;
+        mainImg.src = state.photos[state.index];
+        highlightThumb();
+      };
+
+      if (strip) {
+        strip.innerHTML = "";
+        state.photos.forEach((url, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.setAttribute("data-thumb", "1");
+          btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white";
+          btn.addEventListener("click", () => setMain(idx));
+          const img = document.createElement("img");
+          img.src = url; img.alt = "Photo " + (idx + 1);
+          img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
+          btn.appendChild(img); strip.appendChild(btn);
+        });
+      }
+
+      if (state.photos.length) setMain(0);
+
+      const scrollStrip = (dir) => { if (strip) strip.scrollBy({ left: dir * 320, behavior: "smooth" }); };
+      el("stripLeft")?.addEventListener("click", () => scrollStrip(-1));
+      el("stripRight")?.addEventListener("click", () => scrollStrip(1));
+      el("prevMain")?.addEventListener("click", () => setMain(state.index - 1));
+      el("nextMain")?.addEventListener("click", () => setMain(state.index + 1));
+
+      const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
+      const closeModal = () => el("modal").classList.add("hidden");
+      const renderModal = () => {
+        el("modalImg").src = state.photos[state.index] || "";
+        el("counter").textContent = state.photos.length ? (state.index + 1) + " / " + state.photos.length : "";
+      };
+      const prev = () => { setMain(state.index - 1); renderModal(); };
+      const next = () => { setMain(state.index + 1); renderModal(); };
+
+      if (mainImg) mainImg.addEventListener("click", openModal);
+      el("closeBtn")?.addEventListener("click", closeModal);
+      el("prevBtn")?.addEventListener("click", prev);
+      el("nextBtn")?.addEventListener("click", next);
+      document.addEventListener("keydown", (e) => {
+        if (el("modal").classList.contains("hidden")) return;
+        if (e.key === "Escape") closeModal();
+        if (e.key === "ArrowLeft") prev();
+        if (e.key === "ArrowRight") next();
       });
-      update(0);
 
-      el("stripLeft").onclick = () => el("strip").scrollBy({ left: -300, behavior: "smooth" });
-      el("stripRight").onclick = () => el("strip").scrollBy({ left: 300, behavior: "smooth" });
-      el("prevMain").onclick = () => update(idx - 1);
-      el("nextMain").onclick = () => update(idx + 1);
-
-      // Modal
-      el("mainImg").onclick = () => { el("modal").classList.remove("hidden"); el("modalImg").src = photos[idx]; el("counter").textContent = (idx + 1) + " / " + photos.length; };
-      el("closeBtn").onclick = () => el("modal").classList.add("hidden");
-      el("prevBtn").onclick = () => { update(idx - 1); el("modalImg").src = photos[idx]; el("counter").textContent = (idx + 1) + " / " + photos.length; };
-      el("nextBtn").onclick = () => { update(idx + 1); el("modalImg").src = photos[idx]; el("counter").textContent = (idx + 1) + " / " + photos.length; };
-
-      el("yearNow").textContent = new Date().getFullYear();
-      window.onload = () => setTimeout(() => window.scrollTo(0,0), 10);
+      el("yearNow").textContent = String(new Date().getFullYear());
+      window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0, behavior: "instant" }), 10));
     </script>
   </body>
 </html>
