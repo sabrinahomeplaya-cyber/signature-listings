@@ -735,11 +735,11 @@ function buildTemplate(data) {
         <div class="relative">
           <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
           <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 transition" aria-label="Précédent" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L10 14L18 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><\/svg>
-          <\/button>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L10 14L18 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
           <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 transition" aria-label="Suivant" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L18 14L10 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><\/svg>
-          <\/button>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L18 14L10 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
         <div class="px-4 sm:px-6 py-4 border-t border-black/5">
           <div class="flex items-center gap-3">
@@ -1309,7 +1309,7 @@ async function publishToGitHub() {
 
 
 function showStatus(type, text) {
-  const bar = document.getElementById('status-bar');ffoo
+  const bar = document.getElementById('status-bar');
   const spinner = document.getElementById('status-spinner');
   const statusText = document.getElementById('status-text');
   bar.className = 'status-bar ' + type;
