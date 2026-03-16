@@ -56,7 +56,6 @@
       <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
         <div class="relative">
           <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
-          
           <button id="prevMain" type="button" aria-label="Précédent" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
@@ -114,7 +113,7 @@
               <br>
               <p>Chaque surface raconte une histoire de savoir-faire et d'authenticité. Les sols en pierre naturelle taillée à la main, les murs en pierre apparente sculptés avec une précision artisanale, les plafonds en briques voûtées qui créent une acoustique et une chaleur uniques, tout ici a été pensé pour durer des générations. Les boiseries en bois massif travaillé, les menuiseries en fer forgé et les éléments architecturaux en pierre calcaire locale confèrent à la propriété un caractère colonial d'une élégance rare, à mi-chemin entre l'hacienda mexicaine et la demeure méditerranéenne.</p>
               <br>
-              <p>Les deux niveaux de la résidence déploient 1,300 m² de construction autour d'espaces de réception généreux aux hauteurs sous plafond exceptionnelles. La salle à manger de prestige, encadrée d'arches en pierre et illuminée par un lustre en fer forgé monumental, la cave à vins intégrée avec ses colonnades de pierre, chaque pièce possède une identité propre, une signature architecturale que l'on ne peut ni copier ni reproduire.</p>
+              <p>Les deux niveaux de la résidence déploient 1,300 m² de construction autour d'espaces de réception généreux aux hauteurs sous plafond exceptionnelles. La salle à manger de prestige, encadrée d'arches en pierre et illuminée par un lustre en fer forgé monumental, la cave à vins intégrée avec ses colonnades de pierre, chaque pièce possède une identity propre, une signature architecturale que l'on ne peut ni copier ni reproduire.</p>
               <br>
               <p>Complétant ces matériaux exceptionnels, 30 panneaux solaires assurent une autonomie énergétique exemplaire, conjuguant luxe et responsabilité. Son architecture et ses surfaces volumineuses parachèvent une proposition unique sur le marché de Puerto Aventuras : une maison qui n'est pas seulement belle, mais précieuse.</p>
             </div>
@@ -138,7 +137,7 @@
           </div>
         </section>
 
-        <aside class="lg:col-span-4 mb-8 lg:mb-0">
+        <aside id="agent" class="lg:col-span-4 mb-8 lg:mb-0 scroll-mt-32">
           <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
             <div class="p-8">
               <div class="flex items-center gap-4 mb-8">
@@ -146,17 +145,17 @@
                   <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
                 </div>
                 <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
-                  <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2" />
+                  <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
                   <div class="text-left px-2">
-                    <div class="text-base font-bold text-white">Sabrina Crémona</div>
-                    <div class="text-sm font-light text-white/60 mt-1">Real Estate Advisor</div>
+                    <div id="agentName" class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis">Sabrina Crémona</div>
+                    <div id="agentRole" class="text-sm font-light text-white/60 mt-1">Real Estate Advisor</div>
                   </div>
                 </div>
               </div>
               <div class="grid gap-3">
-                <a id="waBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition">WhatsApp</a>
-                <a id="mailBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm hover:bg-neutral-100 transition">Email</a>
-                <a id="visitBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition">Demander une visite</a>
+                <a id="waBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">WhatsApp</a>
+                <a id="mailBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">Email</a>
+                <a id="visitBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
               </div>
             </div>
           </div>
