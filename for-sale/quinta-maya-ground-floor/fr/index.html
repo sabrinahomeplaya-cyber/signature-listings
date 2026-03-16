@@ -79,7 +79,7 @@
           <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div id="beds" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Garage</div><div id="garage" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Niveau</div><div id="niveau" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div id="year" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div id="construction" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div id="lot" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
@@ -104,7 +104,7 @@
             <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
           </div>
           <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
-            <iframe src="https://maps.google.com/maps?ll=20.496833,-87.236444&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
+            <iframe src="https://maps.google.com/maps?ll=20.503725,-87.217809&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
             <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
           </div>
@@ -183,7 +183,7 @@
       currency: "USD",
       beds: "3",
       baths: "4",
-      garage: "",
+      niveau: "rez-de-jardin",
       year: "2012",
       construction: "353m²",
       lot: "153m²",
@@ -222,7 +222,7 @@
     setText("subtitle", listing.subtitle || "");
     setText("price", listing.price + " " + listing.currency);
     setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
-    setText("beds", listing.beds); setText("baths", listing.baths); setText("garage", listing.garage);
+    setText("beds", listing.beds); setText("baths", listing.baths); setText("niveau", listing.niveau);
     setText("year", listing.year); setText("construction", listing.construction); setText("lot", listing.lot);
     setText("description", listing.description);
     setText("agentName", agent.name); setText("agentRole", agent.role);
