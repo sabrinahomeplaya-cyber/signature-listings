@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Signature SC | Casa Leona</title>
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+        <link rel="icon" type="image/png" sizes="32x32" href="https://listing.signature-sc.com/favicon.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://listing.signature-sc.com/favicon.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="https://listing.signature-sc.com/favicon.png">
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+          @media (min-width: 1024px) {
+            #agentCard {
+              position: sticky !important;
+              top: 150px !important; 
+              z-index: 30;
+            }
+          }
+          html { scroll-padding-top: 120px; }
+        </style>
+    </head>
+
+  <body class="bg-white text-[#223256]">
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center">
+          <img src="https://listing.signature-sc.com/logo-site.png" alt="Signature SC Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
+        </div>
+        <nav class="flex items-center gap-4" aria-label="Langue">
+          <a href="https://listing.signature-sc.com/for-sale/casa-leona/fr/" class="text-base font-semibold text-[#61BDCC] border-b-2 border-[#61BDCC] transition">FR</a>
+          <a href="https://listing.signature-sc.com/for-sale/casa-leona/en/" class="text-base font-semibold text-[#223256]/35 hover:text-[#223256]/60 transition">EN</a>
+          <a href="https://listing.signature-sc.com/for-sale/casa-leona/es/" class="text-base font-semibold text-[#223256]/35 hover:text-[#223256]/60 transition">ES</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
+      <section class="overflow-hidden bg-white">
+        <div class="relative">
+          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
+          <button id="prevMain" type="button" aria-label="Précédent" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M18 6L10 14L18 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="nextMain" type="button" aria-label="Suivant" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M10 6L18 14L10 22" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+          <div class="flex items-center gap-3">
+            <button id="stripLeft" type="button" style="background:none;border:none;cursor:pointer;color:#223256;font-size:1.1rem;padding:8px">&#8249;</button>
+            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+            <button id="stripRight" type="button" style="background:none;border:none;cursor:pointer;color:#223256;font-size:1.1rem;padding:8px">&#8250;</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="mt-8 grid lg:grid-cols-12 gap-8">
+        <section class="lg:col-span-8">
+          <div class="grid sm:grid-cols-12 gap-4 items-start">
+            <div class="sm:col-span-8">
+              <div class="text-xs tracking-widest text-[#223256]/70">Puerto Aventuras, Riviera Maya</div>
+              <h1 class="text-2xl sm:text-3xl font-semibold mt-2">Casa Leona</h1>
+              <p class="text-base text-[#223256]/55 italic mt-1">Villa d'exception aux matériaux luxueux</p>
+            </div>
+            <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
+              <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
+              <div class="text-3xl font-semibold mt-2">$1,990,000 USD</div>
+              <div class="text-base text-[#223256]/60 line-through mt-1">$2,400,000 USD</div>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
+            <div class="flex items-center gap-3 mb-8">
+              <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+              <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div class="text-xl font-semibold mt-2 text-[#223256]">4</div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div class="text-xl font-semibold mt-2 text-[#223256]">4.5</div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Niveaux</div><div class="text-xl font-semibold mt-2 text-[#223256]">2 étages</div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div class="text-xl font-semibold mt-2 text-[#223256]">2010</div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div class="text-xl font-semibold mt-2 text-[#223256]">1 300 m²</div></div>
+              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div class="text-xl font-semibold mt-2 text-[#223256]">850 m²</div></div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">HOA</span><span class="font-semibold text-[#223256]"></span></div>
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">Predial</span><span class="font-semibold text-[#223256]"></span></div>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
+              <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+            </div>
+            <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 text-justify max-w-3xl mx-auto">
+              <p>Casa Leona est une résidence d'une rareté absolue, nichée au coeur de Puerto Aventuras. Ce qui la distingue fondamentalement de toute autre propriété sur le marché n'est pas simplement son emplacement ou ses volumes, c'est la qualité intrinsèque de ses matériaux, sélectionnés avec une exigence que l'on ne rencontre qu'exceptionnellement dans la Riviera Maya.</p>
+              <br>
+              <p>Chaque surface raconte une histoire de savoir-faire et d'authenticité. Les sols en pierre naturelle taillée à la main, les murs en pierre apparente sculptés avec une précision artisanale, les plafonds en briques voûtées qui créent une acoustique et une chaleur uniques, tout ici a été pensé pour durer des générations. Les boiseries en bois massif travaillé, les menuiseries en fer forgé et les éléments architecturaux en pierre calcaire locale confèrent à la propriété un caractère colonial d'une élégance rare, à mi-chemin entre l'hacienda mexicaine et la demeure méditerranéenne.</p>
+              <br>
+              <p>Les deux niveaux de la résidence déploient 1 300 m² de construction autour d'espaces de réception généreux aux hauteurs sous plafond exceptionnelles. La salle à manger de prestige, encadrée d'arches en pierre et illuminée par un lustre en fer forgé monumental, la cave à vins intégrée avec ses colonnades de pierre, chaque pièce possède une identité propre, une signature architecturale que l'on ne peut ni copier ni reproduire.</p>
+              <br>
+              <p>Complétant cette excellence matérielle, 30 panneaux solaires assurent une autonomie énergétique exemplaire, conjuguant luxe et responsabilité. L'accès direct à la plage, la piscine privée, le solarium et la sécurité 24h/24 parachèvent une proposition unique sur le marché de Puerto Aventuras : une maison qui n'est pas seulement belle, mais précieuse.</p>
+            </div>
+            <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
+              <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
+              <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+            </div>
+          </div>
+
+          <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
+              <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
+            </div>
+            <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
+              <iframe src="https://maps.google.com/maps?ll=20.496833,-87.236444&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;position:absolute;inset:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <div style="position:absolute;inset:0;margin:auto;width:128px;height:128px;background:rgba(34,50,86,0.3);border-radius:50%;pointer-events:none;"></div>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);margin-top:80px;font-size:10px;letter-spacing:0.1em;color:white;font-weight:700;background:#223256;padding:6px 16px;border-radius:9999px;pointer-events:none;">PUERTO AVENTURAS</div>
+            </div>
+            <div class="mt-4 text-xs text-[#223256]/60 text-center">*La localisation exacte est fournie lors de la visite.</div>
+          </div>
+        </section>
+
+        <aside class="lg:col-span-4 mb-8 lg:mb-0">
+          <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
+            <div class="p-8">
+              <div class="flex items-center gap-4 mb-8">
+                <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
+                  <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
+                </div>
+                <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
+                  <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2" />
+                  <div class="text-left px-2">
+                    <div class="text-base font-bold text-white">Sabrina Crémona</div>
+                    <div class="text-sm font-light text-white/60 mt-1">Real Estate Advisor</div>
+                  </div>
+                </div>
+              </div>
+              <div class="grid gap-3">
+                <a id="waBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition">WhatsApp</a>
+                <a id="mailBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm hover:bg-neutral-100 transition">Email</a>
+                <a id="visitBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition">Demander une visite</a>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="mt-4 bg-[#223256] text-white">
+      <div class="max-w-6xl mx-auto px-4 py-10">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="flex items-start gap-1">
+              <span style="font-family:'Allura',cursive;" class="text-4xl text-white leading-none">Signature</span>
+              <span class="text-[10px] font-sans font-bold text-white/90 uppercase mt-1">SC</span>
+            </div>
+            <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
+          </div>
+          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés.</div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="modal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black/80"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-6xl">
+          <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
+          <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
+            <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
+            <div id="counter" class="text-xs text-white/80"></div>
+            <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const photos = [
+        "https://i.ibb.co/S7dwrxPP/0-1.jpg",
+        "https://i.ibb.co/7tqVk0hb/0-2.jpg",
+        "https://i.ibb.co/gbwYRCzX/0-3.jpg",
+        "https://i.ibb.co/zV0yHYVM/2.jpg",
+        "https://i.ibb.co/r2Dwtb45/3.jpg",
+        "https://i.ibb.co/QFCG5hkC/4.jpg",
+        "https://i.ibb.co/TM4GsPfy/5.jpg",
+        "https://i.ibb.co/hxKHRDdS/6.jpg",
+        "https://i.ibb.co/RTdZd2d5/7.jpg",
+        "https://i.ibb.co/2zj5zKd/9.jpg",
+        "https://i.ibb.co/dsjzfTyr/10.jpg",
+        "https://i.ibb.co/jkym1rqS/11.jpg",
+        "https://i.ibb.co/9HMRLYMV/12.jpg",
+        "https://i.ibb.co/vCT1pQGw/13.jpg",
+        "https://i.ibb.co/ZzWWRJFb/14.jpg",
+        "https://i.ibb.co/0yLSdmWp/15.jpg",
+        "https://i.ibb.co/nNf6GnvL/16.jpg",
+        "https://i.ibb.co/0ppmy5HQ/17.jpg",
+        "https://i.ibb.co/tPTs6RcX/18.jpg",
+        "https://i.ibb.co/zHXDw5xK/19.jpg",
+        "https://i.ibb.co/rKfgBT0p/20.jpg",
+        "https://i.ibb.co/s9nLyBNZ/22.jpg",
+        "https://i.ibb.co/XZwSmW4m/23.jpg",
+        "https://i.ibb.co/p64r1MGY/24.jpg",
+        "https://i.ibb.co/q320cBpB/25.jpg",
+        "https://i.ibb.co/mV91YTxt/26.jpg",
+        "https://i.ibb.co/rfscCdmR/27.jpg",
+        "https://i.ibb.co/tTQvDS44/28.jpg",
+        "https://i.ibb.co/hx66VsnZ/30.jpg",
+        "https://i.ibb.co/Z7zr0pp/31.jpg",
+        "https://i.ibb.co/ksYVhSZR/32.jpg",
+        "https://i.ibb.co/sdWDwXRd/33.jpg",
+        "https://i.ibb.co/VRpk2SQ/34.jpg",
+        "https://i.ibb.co/dsBxV3mn/35.jpg",
+        "https://i.ibb.co/XfZnHRzr/36.jpg",
+        "https://i.ibb.co/PvTtNg85/37.jpg",
+        "https://i.ibb.co/1JBZNfv0/38.jpg",
+        "https://i.ibb.co/3yrmNZ29/39.jpg",
+        "https://i.ibb.co/SDc8PFB0/40.jpg",
+        "https://i.ibb.co/mVdL9YNj/41.jpg",
+        "https://i.ibb.co/xSMm5PXC/43.jpg",
+        "https://i.ibb.co/S4cDGDtc/44.jpg",
+        "https://i.ibb.co/99CjWWyQ/45.jpg",
+        "https://i.ibb.co/ZzK0XbSK/46.jpg",
+        "https://i.ibb.co/HLDYdfr5/47.jpg",
+        "https://i.ibb.co/LhX62KWY/49.jpg",
+        "https://i.ibb.co/7t91tjDD/50.jpg",
+        "https://i.ibb.co/QF1pyLrZ/51.jpg",
+        "https://i.ibb.co/xch57QS/52.jpg",
+        "https://i.ibb.co/rKQW8xKQ/53.jpg",
+        "https://i.ibb.co/vtKZKJS/55.jpg",
+        "https://i.ibb.co/g0kqbjc/56.jpg",
+        "https://i.ibb.co/jPGQRB90/57.jpg",
+        "https://i.ibb.co/NgQCcvYP/58.jpg",
+        "https://i.ibb.co/LXM1t8Xg/59.jpg",
+        "https://i.ibb.co/7M7rkqz/60.jpg",
+        "https://i.ibb.co/wZvLwpRT/61.jpg",
+        "https://i.ibb.co/4gwKMDxZ/62.jpg"
+      ];
+
+      const highlights = [
+        "Accès direct à la plage",
+        "Piscine privée et solarium",
+        "Sécurité 24h/24",
+        "Résidence meublée, prête à habiter",
+        "Terrasse couverte et deck extérieur",
+        "Jardins tropicaux et espaces verts",
+        "2 niveaux avec volumes généreux",
+        "30 panneaux solaires"
+      ];
+
+      const el = (id) => document.getElementById(id);
+      const state = { index: 0 };
+
+      // Highlights
+      const hlEl = el("highlights");
+      highlights.forEach((t) => {
+        const li = document.createElement("li");
+        li.className = "flex items-start gap-2";
+        li.innerHTML = "<span class='mt-1 h-2 w-2 rounded-full bg-[#61BDCC]'></span><span class='text-[#223256]/90'>" + t + "</span>";
+        hlEl.appendChild(li);
+      });
+
+      // Gallery
+      const mainImg = el("mainImg");
+      const strip = el("strip");
+
+      const highlightThumb = () => {
+        document.querySelectorAll("[data-thumb]").forEach((n, i) => {
+          i === state.index ? n.classList.add("ring-2","ring-[#61BDCC]") : n.classList.remove("ring-2","ring-[#61BDCC]");
+        });
+      };
+
+      const setMain = (idx) => {
+        state.index = (idx + photos.length) % photos.length;
+        mainImg.src = photos[state.index];
+        highlightThumb();
+      };
+
+      photos.forEach((url, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("data-thumb","1");
+        btn.className = "shrink-0 overflow-hidden ring-1 ring-black/5 hover:ring-[#61BDCC] transition bg-white";
+        btn.addEventListener("click", () => setMain(idx));
+        const img = document.createElement("img");
+        img.src = url; img.alt = "Photo " + (idx+1);
+        img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
+        btn.appendChild(img); strip.appendChild(btn);
+      });
+
+      setMain(0);
+
+      el("stripLeft").addEventListener("click", () => strip.scrollBy({left:-320,behavior:"smooth"}));
+      el("stripRight").addEventListener("click", () => strip.scrollBy({left:320,behavior:"smooth"}));
+      el("prevMain").addEventListener("click", () => setMain(state.index - 1));
+      el("nextMain").addEventListener("click", () => setMain(state.index + 1));
+
+      // Lightbox
+      const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
+      const closeModal = () => el("modal").classList.add("hidden");
+      const renderModal = () => {
+        el("modalImg").src = photos[state.index];
+        el("counter").textContent = (state.index+1) + " / " + photos.length;
+      };
+      const prev = () => { setMain(state.index-1); renderModal(); };
+      const next = () => { setMain(state.index+1); renderModal(); };
+
+      mainImg.addEventListener("click", openModal);
+      el("closeBtn").addEventListener("click", closeModal);
+      el("prevBtn").addEventListener("click", prev);
+      el("nextBtn").addEventListener("click", next);
+      document.addEventListener("keydown", (e) => {
+        if (el("modal").classList.contains("hidden")) return;
+        if (e.key==="Escape") closeModal();
+        if (e.key==="ArrowLeft") prev();
+        if (e.key==="ArrowRight") next();
+      });
+
+      // WhatsApp & Email
+      const title = "Casa Leona";
+      const price = "$1,990,000 USD";
+      const liveUrl = "https://listing.signature-sc.com/for-sale/casa-leona/fr/";
+
+      el("waBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :\n\nTitre : " + title + "\nPrix : " + price + "\nLien : " + liveUrl);
+      el("visitBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent("Bonjour Sabrina, je souhaite organiser une visite pour ce bien.\n\nTitre : " + title + "\nPrix : " + price + "\nLien : " + liveUrl);
+
+      const subject = "Demande d'informations - " + title;
+      const body = "Bonjour Sabrina,\n\nJe souhaite obtenir des informations sur ce bien :\nTitre : " + title + "\nPrix : " + price + "\nLien : " + liveUrl + "\n\nMerci,";
+      el("mailBtn").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent("Sales@signature-sc.com") + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+
+      el("yearNow").textContent = String(new Date().getFullYear());
+    </script>
+  </body>
+</html>
