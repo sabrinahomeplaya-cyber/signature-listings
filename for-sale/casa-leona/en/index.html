@@ -57,11 +57,11 @@
         <div class="relative">
           <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
           
-          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent">
-            <span class="text-lg font-semibold text-[#223256]">‹</span>
+          <button id="prevMain" type="button" aria-label="Précédent" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
-          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant">
-            <span class="text-lg font-semibold text-[#223256]">›</span>
+          <button id="nextMain" type="button" aria-label="Suivant" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
 
@@ -198,63 +198,25 @@
 
     <script>
       const photos = [
-        "../photos/0.1.jpg",
-        "../photos/0.2.jpg",
-        "../photos/0.3.jpg",
-        "../photos/2.jpg",
-        "../photos/3.jpg",
-        "../photos/4.jpg",
-        "../photos/5.jpg",
-        "../photos/6.jpg",
-        "../photos/7.jpg",
-        "../photos/9.jpg",
-        "../photos/10.jpg",
-        "../photos/11.jpg",
-        "../photos/12.jpg",
-        "../photos/13.jpg",
-        "../photos/14.jpg",
-        "../photos/15.jpg",
-        "../photos/16.jpg",
-        "../photos/17.jpg",
-        "../photos/18.jpg",
-        "../photos/19.jpg",
-        "../photos/20.jpg",
-        "../photos/22.jpg",
-        "../photos/23.jpg",
-        "../photos/24.jpg",
-        "../photos/25.jpg",
-        "../photos/26.jpg",
-        "../photos/27.jpg",
-        "../photos/28.jpg",
-        "../photos/30.jpg",
-        "../photos/31.jpg",
-        "../photos/32.jpg",
-        "../photos/33.jpg",
-        "../photos/34.jpg",
-        "../photos/35.jpg",
-        "../photos/36.jpg",
-        "../photos/37.jpg",
-        "../photos/38.jpg",
-        "../photos/39.jpg",
-        "../photos/40.jpg",
-        "../photos/41.jpg",
-        "../photos/43.jpg",
-        "../photos/44.jpg",
-        "../photos/45.jpg",
-        "../photos/46.jpg",
-        "../photos/47.jpg",
-        "../photos/49.jpg",
-        "../photos/50.jpg",
-        "../photos/51.jpg",
-        "../photos/52.jpg",
-        "../photos/53.jpg",
-        "../photos/55.jpg",
-        "../photos/56.jpg",
-        "../photos/57.jpg",
-        "../photos/58.jpg",
-        "../photos/59.jpg",
-        "../photos/60.jpg",
-        "../photos/61.jpg",
+        "../photos/0.1.jpg", "../photos/0.2.jpg", "../photos/0.3.jpg",
+        "../photos/2.jpg", "../photos/3.jpg", "../photos/4.jpg",
+        "../photos/5.jpg", "../photos/6.jpg", "../photos/7.jpg",
+        "../photos/9.jpg", "../photos/10.jpg", "../photos/11.jpg",
+        "../photos/12.jpg", "../photos/13.jpg", "../photos/14.jpg",
+        "../photos/15.jpg", "../photos/16.jpg", "../photos/17.jpg",
+        "../photos/18.jpg", "../photos/19.jpg", "../photos/20.jpg",
+        "../photos/22.jpg", "../photos/23.jpg", "../photos/24.jpg",
+        "../photos/25.jpg", "../photos/26.jpg", "../photos/27.jpg",
+        "../photos/28.jpg", "../photos/30.jpg", "../photos/31.jpg",
+        "../photos/32.jpg", "../photos/33.jpg", "../photos/34.jpg",
+        "../photos/35.jpg", "../photos/36.jpg", "../photos/37.jpg",
+        "../photos/38.jpg", "../photos/39.jpg", "../photos/40.jpg",
+        "../photos/41.jpg", "../photos/43.jpg", "../photos/44.jpg",
+        "../photos/45.jpg", "../photos/46.jpg", "../photos/47.jpg",
+        "../photos/49.jpg", "../photos/50.jpg", "../photos/51.jpg",
+        "../photos/52.jpg", "../photos/53.jpg", "../photos/55.jpg",
+        "../photos/56.jpg", "../photos/57.jpg", "../photos/58.jpg",
+        "../photos/59.jpg", "../photos/60.jpg", "../photos/61.jpg",
         "../photos/62.jpg"
       ];
 
@@ -299,7 +261,6 @@
         const btn = document.createElement("button");
         btn.type = "button";
         btn.setAttribute("data-thumb","1");
-        // Ajout de l'arrondi sur les miniatures
         btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-[#61BDCC] transition bg-white";
         btn.addEventListener("click", () => setMain(idx));
         const img = document.createElement("img");
