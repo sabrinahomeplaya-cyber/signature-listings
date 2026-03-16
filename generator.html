@@ -1,406 +1,709 @@
 <!doctype html>
 <html lang="fr">
-    <head>
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://listing.signature-sc.com/for-sale/casa-xaman/fr/" />
-        <meta property="og:title" content="Signature ˢᶜ | Casa Xaman Ek · Résidence de luxe face à la marina" />
-        <meta property="og:description" content="Puerto Aventuras, Riviera Maya · $3,500,000 USD · 5 chambres · 603 m² · Quai privé · Accès plage" />
-        <meta property="og:image" content="https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO1.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="fr_FR" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO1.jpg" />
-        <title>Signature ˢᶜ | Casa Xaman Ek · Puerto Aventuras</title>
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signature SC — Générateur de Listings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --navy: #223256; --teal: #61BDCC; --gold: #c9aa71; --cream: #faf9f6; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
+    .allura { font-family: 'Allura', cursive; }
+    .cormorant { font-family: 'Cormorant Garamond', serif; }
 
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
+    #screen-generator { min-height: 100vh; display: flex; flex-direction: column; }
+    .gen-header { background: var(--navy); padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; }
+    .gen-logo { display: flex; align-items: flex-start; gap: 4px; }
+    .gen-logo-script { font-family: 'Allura', cursive; font-size: 2.2rem; color: white; line-height: 1; }
+    .gen-logo-sc { font-size: 0.6rem; font-weight: 700; color: rgba(255,255,255,0.85); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.05em; }
+    .gen-badge { font-size: 0.7rem; font-weight: 500; color: var(--teal); border: 1px solid var(--teal); border-radius: 100px; padding: 4px 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .gen-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
+    .gen-card { background: white; border-radius: 24px; box-shadow: 0 4px 40px rgba(34,50,86,0.08), 0 1px 4px rgba(34,50,86,0.04); padding: 56px; max-width: 640px; width: 100%; }
+    @media (max-width: 640px) { .gen-card { padding: 36px 24px; } .gen-header { padding: 20px 24px; } }
+    .gen-eyebrow { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+    .gen-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 500; color: var(--navy); line-height: 1.2; margin-bottom: 8px; }
+    .gen-subtitle { font-size: 0.88rem; color: rgba(34,50,86,0.55); line-height: 1.6; margin-bottom: 40px; }
+    .input-group { margin-bottom: 24px; }
+    .input-label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
+    .url-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.12); border-radius: 12px; padding: 14px 18px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .url-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.12); }
+    .url-input::placeholder { color: rgba(34,50,86,0.35); }
+    .optional-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    @media (max-width: 480px) { .optional-grid { grid-template-columns: 1fr; } }
+    .small-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.12); border-radius: 10px; padding: 11px 14px; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; }
+    .small-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.12); }
+    .small-input::placeholder { color: rgba(34,50,86,0.35); }
+    .btn-generate { width: 100%; background: var(--navy); color: white; border: none; border-radius: 12px; padding: 16px 24px; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s, transform 0.15s; }
+    .btn-generate:hover:not(:disabled) { background: #1a2845; transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .status-bar { margin-top: 20px; border-radius: 10px; padding: 14px 18px; font-size: 0.83rem; display: none; align-items: center; gap: 10px; }
+    .status-bar.loading { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); color: var(--navy); display: flex; }
+    .status-bar.error { background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2); color: #c0392b; display: flex; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(97,189,204,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .divider { border: none; border-top: 1px solid rgba(34,50,86,0.07); margin: 32px 0; }
+    .instructions { display: flex; flex-direction: column; gap: 12px; }
+    .instruction-step { display: flex; align-items: flex-start; gap: 12px; font-size: 0.83rem; color: rgba(34,50,86,0.6); line-height: 1.5; }
+    .step-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(97,189,204,0.15); color: var(--teal); font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
 
-        <script src="https://cdn.tailwindcss.com"></script>
+    #screen-result { display: none; min-height: 100vh; flex-direction: column; }
+    .result-topbar { background: white; border-bottom: 1px solid rgba(34,50,86,0.07); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .btn-back { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 500; color: rgba(34,50,86,0.6); cursor: pointer; background: none; border: none; padding: 8px 12px; border-radius: 8px; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+    .btn-back:hover { background: rgba(34,50,86,0.06); color: var(--navy); }
+    .topbar-title { font-size: 0.8rem; font-weight: 600; color: rgba(34,50,86,0.45); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+    .btn-copy-code { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: white; background: var(--teal); border: none; padding: 9px 18px; border-radius: 8px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .btn-copy-code:hover { background: #4daab9; }
+    .btn-download { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: var(--navy); background: rgba(34,50,86,0.07); border: none; padding: 9px 18px; border-radius: 8px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .btn-download:hover { background: rgba(34,50,86,0.12); }
+    .btn-preview-tab { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: var(--navy); background: white; border: 1.5px solid rgba(34,50,86,0.18); padding: 9px 18px; border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
+    .btn-preview-tab:hover { background: var(--cream); border-color: var(--navy); }
+    .btn-publish { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: white; background: #2d6a4f; border: none; padding: 9px 18px; border-radius: 8px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .btn-publish:hover:not(:disabled) { background: #245a42; }
+    .btn-publish:disabled { opacity: 0.6; cursor: not-allowed; }
+    .copy-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: white; font-size: 0.82rem; font-weight: 500; padding: 10px 22px; border-radius: 100px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 9999; white-space: nowrap; }
+    .copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .result-tabs { display: flex; gap: 0; background: rgba(34,50,86,0.04); border-radius: 10px; padding: 3px; }
+    .tab-btn { font-size: 0.78rem; font-weight: 600; padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer; background: transparent; color: rgba(34,50,86,0.5); transition: all 0.15s; white-space: nowrap; }
+    .tab-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 4px rgba(34,50,86,0.1); }
+    #preview-pane { flex: 1; border: none; width: 100%; min-height: calc(100vh - 62px); }
+    #code-pane { display: none; flex: 1; background: #0f1117; overflow: auto; }
+    #code-pane pre { margin: 0; padding: 32px; font-size: 0.78rem; line-height: 1.7; color: #e2e8f0; font-family: 'Fira Code', 'JetBrains Mono', monospace; white-space: pre-wrap; word-break: break-all; }
+  </style>
+</head>
+<body>
 
-        <style>
-          @media (min-width: 1024px) {
-            #agentCard {
-              position: sticky !important;
-              top: 150px !important; 
-              z-index: 30;
-            }
-          }
-          #contact-block {
-            margin-bottom: 40px;
-            scroll-margin-top: 100px;
-          }
-          html {
-            scroll-padding-top: 120px; 
-          }
-        </style>
-    </head>
-
-  <body class="bg-white text-[#223256]">
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <div class="flex items-center">
-          <img src="/logo-site.png" alt="Signature SC Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
-        </div>
-        <nav class="flex items-center gap-4" aria-label="Langue">
-          <a id="langFr" href="/for-sale/casa-xaman/fr/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
-          <a id="langEn" href="/for-sale/casa-xaman/en/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
-          <a id="langEs" href="/for-sale/casa-xaman/es/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
-        </nav>
+<div id="screen-generator">
+  <header class="gen-header">
+    <div class="gen-logo">
+      <span class="gen-logo-script">Signature</span>
+      <span class="gen-logo-sc">SC</span>
+    </div>
+    <span class="gen-badge">Générateur de listings</span>
+  </header>
+  <main class="gen-main">
+    <div class="gen-card">
+      <div class="gen-eyebrow">Signature SC Real Estate</div>
+      <h1 class="gen-title">Créer un listing<br>en quelques secondes</h1>
+      <p class="gen-subtitle">Collez le lien d'un listing collaborateur. Claude extrait toutes les informations et génère une page prête à partager sous votre identité visuelle.</p>
+      <div class="input-group">
+        <label class="input-label" for="listing-url">Lien du listing collaborateur</label>
+        <input id="listing-url" type="url" class="url-input" placeholder="https://howesrealty.com/es/property/..." autocomplete="off" spellcheck="false" />
       </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-      <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
-        <div class="relative">
-          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
-          <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent"><span class="text-lg font-semibold">‹</span></button>
-          <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant"><span class="text-lg font-semibold">›</span></button>
+      <div class="optional-grid">
+        <div>
+          <label class="input-label" for="listing-slug" style="font-size:0.68rem">Slug du bien</label>
+          <input id="listing-slug" type="text" class="small-input" placeholder="casa-xaman-ek" autocomplete="off" spellcheck="false" />
+          <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview">casa-xaman-ek</strong>/fr</div>
         </div>
-        <div class="px-4 sm:px-6 py-4 border-t border-black/5">
-          <div class="flex items-center gap-3">
-            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à gauche">‹</button>
-            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à droite">›</button>
+        <div>
+          <label class="input-label" for="listing-lang" style="font-size:0.68rem">Langue du listing</label>
+          <select id="listing-lang" class="small-input" style="cursor:pointer">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-generate" id="btn-generate" onclick="generateListing()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Générer le listing
+      </button>
+      <div id="status-bar" class="status-bar">
+        <div class="spinner" id="status-spinner"></div>
+        <span id="status-text">Extraction en cours…</span>
+      </div>
+      <hr class="divider">
+      <div class="instructions">
+        <div class="instruction-step"><span class="step-num">1</span><span>Collez le lien public du listing de votre collaborateur ci-dessus.</span></div>
+        <div class="instruction-step"><span class="step-num">2</span><span>Claude lit la page, extrait toutes les informations et photos automatiquement.</span></div>
+        <div class="instruction-step"><span class="step-num">3</span><span>Cliquez <strong>Publier</strong> — le listing est en ligne instantanément.</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="screen-result">
+  <div class="result-topbar">
+    <div class="topbar-left">
+      <button class="btn-back" onclick="backToGenerator()">← Nouveau listing</button>
+      <span class="topbar-title" id="result-property-name">Listing généré</span>
+      <span id="result-path" style="font-size:0.72rem;color:rgba(34,50,86,0.35);font-family:'Fira Code',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+      <div class="result-tabs">
+        <button class="tab-btn active" id="tab-preview" onclick="showTab('preview')">Aperçu</button>
+        <button class="tab-btn" id="tab-code" onclick="showTab('code')">Code HTML</button>
+      </div>
+      <button class="btn-copy-code" onclick="copyCode()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Copier le code
+      </button>
+      <button class="btn-download" onclick="downloadCode()">↓ Télécharger</button>
+      <button class="btn-preview-tab" onclick="openInNewTab()">↗ Nouvel onglet</button>
+      <button class="btn-publish" id="btn-publish" onclick="publishToGitHub()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Publier
+      </button>
+    </div>
+  </div>
+  <div id="preview-pane-wrapper" style="flex:1;display:flex;flex-direction:column">
+    <iframe id="preview-pane" title="Aperçu listing"></iframe>
+  </div>
+  <div id="code-pane"><pre id="code-display"></pre></div>
+</div>
+
+<div class="copy-toast" id="copy-toast">✓ Code copié dans le presse-papiers</div>
+
+<script>
+let generatedCode = '';
+let currentSlug = '';
+let currentLang = 'fr';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const slugInput = document.getElementById('listing-slug');
+  const langSelect = document.getElementById('listing-lang');
+  const preview = document.getElementById('slug-preview');
+  function updatePreview() {
+    const slug = slugInput.value.trim() || 'casa-xaman-ek';
+    const lang = langSelect.value || 'fr';
+    preview.textContent = slug + '/' + lang;
+  }
+  slugInput.addEventListener('input', updatePreview);
+  langSelect.addEventListener('change', updatePreview);
+});
+
+function buildTemplate(data) {
+  const images = data.images || [];
+  const imagesJSON = JSON.stringify(images, null, 8);
+  const highlightsJSON = JSON.stringify(data.highlights || [], null, 8);
+  const lat = data.lat || '20.496833';
+  const lng = data.lng || '-87.236444';
+  const mapLabel = (data.location || 'Puerto Aventuras').toUpperCase().split(',')[0].trim();
+  const base = `https://listing.signature-sc.com/for-sale/${data.slug || 'listing'}/`;
+  const langFr = base + 'fr/';
+  const langEn = base + 'en/';
+  const langEs = base + 'es/';
+
+  return `<!doctype html>
+<html lang="${data.lang || 'fr'}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${data.publicUrl || ''}" />
+  <meta property="og:title" content="Signature SC | ${(data.title || '').replace(/"/g, '&quot;')}" />
+  <meta property="og:description" content="${(data.location || 'Puerto Aventuras')} · ${data.price || ''} ${data.currency || 'USD'} · ${data.beds || ''} chambres" />
+  <meta property="og:image" content="${(images[0] || '')}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="${data.lang === 'en' ? 'en_US' : data.lang === 'es' ? 'es_MX' : 'fr_FR'}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="${(images[0] || '')}" />
+  <title>Signature SC | ${(data.title || 'Property').replace(/"/g, '&quot;')}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <style>
+    @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
+    html { scroll-padding-top: 120px; }
+  </style>
+</head>
+<body class="bg-white text-[#223256]">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center">
+        <img src="/logo-site.png" alt="Signature SC Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
+      </div>
+      <nav class="flex items-center gap-4" aria-label="Langue">
+        <a id="langFr" href="${langFr}" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
+        <a id="langEn" href="${langEn}" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
+        <a id="langEs" href="${langEs}" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
+    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+      <div class="relative">
+        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
+        <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent"><span class="text-lg font-semibold">&#8249;</span></button>
+        <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant"><span class="text-lg font-semibold">&#8250;</span></button>
+      </div>
+      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+        <div class="flex items-center gap-3">
+          <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à gauche">&#8249;</button>
+          <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+          <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à droite">&#8250;</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="mt-8 grid lg:grid-cols-12 gap-8">
+      <section class="lg:col-span-8">
+        <div class="grid sm:grid-cols-12 gap-4 items-start">
+          <div class="sm:col-span-8">
+            <div class="text-xs tracking-widest text-[#223256]/70" id="locationLine"></div>
+            <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2"></h1>
+            <p id="subtitle" class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1"></p>
           </div>
+          <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
+            <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
+            <div class="text-3xl font-semibold mt-2" id="price"></div>
+            <div class="text-base text-[#223256]/60 line-through mt-1" id="priceOld"></div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
+          </div>
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div id="beds" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Garage</div><div id="garage" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div id="year" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div id="construction" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div id="lot" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
+            <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+          </div>
+          <div id="description" class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto"></div>
+          <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
+            <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
+            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
+          </div>
+          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
+            <iframe src="https://maps.google.com/maps?ll=${lat},${lng}&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
+            <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">${mapLabel}</div>
+          </div>
+          <div class="mt-4 text-xs text-[#223256]/60 text-center">*La localisation exacte est fournie lors de la visite.</div>
         </div>
       </section>
 
-      <div class="mt-8 grid lg:grid-cols-12 gap-8">
-        <section class="lg:col-span-8">
-          <div class="grid sm:grid-cols-12 gap-4 items-start">
-            <div class="sm:col-span-8">
-              <div class="text-xs tracking-widest text-[#223256]/70" id="locationLine"></div>
-              <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2"></h1>
-              <p id="subtitle" class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1"></p>
-            </div>
-            <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
-              <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
-              <div class="text-3xl font-semibold mt-2" id="price"></div>
-              <div class="text-base text-[#223256]/60 line-through mt-1" id="priceOld"></div>
-            </div>
-          </div>
-
-          <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
-            <div class="flex items-center gap-3 mb-8">
-              <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-              <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
-            </div>
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div id="beds" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Garage</div><div id="garage" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div id="year" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div id="construction" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-              <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div id="lot" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            </div>
-          </div>
-
-          <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
-            <div class="flex items-center gap-3">
-              <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-              <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
-            </div>
-            <div id="description" class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto"></div>
-            <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
-              <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
-              <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
-            </div>
-          </div>
-
-          <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
-            <div class="flex items-center gap-3 mb-6">
-              <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-              <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
-            </div>
-            <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
-              <iframe src="https://maps.google.com/maps?ll=20.4968,-87.2364&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
-              <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
-              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
-            </div>
-            <div class="mt-4 text-xs text-[#223256]/60 text-center">*La localisation exacte est fournie lors de la visite.</div>
-          </div>
-        </section>
-
-        <aside id="agent" class="lg:col-span-4 mb-8 lg:mb-0 scroll-mt-32">
-          <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
-            <div class="p-8">
-              <div class="flex items-center gap-4 mb-8">
-                <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
-                  <img src="/agent.jpg" alt="Agent" class="h-full w-full object-cover" onerror="this.style.display='none';" />
-                </div>
-                <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
-                  <img src="/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
-                  <div class="text-left px-2">
-                    <div id="agentName" class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis"></div>
-                    <div id="agentRole" class="text-sm font-light text-white/60 mt-1"></div>
-                  </div>
+      <aside id="agent" class="lg:col-span-4 mb-8 lg:mb-0 scroll-mt-32">
+        <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
+          <div class="p-8">
+            <div class="flex items-center gap-4 mb-8">
+              <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
+                <img src="/agent.jpg" alt="Agent" class="h-full w-full object-cover" onerror="this.style.display='none';" />
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
+                <img src="/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
+                <div class="text-left px-2">
+                  <div id="agentName" class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis"></div>
+                  <div id="agentRole" class="text-sm font-light text-white/60 mt-1"></div>
                 </div>
               </div>
-              <div class="grid gap-3">
-                <a id="waBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">WhatsApp</a>
-                <a id="mailBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">Email</a>
-                <a id="visitBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
-              </div>
+            </div>
+            <div class="grid gap-3">
+              <a id="waBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">WhatsApp</a>
+              <a id="mailBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">Email</a>
+              <a id="visitBtn" href="#" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
             </div>
           </div>
-        </aside>
-      </div>
-    </main>
-
-    <footer class="mt-4 bg-[#223256] text-white">
-      <div class="max-w-6xl mx-auto px-4 py-10">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div class="flex items-start gap-1">
-              <span style="font-family: 'Allura', cursive;" class="text-4xl text-white leading-none">Signature</span>
-              <span class="text-[10px] font-sans font-bold text-white/90 uppercase mt-1">SC</span>
-            </div>
-            <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
-          </div>
-          <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés.</div>
         </div>
-      </div>
-    </footer>
+      </aside>
+    </div>
+  </main>
 
-    <div id="modal" class="fixed inset-0 z-50 hidden">
-      <div class="absolute inset-0 bg-black/80"></div>
-      <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="relative w-full max-w-6xl">
-          <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
-          <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-            <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
+  <footer class="mt-4 bg-[#223256] text-white">
+    <div class="max-w-6xl mx-auto px-4 py-10">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div class="flex items-start gap-1">
+            <span style="font-family: 'Allura', cursive;" class="text-4xl text-white leading-none">Signature</span>
+            <span class="text-[10px] font-sans font-bold text-white/90 uppercase mt-1">SC</span>
           </div>
-          <div class="mt-4 flex items-center justify-between">
-            <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
-            <div id="counter" class="text-xs text-white/80"></div>
-            <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
-          </div>
+          <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
+        </div>
+        <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés.</div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="relative w-full max-w-6xl">
+        <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
+        <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
+          <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
+          <div id="counter" class="text-xs text-white/80"></div>
+          <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      const listing = {
-        lang: "fr",
-        langLinks: {
-          fr: "/for-sale/casa-xaman/fr/",
-          en: "/for-sale/casa-xaman/en/",
-          es: "/for-sale/casa-xaman/es/"
-        },
-        area: "Puerto Aventuras",
-        location: "Puerto Aventuras, Mexique.",
-        title: "Casa Xaman Ek",
-        subtitle: "Résidence de luxe face à la marina",
-        price: "$3,500,000",
-        priceOld: "",
-        currency: "USD",
-        beds: "5",
-        baths: "6",
-        garage: "2",
-        year: "2020",
-        construction: "603.87 m²",
-        lot: "750 m²",
-        hoa: "",
-        predial: "",
-        source: "https://howesrealty.com/es/property/casa-xaman-ek-puerto-aventuras-for-sale-marina/",
-        publicUrl: "https://listing.signature-sc.com/for-sale/casa-xaman/fr/",
-        description: `Nichée dans la prestigieuse Phase 4 de Puerto Aventuras, Casa Xaman Ek est une résidence d'exception avec accès direct à la marina depuis son muelle privé. Entourée du canal, de cenotes et de La Caleta, plage naturelle et privée accessible à pied, cette villa incarne l'équilibre rare entre intimité, nature et luxe côtier.
+  <script>
+    const listing = {
+      lang: "${data.lang || 'fr'}",
+      langLinks: { fr: "${langFr}", en: "${langEn}", es: "${langEs}" },
+      area: "${(data.area || 'Puerto Aventuras').replace(/"/g, '\\"')}",
+      location: "${(data.location || 'Puerto Aventuras, Mexique.').replace(/"/g, '\\"')}",
+      title: "${(data.title || '').replace(/"/g, '\\"')}",
+      subtitle: "${(data.subtitle || '').replace(/"/g, '\\"')}",
+      price: "${(data.price || '').replace(/"/g, '\\"')}",
+      priceOld: "${(data.priceOld || '').replace(/"/g, '\\"')}",
+      currency: "${data.currency || 'USD'}",
+      beds: "${data.beds || ''}",
+      baths: "${data.baths || ''}",
+      garage: "${data.garage || ''}",
+      year: "${data.year || ''}",
+      construction: "${data.construction || ''}",
+      lot: "${data.lot || ''}",
+      hoa: "${(data.hoa || '').replace(/"/g, '\\"')}",
+      predial: "${(data.predial || '').replace(/"/g, '\\"')}",
+      publicUrl: "${(data.publicUrl || '').replace(/"/g, '\\"')}",
+      description: \`${(data.description || '').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`,
+      highlights: ${highlightsJSON},
+      images: ${imagesJSON}
+    };
 
-Conçue sur deux niveaux, la propriété déploie 604 m² de construction pour une surface de 750 m². Cinq chambres en suite, dont une suite principale avec douche intérieure et extérieure, hammam et balcon panoramique sur le canal. L'architecture contemporaine optimise la lumière naturelle et les volumes, créant des espaces aussi beaux à vivre qu'à recevoir.
+    const agent = { name: "Sabrina Crémona", role: "Real Estate Advisor", email: "Sales@signature-sc.com" };
+    const el = (id) => document.getElementById(id);
+    const setText = (id, value) => { const node = el(id); if (node) node.textContent = value || ""; };
 
-La villa est entièrement meublée et équipée : cuisine professionnelle, système audio SONOS intérieur et extérieur, panneaux solaires, électroménager haut de gamme et BBQ en terrasse. Depuis le ponton privé, partez en mer à tout moment. La piscine, le jardin et les espaces extérieurs complètent un art de vivre pensé pour ceux qui aiment le nautisme, le golf et la nature préservée.
+    const langMap = [
+      { id: "langFr", code: "fr" }, { id: "langEn", code: "en" }, { id: "langEs", code: "es" }
+    ];
+    langMap.forEach(item => {
+      const node = el(item.id); if (!node) return;
+      const active = item.code === listing.lang;
+      node.classList.remove("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]", "text-[#223256]/35", "hover:text-[#223256]/60");
+      if (active) node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
+      else node.classList.add("text-[#223256]/35", "hover:text-[#223256]/60");
+    });
 
-Puerto Aventuras est l'une des communautés les plus établies de la Riviera Maya : sécurité 24h/24, école bilingue, marina, restaurants, beach club et parcours de golf à quelques minutes. Un investissement d'exception dans l'un des marchés les plus recherchés du Mexique.`,
-        highlights: [
-          "Muelle privé avec accès direct à la marina",
-          "Entièrement meublée et équipée",
-          "Panneaux solaires et domotique intégrée",
-          "Plage privée La Caleta à quelques pas",
-          "Communauté sécurisée 24h/24",
-          "5 chambres en suite sur 2 niveaux"
-        ],
-        images: [
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO1.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO2.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO3.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO4.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO5.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO6.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO7.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO8.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO9.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO10.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO11.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO12.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO13.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO14.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO15.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO16.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO17.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO18.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO19.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO20.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO21.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO22-1.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO23.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO24.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO25.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO26.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO27.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO28.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO29.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO30.jpg",
-          "https://howesrealty.com/wp-content/uploads/2025/06/CASA-ROCO31.jpg"
-        ]
-      };
+    setText("locationLine", listing.location);
+    setText("title", listing.title);
+    setText("subtitle", listing.subtitle || "");
+    setText("price", listing.price + " " + listing.currency);
+    setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
+    setText("beds", listing.beds); setText("baths", listing.baths); setText("garage", listing.garage);
+    setText("year", listing.year); setText("construction", listing.construction); setText("lot", listing.lot);
+    setText("description", listing.description);
+    setText("agentName", agent.name); setText("agentRole", agent.role);
 
-      const agent = {
-        name: "Sabrina Crémona",
-        role: "Real Estate Advisor",
-        email: "Sales@signature-sc.com"
-      };
+    const buildWaText = (type) => {
+      const intro = type === 'visit' ? "Bonjour Sabrina, je souhaite organiser une visite pour ce bien." : "Bonjour Sabrina, je souhaite obtenir des informations sur ce bien :";
+      return intro + "\\n\\nTitre : " + listing.title + "\\nPrix : " + listing.price + " " + listing.currency + "\\nLien : " + listing.publicUrl;
+    };
+    const waBtn = el("waBtn"); if (waBtn) { waBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('info')); waBtn.target = "_blank"; }
+    const visitBtn = el("visitBtn"); if (visitBtn) { visitBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('visit')); visitBtn.target = "_blank"; }
+    const mailBtn = el("mailBtn");
+    if (mailBtn) {
+      const subject = "Demande d'informations - " + listing.title;
+      const body = "Bonjour Sabrina,\\n\\nJe souhaite obtenir des informations sur ce bien :\\nTitre : " + listing.title + "\\nPrix : " + listing.price + " " + listing.currency + "\\nLien : " + listing.publicUrl + "\\n\\nMerci,";
+      mailBtn.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(agent.email) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      mailBtn.target = "_blank";
+    }
 
-      const el = (id) => document.getElementById(id);
-      const simplifyMoney = (s) => (s || "").replace(/\.00\b/g, "").replace(/,00\b/g, "");
-      const setText = (id, value) => { const node = el(id); if (node) node.textContent = value || ""; };
-
-      // Lang buttons
-      const langMap = [
-        { id: "langFr", code: "fr" },
-        { id: "langEn", code: "en" },
-        { id: "langEs", code: "es" }
-      ];
-      langMap.forEach(item => {
-        const node = el(item.id);
-        if (!node) return;
-        const active = item.code === listing.lang;
-        node.classList.remove("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]", "text-[#223256]/35", "hover:text-[#223256]/60");
-        if (active) node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
-        else node.classList.add("text-[#223256]/35", "hover:text-[#223256]/60");
+    const highlightsEl = el("highlights");
+    if (highlightsEl) {
+      highlightsEl.innerHTML = "";
+      listing.highlights.forEach(t => {
+        const li = document.createElement("li");
+        li.className = "flex items-start gap-2";
+        li.innerHTML = "<span class='mt-1 h-2 w-2 rounded-full bg-[#61BDCC]'><\\/span><span class='text-[#223256]/90'>" + t + "<\\/span>";
+        highlightsEl.appendChild(li);
       });
+    }
 
-      setText("locationLine", listing.location);
-      setText("title", listing.title);
-      setText("subtitle", listing.subtitle || "");
-      setText("price", listing.price + " " + listing.currency);
-      setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
-      setText("beds", listing.beds);
-      setText("baths", listing.baths);
-      setText("garage", listing.garage);
-      setText("year", listing.year);
-      setText("construction", listing.construction);
-      setText("lot", listing.lot);
-      setText("hoa", simplifyMoney(listing.hoa));
-      setText("predial", simplifyMoney(listing.predial));
-      setText("description", listing.description);
-      setText("agentName", agent.name);
-      setText("agentRole", agent.role);
+    const photos = listing.images.filter(Boolean);
+    const state = { index: 0, photos };
+    const mainImg = el("mainImg");
+    const strip = el("strip");
 
-      // WhatsApp / Email buttons
-      const buildWaText = (type) => {
-        const intro = type === 'visit'
-          ? "Bonjour Sabrina, je souhaite organiser une visite pour ce bien."
-          : "Bonjour Sabrina, je souhaite obtenir des informations sur ce bien :";
-        return intro + "\n\nTitre : " + listing.title + "\nPrix : " + listing.price + " " + listing.currency + "\nLien : " + listing.publicUrl;
-      };
-
-      const waBtn = el("waBtn");
-      if (waBtn) { waBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('info')); waBtn.target = "_blank"; }
-
-      const visitBtn = el("visitBtn");
-      if (visitBtn) { visitBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('visit')); visitBtn.target = "_blank"; }
-
-      const mailBtn = el("mailBtn");
-      if (mailBtn) {
-        const subject = "Demande d'informations — " + listing.title;
-        const body = "Bonjour Sabrina,\n\nJe souhaite obtenir des informations sur ce bien :\nTitre : " + listing.title + "\nPrix : " + listing.price + " " + listing.currency + "\nLien : " + listing.publicUrl + "\n\nMerci,";
-        mailBtn.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(agent.email) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-        mailBtn.target = "_blank";
-      }
-
-      // Highlights
-      const highlightsEl = el("highlights");
-      if (highlightsEl) {
-        highlightsEl.innerHTML = "";
-        listing.highlights.forEach(t => {
-          const li = document.createElement("li");
-          li.className = "flex items-start gap-2";
-          li.innerHTML = "<span class='mt-1 h-2 w-2 rounded-full bg-[#61BDCC]'></span><span class='text-[#223256]/90'>" + t + "</span>";
-          highlightsEl.appendChild(li);
-        });
-      }
-
-      // Gallery
-      const photos = listing.images.filter(Boolean);
-      const state = { index: 0, photos };
-      const mainImg = el("mainImg");
-      const strip = el("strip");
-
-      const highlightThumb = () => {
-        Array.from(document.querySelectorAll("[data-thumb]")).forEach((n, i) => {
-          if (i === state.index) n.classList.add("ring-2", "ring-[#61BDCC]");
-          else n.classList.remove("ring-2", "ring-[#61BDCC]");
-        });
-      };
-
-      const setMain = (idx) => {
-        if (!state.photos.length || !mainImg) return;
-        state.index = (idx + state.photos.length) % state.photos.length;
-        mainImg.src = state.photos[state.index];
-        highlightThumb();
-      };
-
-      if (strip) {
-        strip.innerHTML = "";
-        state.photos.forEach((url, idx) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.setAttribute("data-thumb", "1");
-          btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white";
-          btn.addEventListener("click", () => setMain(idx));
-          const img = document.createElement("img");
-          img.src = url; img.alt = "Photo " + (idx + 1);
-          img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
-          btn.appendChild(img); strip.appendChild(btn);
-        });
-      }
-
-      if (state.photos.length) setMain(0);
-
-      const scrollStrip = (dir) => { if (strip) strip.scrollBy({ left: dir * 320, behavior: "smooth" }); };
-      el("stripLeft")?.addEventListener("click", () => scrollStrip(-1));
-      el("stripRight")?.addEventListener("click", () => scrollStrip(1));
-      el("prevMain")?.addEventListener("click", () => setMain(state.index - 1));
-      el("nextMain")?.addEventListener("click", () => setMain(state.index + 1));
-
-      const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
-      const closeModal = () => el("modal").classList.add("hidden");
-      const renderModal = () => {
-        el("modalImg").src = state.photos[state.index] || "";
-        el("counter").textContent = state.photos.length ? (state.index + 1) + " / " + state.photos.length : "";
-      };
-      const prev = () => { setMain(state.index - 1); renderModal(); };
-      const next = () => { setMain(state.index + 1); renderModal(); };
-
-      if (mainImg) mainImg.addEventListener("click", openModal);
-      el("closeBtn")?.addEventListener("click", closeModal);
-      el("prevBtn")?.addEventListener("click", prev);
-      el("nextBtn")?.addEventListener("click", next);
-      document.addEventListener("keydown", (e) => {
-        if (el("modal").classList.contains("hidden")) return;
-        if (e.key === "Escape") closeModal();
-        if (e.key === "ArrowLeft") prev();
-        if (e.key === "ArrowRight") next();
+    const highlightThumb = () => {
+      Array.from(document.querySelectorAll("[data-thumb]")).forEach((n, i) => {
+        if (i === state.index) n.classList.add("ring-2", "ring-[#61BDCC]");
+        else n.classList.remove("ring-2", "ring-[#61BDCC]");
       });
+    };
 
-      el("yearNow").textContent = String(new Date().getFullYear());
-      window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0, behavior: "instant" }), 10));
-    </script>
-  </body>
+    const setMain = (idx) => {
+      if (!state.photos.length || !mainImg) return;
+      state.index = (idx + state.photos.length) % state.photos.length;
+      mainImg.src = state.photos[state.index];
+      highlightThumb();
+    };
+
+    if (strip) {
+      strip.innerHTML = "";
+      state.photos.forEach((url, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.setAttribute("data-thumb", "1");
+        btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white";
+        btn.addEventListener("click", () => setMain(idx));
+        const img = document.createElement("img");
+        img.src = url; img.alt = "Photo " + (idx + 1);
+        img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
+        btn.appendChild(img); strip.appendChild(btn);
+      });
+    }
+
+    if (state.photos.length) setMain(0);
+    const scrollStrip = (dir) => { if (strip) strip.scrollBy({ left: dir * 320, behavior: "smooth" }); };
+    el("stripLeft")?.addEventListener("click", () => scrollStrip(-1));
+    el("stripRight")?.addEventListener("click", () => scrollStrip(1));
+    el("prevMain")?.addEventListener("click", () => setMain(state.index - 1));
+    el("nextMain")?.addEventListener("click", () => setMain(state.index + 1));
+
+    const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
+    const closeModal = () => el("modal").classList.add("hidden");
+    const renderModal = () => { el("modalImg").src = state.photos[state.index] || ""; el("counter").textContent = state.photos.length ? (state.index + 1) + " / " + state.photos.length : ""; };
+    const prev = () => { setMain(state.index - 1); renderModal(); };
+    const next = () => { setMain(state.index + 1); renderModal(); };
+    if (mainImg) mainImg.addEventListener("click", openModal);
+    el("closeBtn")?.addEventListener("click", closeModal);
+    el("prevBtn")?.addEventListener("click", prev);
+    el("nextBtn")?.addEventListener("click", next);
+    document.addEventListener("keydown", (e) => {
+      if (el("modal").classList.contains("hidden")) return;
+      if (e.key === "Escape") closeModal();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    });
+
+    el("yearNow").textContent = String(new Date().getFullYear());
+    window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0, behavior: "instant" }), 10));
+  <\/script>
+</body>
+</html>`;
+}
+
+async function generateListing() {
+  const url = document.getElementById('listing-url').value.trim();
+  const slug = document.getElementById('listing-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-|-$/g, '') || '';
+  const lang = document.getElementById('listing-lang').value;
+
+  if (!url) { showStatus('error', 'Veuillez entrer un lien de listing.'); return; }
+  if (!url.startsWith('http')) { showStatus('error', 'Le lien doit commencer par http:// ou https://'); return; }
+  if (!slug) { showStatus('error', 'Veuillez entrer un slug pour ce bien (ex: casa-xaman-ek).'); return; }
+
+  currentSlug = slug;
+  currentLang = lang;
+  const publicUrl = `https://listing.signature-sc.com/for-sale/${slug}/${lang}/`;
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+  showStatus('loading', 'Lecture de la page en cours…');
+
+  try {
+    showStatus('loading', 'Claude extrait les informations du listing…');
+    const langLabel = lang === 'fr' ? 'français' : lang === 'en' ? 'anglais' : 'espagnol (Mexique)';
+    const systemPrompt = `Tu es un extracteur de données pour des listings immobiliers.
+Tu reçois le contenu texte d'une page immobilière et tu dois extraire toutes les informations disponibles.
+Tu dois répondre UNIQUEMENT avec un objet JSON valide, sans texte avant ni après, sans backticks markdown.
+
+Structure JSON attendue :
+{
+  "title": "nom propre du bien en ${langLabel} (ex: Casa Xaman Ek, Villa Marina, etc.)",
+  "subtitle": "courte accroche élégante en ${langLabel} (ex: Résidence de luxe face à la marina)",
+  "location": "ville, pays",
+  "area": "quartier/zone",
+  "price": "$X,XXX,XXX",
+  "priceOld": "",
+  "currency": "USD ou MXN",
+  "beds": "nombre",
+  "baths": "nombre",
+  "garage": "nombre ou description",
+  "year": "année construction",
+  "construction": "Xm²",
+  "lot": "Xm²",
+  "hoa": "",
+  "predial": "",
+  "description": "belle description originale en ${langLabel}, 3 à 4 paragraphes, ton luxueux et élégant, style Signature SC. Ne pas utiliser de tirets comme ponctuation. Rédiger comme un texte de présentation haut de gamme.",
+  "highlights": ["point fort 1", "point fort 2", "point fort 3", "point fort 4", "point fort 5", "point fort 6"],
+  "images": ["url_image_1", "url_image_2"],
+  "lat": "",
+  "lng": ""
+}
+
+IMPORTANT: Le title doit être le NOM PROPRE du bien, pas une description générique.
+Les highlights doivent être en ${langLabel}, concis, 4 à 6 maximum.
+La description doit être rédigée en ${langLabel} avec un ton élégant.`;
+
+    const userPrompt = `Voici le contenu de la page du listing immobilier (URL: ${url}). Extrait toutes les informations et retourne le JSON. Utilise UNIQUEMENT les informations présentes dans ce contenu.`;
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 8000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt + "\n\nURL à analyser : " + url }]
+      })
+    });
+
+    if (!response.ok) throw new Error('Erreur API: ' + response.status);
+    const apiData = await response.json();
+    showStatus('loading', 'Construction du listing Signature SC…');
+
+    let rawText = '';
+    for (const block of (apiData.content || [])) {
+      if (block.type === 'text') rawText += block.text;
+    }
+
+    let listingData = {};
+    try {
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) listingData = JSON.parse(jsonMatch[0]);
+      else throw new Error('Aucun JSON trouvé dans la réponse');
+    } catch (parseErr) {
+      console.error('Parse error:', parseErr, rawText);
+      throw new Error('Impossible de parser les données extraites.');
+    }
+
+    listingData.publicUrl = publicUrl;
+    listingData.lang = lang;
+    listingData.source = url;
+    listingData.slug = slug;
+
+    const finalHtml = buildTemplate(listingData);
+    generatedCode = finalHtml;
+    showResult(listingData, finalHtml);
+
+  } catch (err) {
+    console.error(err);
+    showStatus('error', err.message || 'Une erreur est survenue. Réessayez.');
+    btn.disabled = false;
+  }
+}
+
+function showResult(data, html) {
+  document.getElementById('result-property-name').textContent = data.title || 'Listing généré';
+  document.getElementById('result-path').textContent = `for-sale/${data.slug || 'listing'}/${data.lang}/index.html`;
+  const iframe = document.getElementById('preview-pane');
+  const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
+  iframe.src = URL.createObjectURL(blob);
+  document.getElementById('code-display').textContent = html;
+  document.getElementById('screen-generator').style.display = 'none';
+  const resultScreen = document.getElementById('screen-result');
+  resultScreen.style.display = 'flex';
+  resultScreen.style.flexDirection = 'column';
+  hideStatus();
+  document.getElementById('btn-generate').disabled = false;
+}
+
+function backToGenerator() {
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-generator').style.display = 'flex';
+  showTab('preview');
+}
+
+function showTab(tab) {
+  const previewWrapper = document.getElementById('preview-pane-wrapper');
+  const codePaneEl = document.getElementById('code-pane');
+  const tabPreview = document.getElementById('tab-preview');
+  const tabCode = document.getElementById('tab-code');
+  if (tab === 'preview') {
+    previewWrapper.style.display = 'flex'; codePaneEl.style.display = 'none';
+    tabPreview.classList.add('active'); tabCode.classList.remove('active');
+  } else {
+    previewWrapper.style.display = 'none'; codePaneEl.style.display = 'block';
+    tabCode.classList.add('active'); tabPreview.classList.remove('active');
+  }
+}
+
+async function copyCode() {
+  if (!generatedCode) return;
+  try {
+    await navigator.clipboard.writeText(generatedCode);
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = generatedCode; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  const toast = document.getElementById('copy-toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function downloadCode() {
+  if (!generatedCode) return;
+  const blob = new Blob([generatedCode], { type: 'text/html; charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'index.html'; a.click();
+}
+
+function openInNewTab() {
+  if (!generatedCode) return;
+  const blob = new Blob([generatedCode], { type: 'text/html; charset=utf-8' });
+  window.open(URL.createObjectURL(blob), '_blank');
+}
+
+async function publishToGitHub() {
+  if (!generatedCode) return;
+  const btn = document.getElementById('btn-publish');
+  btn.disabled = true;
+  btn.textContent = 'Publication…';
+  const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
+  const message = `Add listing: ${currentSlug} (${currentLang})`;
+  try {
+    const res = await fetch('/api/github-publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path, content: generatedCode, message })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur GitHub');
+    const toast = document.getElementById('copy-toast');
+    toast.textContent = '✓ Publié sur listing.signature-sc.com/' + path;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = '✓ Code copié dans le presse-papiers'; }, 4000);
+    btn.textContent = '✓ Publié';
+    btn.style.background = '#1a3d2e';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier';
+      btn.style.background = '';
+    }, 5000);
+  } catch (err) {
+    alert('Erreur lors de la publication : ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier';
+  }
+}
+
+function showStatus(type, text) {
+  const bar = document.getElementById('status-bar');
+  const spinner = document.getElementById('status-spinner');
+  const statusText = document.getElementById('status-text');
+  bar.className = 'status-bar ' + type;
+  statusText.textContent = text;
+  spinner.style.display = type === 'loading' ? 'block' : 'none';
+}
+
+function hideStatus() { document.getElementById('status-bar').className = 'status-bar'; }
+
+document.getElementById('listing-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateListing(); });
+</script>
+</body>
 </html>
