@@ -26,7 +26,14 @@
     @media (max-width: 640px) { .gen-card { padding: 36px 24px; } .gen-header { padding: 20px 24px; } }
     .gen-eyebrow { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
     .gen-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 500; color: var(--navy); line-height: 1.2; margin-bottom: 8px; }
-    .gen-subtitle { font-size: 0.88rem; color: rgba(34,50,86,0.55); line-height: 1.6; margin-bottom: 40px; }
+    .gen-subtitle { font-size: 0.88rem; color: rgba(34,50,86,0.55); line-height: 1.6; margin-bottom: 32px; }
+
+    /* Mode toggle */
+    .mode-toggle { display: flex; gap: 0; background: rgba(34,50,86,0.06); border-radius: 12px; padding: 4px; margin-bottom: 32px; }
+    .mode-btn { flex: 1; font-size: 0.8rem; font-weight: 600; padding: 10px 16px; border-radius: 9px; border: none; cursor: pointer; background: transparent; color: rgba(34,50,86,0.5); transition: all 0.15s; text-align: center; line-height: 1.3; }
+    .mode-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 4px rgba(34,50,86,0.12); }
+    .mode-btn span { display: block; font-size: 0.68rem; font-weight: 400; opacity: 0.7; margin-top: 2px; }
+
     .input-group { margin-bottom: 24px; }
     .input-label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
     .url-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.12); border-radius: 12px; padding: 14px 18px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
@@ -37,6 +44,11 @@
     .small-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.12); border-radius: 10px; padding: 11px 14px; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; }
     .small-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.12); }
     .small-input::placeholder { color: rgba(34,50,86,0.35); }
+
+    /* Info box mode traduction */
+    .info-box { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); border-radius: 10px; padding: 12px 16px; font-size: 0.8rem; color: rgba(34,50,86,0.7); line-height: 1.5; margin-bottom: 24px; }
+    .info-box strong { color: var(--navy); }
+
     .btn-generate { width: 100%; background: var(--navy); color: white; border: none; border-radius: 12px; padding: 16px 24px; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s, transform 0.15s; }
     .btn-generate:hover:not(:disabled) { background: #1a2845; transform: translateY(-1px); }
     .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
@@ -89,39 +101,87 @@
     <div class="gen-card">
       <div class="gen-eyebrow">Signature ˢᶜ Real Estate</div>
       <h1 class="gen-title">Créer un listing<br>en quelques secondes</h1>
-      <p class="gen-subtitle">Collez le lien d'un listing collaborateur. Claude extrait toutes les informations et génère une page prête à partager sous votre identité visuelle.</p>
-      <div class="input-group">
-        <label class="input-label" for="listing-url">Lien du listing collaborateur</label>
-        <input id="listing-url" type="url" class="url-input" placeholder="https://howesrealty.com/es/property/..." autocomplete="off" spellcheck="false" />
+      <p class="gen-subtitle">Choisissez votre mode, collez un lien, et obtenez votre listing prêt à publier.</p>
+
+      <!-- Mode toggle -->
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modeCollabBtn" onclick="setMode('collab')">
+          🔗 Listing collaborateur
+          <span>Extraire depuis un site externe</span>
+        </button>
+        <button class="mode-btn" id="modeTranslateBtn" onclick="setMode('translate')">
+          🌐 Traduire mon listing
+          <span>FR → EN ou ES</span>
+        </button>
       </div>
-      <div class="optional-grid">
-        <div>
-          <label class="input-label" for="listing-slug" style="font-size:0.68rem">Slug du bien</label>
-          <input id="listing-slug" type="text" class="small-input" placeholder="casa-xaman-ek" autocomplete="off" spellcheck="false" />
-          <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview">casa-xaman-ek</strong>/fr</div>
+
+      <!-- Mode collaborateur -->
+      <div id="panelCollab">
+        <div class="input-group">
+          <label class="input-label" for="listing-url">Lien du listing collaborateur</label>
+          <input id="listing-url" type="url" class="url-input" placeholder="https://howesrealty.com/es/property/..." autocomplete="off" spellcheck="false" />
         </div>
-        <div>
-          <label class="input-label" for="listing-lang" style="font-size:0.68rem">Langue du listing</label>
-          <select id="listing-lang" class="small-input" style="cursor:pointer">
-            <option value="fr">Français</option>
-            <option value="en">English</option>
-            <option value="es">Español</option>
-          </select>
+        <div class="optional-grid">
+          <div>
+            <label class="input-label" for="listing-slug" style="font-size:0.68rem">Slug du bien</label>
+            <input id="listing-slug" type="text" class="small-input" placeholder="casa-xaman-ek" autocomplete="off" spellcheck="false" />
+            <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview">casa-xaman-ek</strong>/fr</div>
+          </div>
+          <div>
+            <label class="input-label" for="listing-lang" style="font-size:0.68rem">Langue du listing</label>
+            <select id="listing-lang" class="small-input" style="cursor:pointer">
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </div>
+        </div>
+        <hr class="divider" style="margin-top:0">
+        <div class="instructions">
+          <div class="instruction-step"><span class="step-num">1</span><span>Collez le lien public du listing de votre collaborateur ci-dessus.</span></div>
+          <div class="instruction-step"><span class="step-num">2</span><span>Claude lit la page, extrait toutes les informations et photos automatiquement.</span></div>
+          <div class="instruction-step"><span class="step-num">3</span><span>Cliquez <strong>Publier</strong> — le listing est en ligne instantanément.</span></div>
         </div>
       </div>
-      <button class="btn-generate" id="btn-generate" onclick="generateListing()">
+
+      <!-- Mode traduction -->
+      <div id="panelTranslate" style="display:none">
+        <div class="info-box">
+          Collez le lien d'un de vos listings <strong>déjà publié en français</strong> sur listing.signature-sc.com. Claude lira la page, traduira le contenu et convertira automatiquement les surfaces <strong>(m² → sq ft pour l'anglais)</strong>.
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="translate-url">Lien de votre listing en français</label>
+          <input id="translate-url" type="url" class="url-input" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/fr/" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="optional-grid">
+          <div>
+            <label class="input-label" for="translate-slug" style="font-size:0.68rem">Slug du bien</label>
+            <input id="translate-slug" type="text" class="small-input" placeholder="quinta-luna-penthouse" autocomplete="off" spellcheck="false" />
+            <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview-t">quinta-luna-penthouse</strong>/<span id="lang-preview-t">en</span></div>
+          </div>
+          <div>
+            <label class="input-label" for="translate-lang" style="font-size:0.68rem">Langue cible</label>
+            <select id="translate-lang" class="small-input" style="cursor:pointer">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </div>
+        </div>
+        <hr class="divider" style="margin-top:0">
+        <div class="instructions">
+          <div class="instruction-step"><span class="step-num">1</span><span>Collez le lien de votre listing FR déjà publié sur listing.signature-sc.com.</span></div>
+          <div class="instruction-step"><span class="step-num">2</span><span>Choisissez la langue cible. Les surfaces sont converties automatiquement (m² ↔ sq ft).</span></div>
+          <div class="instruction-step"><span class="step-num">3</span><span>Cliquez <strong>Publier</strong> — la traduction est en ligne instantanément.</span></div>
+        </div>
+      </div>
+
+      <button class="btn-generate" id="btn-generate" onclick="generateListing()" style="margin-top:32px">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Générer le listing
+        <span id="btn-generate-label">Générer le listing</span>
       </button>
       <div id="status-bar" class="status-bar">
         <div class="spinner" id="status-spinner"></div>
         <span id="status-text">Extraction en cours…</span>
-      </div>
-      <hr class="divider">
-      <div class="instructions">
-        <div class="instruction-step"><span class="step-num">1</span><span>Collez le lien public du listing de votre collaborateur ci-dessus.</span></div>
-        <div class="instruction-step"><span class="step-num">2</span><span>Claude lit la page, extrait toutes les informations et photos automatiquement.</span></div>
-        <div class="instruction-step"><span class="step-num">3</span><span>Cliquez <strong>Publier</strong> — le listing est en ligne instantanément.</span></div>
       </div>
     </div>
   </main>
@@ -163,8 +223,43 @@
 let generatedCode = '';
 let currentSlug = '';
 let currentLang = 'fr';
+let currentMode = 'collab';
 
+// ── Conversion surfaces ──────────────────────────────────────────
+const SQM_TO_SQFT = 10.7639;
+
+function convertSurface(value, toLang) {
+  if (!value) return value;
+  // Détecte si c'est en sq ft → convertir en m²
+  const sqftMatch = value.match(/([\d,\.]+)\s*sq\s*ft/i);
+  if (sqftMatch && toLang !== 'en') {
+    const sqft = parseFloat(sqftMatch[1].replace(/,/g, ''));
+    const sqm = (sqft / SQM_TO_SQFT).toFixed(1);
+    return sqm + ' m²';
+  }
+  // Détecte si c'est en m² → convertir en sq ft
+  const sqmMatch = value.match(/([\d,\.]+)\s*m²/i);
+  if (sqmMatch && toLang === 'en') {
+    const sqm = parseFloat(sqmMatch[1].replace(/,/g, ''));
+    const sqft = Math.round(sqm * SQM_TO_SQFT).toLocaleString('en-US');
+    return sqft + ' sq ft';
+  }
+  return value;
+}
+
+// ── Mode toggle ───────────────────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('panelCollab').style.display = mode === 'collab' ? 'block' : 'none';
+  document.getElementById('panelTranslate').style.display = mode === 'translate' ? 'block' : 'none';
+  document.getElementById('modeCollabBtn').classList.toggle('active', mode === 'collab');
+  document.getElementById('modeTranslateBtn').classList.toggle('active', mode === 'translate');
+  document.getElementById('btn-generate-label').textContent = mode === 'translate' ? 'Traduire le listing' : 'Générer le listing';
+}
+
+// ── Slug / lang preview ───────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Mode collab
   const slugInput = document.getElementById('listing-slug');
   const langSelect = document.getElementById('listing-lang');
   const preview = document.getElementById('slug-preview');
@@ -175,8 +270,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   slugInput.addEventListener('input', updatePreview);
   langSelect.addEventListener('change', updatePreview);
+
+  // Mode traduction — auto-remplir le slug depuis l'URL
+  const translateUrl = document.getElementById('translate-url');
+  const translateSlug = document.getElementById('translate-slug');
+  const translateLang = document.getElementById('translate-lang');
+  const slugPreviewT = document.getElementById('slug-preview-t');
+  const langPreviewT = document.getElementById('lang-preview-t');
+
+  function updateTranslatePreview() {
+    const slug = translateSlug.value.trim() || 'listing';
+    const lang = translateLang.value || 'en';
+    slugPreviewT.textContent = slug;
+    langPreviewT.textContent = lang;
+  }
+
+  translateUrl.addEventListener('input', () => {
+    const url = translateUrl.value.trim();
+    // Auto-extraire le slug depuis l'URL : /for-sale/SLUG/fr/
+    const match = url.match(/for-sale\/([^\/]+)\//);
+    if (match && match[1]) {
+      translateSlug.value = match[1];
+    }
+    updateTranslatePreview();
+  });
+  translateSlug.addEventListener('input', updateTranslatePreview);
+  translateLang.addEventListener('change', updateTranslatePreview);
+
+  // Enter key
+  document.getElementById('listing-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateListing(); });
+  translateUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') generateListing(); });
 });
 
+// ── Build template ────────────────────────────────────────────────
 function buildTemplate(data) {
   const images = data.images || [];
   const imagesJSON = JSON.stringify(images, null, 8);
@@ -188,22 +314,32 @@ function buildTemplate(data) {
   const langFr = base + 'fr/';
   const langEn = base + 'en/';
   const langEs = base + 'es/';
+  const lang = data.lang || 'fr';
+
+  const labels = {
+    fr: { price: 'PRIX', details: 'DÉTAILS', beds: 'Chambres', baths: 'Salles de bain', garage: 'Garage', year: 'Année', construction: 'Construction', lot: 'Terrain', desc: 'DESCRIPTION', highlights: 'POINTS FORTS', location: 'LOCALISATION', locNote: 'La localisation exacte est fournie lors de la visite.', close: 'Fermer', prev: 'Précédent', next: 'Suivant', wa: 'WhatsApp', mail: 'Email', visit: 'Demander une visite', rights: 'Tous droits réservés', waIntro: 'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit: 'Bonjour Sabrina, je souhaite organiser une visite pour ce bien.', mailSubject: "Demande d'informations - ", mailBody: 'Bonjour Sabrina,\n\nJe souhaite obtenir des informations sur ce bien :\nTitre : ', mailBody2: '\nPrix : ', mailBody3: '\nLien : ', mailBody4: '\n\nMerci,' },
+    en: { price: 'PRICE', details: 'DETAILS', beds: 'Bedrooms', baths: 'Bathrooms', garage: 'Garage', year: 'Year built', construction: 'Living area', lot: 'Lot size', desc: 'DESCRIPTION', highlights: 'HIGHLIGHTS', location: 'LOCATION', locNote: 'Exact location provided upon visit.', close: 'Close', prev: 'Previous', next: 'Next', wa: 'WhatsApp', mail: 'Email', visit: 'Schedule a visit', rights: 'All rights reserved', waIntro: 'Hello Sabrina, I would like to receive information about this property:', waVisit: 'Hello Sabrina, I would like to schedule a visit for this property.', mailSubject: 'Property inquiry - ', mailBody: 'Hello Sabrina,\n\nI would like to receive information about this property:\nTitle: ', mailBody2: '\nPrice: ', mailBody3: '\nLink: ', mailBody4: '\n\nThank you,' },
+    es: { price: 'PRECIO', details: 'DETALLES', beds: 'Recámaras', baths: 'Baños', garage: 'Cochera', year: 'Año', construction: 'Construcción', lot: 'Terreno', desc: 'DESCRIPCIÓN', highlights: 'PUNTOS DESTACADOS', location: 'UBICACIÓN', locNote: 'La ubicación exacta se proporciona durante la visita.', close: 'Cerrar', prev: 'Anterior', next: 'Siguiente', wa: 'WhatsApp', mail: 'Correo electrónico', visit: 'Solicitar una visita', rights: 'Todos los derechos reservados', waIntro: 'Hola Sabrina, me gustaría obtener más información sobre esta propiedad:', waVisit: 'Hola Sabrina, me gustaría agendar una visita para esta propiedad.', mailSubject: 'Solicitud de información - ', mailBody: 'Hola Sabrina,\n\nMe gustaría obtener más información sobre esta propiedad:\nTítulo: ', mailBody2: '\nPrecio: ', mailBody3: '\nEnlace: ', mailBody4: '\n\nGracias,' }
+  };
+  const L = labels[lang] || labels.fr;
+  const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
+  const priceLabel = lang === 'fr' ? (data.priceOld ? data.priceOld + ' ' + (data.currency||'USD') : '') : '';
 
   return `<!doctype html>
-<html lang="${data.lang || 'fr'}">
+<html lang="${lang}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${data.publicUrl || ''}" />
   <meta property="og:title" content="Signature ˢᶜ | ${(data.title || '').replace(/"/g, '&quot;')}" />
-  <meta property="og:description" content="${(data.location || 'Puerto Aventuras')} · ${data.price || ''} ${data.currency || 'USD'} · ${data.beds || ''} chambres" />
-  <meta property="og:image" content="${(images[0] || '')}" />
+  <meta property="og:description" content="${(data.location || 'Puerto Aventuras')} · ${data.price || ''} ${data.currency || 'USD'} · ${data.beds || ''} ${L.beds.toLowerCase()}" />
+  <meta property="og:image" content="${images[0] || ''}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:locale" content="${data.lang === "en" ? "en_US" : data.lang === "es" ? "es_MX" : "fr_FR"}" />
+  <meta property="og:locale" content="${lang === 'en' ? 'en_US' : lang === 'es' ? 'es_MX' : 'fr_FR'}" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="${(images[0] || '')}" />
+  <meta name="twitter:image" content="${images[0] || ''}" />
   <title>Signature ˢᶜ | ${(data.title || 'Property').replace(/"/g, '&quot;')}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -223,7 +359,7 @@ function buildTemplate(data) {
       <div class="flex items-center">
         <img src="/logo-site.png" alt="Signature ˢᶜ Real Estate" class="h-20 sm:h-28 w-auto object-contain" />
       </div>
-      <nav class="flex items-center gap-4" aria-label="Langue">
+      <nav class="flex items-center gap-4">
         <a id="langFr" href="${langFr}" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
         <a id="langEn" href="${langEn}" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
         <a id="langEs" href="${langEs}" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
@@ -232,64 +368,63 @@ function buildTemplate(data) {
   </header>
 
   <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-      <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
-        <div class="relative">
-          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Main photo" />
-          <button id="prevMain" type="button" aria-label="Previous" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button id="nextMain" type="button" aria-label="Next" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
+    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+      <div class="relative">
+        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo" />
+        <button id="prevMain" type="button" aria-label="Prev" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button id="nextMain" type="button" aria-label="Next" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+        <div class="flex items-center gap-3">
+          <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
+          <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+          <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8250;</button>
         </div>
-
-        <div class="px-4 sm:px-6 py-4 border-t border-black/5">
-          <div class="flex items-center gap-3">
-            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">‹</button>
-            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">›</button>
-          </div>
-        </div>
-      </section>
+      </div>
+    </section>
 
     <div class="mt-8 grid lg:grid-cols-12 gap-8">
       <section class="lg:col-span-8">
         <div class="grid sm:grid-cols-12 gap-4 items-start">
           <div class="sm:col-span-8">
-            <div class="text-xs tracking-widest text-[#223256]/70" id="locationLine"></div>
-            <h1 id="title" class="text-2xl sm:text-3xl font-semibold mt-2"></h1>
-            <p id="subtitle" class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1"></p>
+            <div class="text-xs tracking-widest text-[#223256]/70">${(data.location || '').replace(/"/g, '&quot;')}</div>
+            <h1 class="text-2xl sm:text-3xl font-semibold mt-2">${(data.title || '').replace(/"/g, '&quot;')}</h1>
+            <p class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1">${(data.subtitle || '').replace(/"/g, '&quot;')}</p>
           </div>
           <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
-            <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
-            <div class="text-3xl font-semibold mt-2" id="price"></div>
-            <div class="text-base text-[#223256]/60 line-through mt-1" id="priceOld"></div>
+            <div class="text-xs tracking-widest text-[#223256]/70">${L.price}</div>
+            <div class="text-3xl font-semibold mt-2">${data.price || ''} ${data.currency || 'USD'}</div>
+            ${data.priceOld ? `<div class="text-base text-[#223256]/60 line-through mt-1">${data.priceOld} ${data.currency || 'USD'}</div>` : ''}
           </div>
         </div>
 
         <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
           <div class="flex items-center gap-3 mb-8">
             <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
+            <div class="text-sm tracking-widest text-[#223256]/80">${L.details}</div>
           </div>
           <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div id="beds" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div id="baths" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Garage</div><div id="garage" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div id="year" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div id="construction" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div id="lot" class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.beds}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.beds || ''}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.baths}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.baths || ''}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.garage}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.garage || ''}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.year}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.year || ''}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.construction || ''}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.lot || ''}</div></div>
           </div>
         </div>
 
         <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
           <div class="flex items-center gap-3">
             <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+            <div class="text-sm tracking-widest text-[#223256]/80">${L.desc}</div>
           </div>
-          <div id="description" class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto"></div>
+          <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">${(data.description || '').replace(/"/g, '&quot;')}</div>
           <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
-            <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
+            <div class="text-xs tracking-widest text-[#223256]/70">${L.highlights}</div>
             <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
           </div>
         </div>
@@ -297,42 +432,42 @@ function buildTemplate(data) {
         <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
           <div class="flex items-center gap-3 mb-6">
             <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
+            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">${L.location}</div>
           </div>
           <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
-            <iframe src="https://maps.google.com/maps?ll=${lat},${lng}&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
+            <iframe src="https://maps.google.com/maps?ll=${lat},${lng}&z=16&t=m&hl=${lang}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
             <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">${mapLabel}</div>
           </div>
-          <div class="mt-4 text-xs text-[#223256]/60 text-center">*La localisation exacte est fournie lors de la visite.</div>
+          <div class="mt-4 text-xs text-[#223256]/60 text-center">*${L.locNote}</div>
         </div>
       </section>
 
       <aside id="agent" class="lg:col-span-4 mb-8 lg:mb-0 scroll-mt-32">
-          <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
-            <div class="p-8">
-              <div class="flex items-center gap-4 mb-8">
-                <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
-                  <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
-                </div>
-                <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
-                  <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
-                  <div class="text-left px-2">
-                    <div id="agentName" class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis">Sabrina Crémona</div>
-                    <div id="agentRole" class="text-sm font-light text-white/60 mt-1">Agent Immobilier</div>
-                  </div>
-                </div>
+        <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
+          <div class="p-8">
+            <div class="flex items-center gap-4 mb-8">
+              <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
+                <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
               </div>
-              <div class="grid gap-3">
-                <a id="waBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">WhatsApp</a>
-                <a id="mailBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">Email</a>
-                <a id="visitBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">Demander une visite</a>
+              <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
+                <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2 opacity-100 contrast-[1.05] brightness-[1.02]" />
+                <div class="text-left px-2">
+                  <div class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis">Sabrina Crémona</div>
+                  <div class="text-sm font-light text-white/60 mt-1">${agentRole}</div>
+                </div>
               </div>
             </div>
+            <div class="grid gap-3">
+              <a id="waBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">${L.wa}</a>
+              <a id="mailBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm ring-1 ring-white/20 hover:bg-neutral-100 transition shadow-lg">${L.mail}</a>
+              <a id="visitBtn" href="#" rel="noopener" target="_blank" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition backdrop-blur-sm">${L.visit}</a>
+            </div>
           </div>
-        </aside>
-      </div>
-    </main>
+        </div>
+      </aside>
+    </div>
+  </main>
 
   <footer class="mt-4 bg-[#223256] text-white">
     <div class="max-w-6xl mx-auto px-4 py-10">
@@ -344,7 +479,7 @@ function buildTemplate(data) {
           </div>
           <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
         </div>
-        <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés</div>
+        <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ ${L.rights}</div>
       </div>
     </div>
   </footer>
@@ -353,14 +488,14 @@ function buildTemplate(data) {
     <div class="absolute inset-0 bg-black/80"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
       <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
+        <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.close}</button>
         <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
           <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
+          <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.prev}</button>
           <div id="counter" class="text-xs text-white/80"></div>
-          <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
+          <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.next}</button>
         </div>
       </div>
     </div>
@@ -368,71 +503,29 @@ function buildTemplate(data) {
 
   <script>
     const listing = {
-      lang: "${data.lang || 'fr'}",
-      langLinks: { fr: "${langFr}", en: "${langEn}", es: "${langEs}" },
-      area: "${(data.area || 'Puerto Aventuras').replace(/"/g, '\\"')}",
-      location: "${(data.location || 'Puerto Aventuras, Mexique.').replace(/"/g, '\\"')}",
-      title: "${(data.title || '').replace(/"/g, '\\"')}",
-      subtitle: "${(data.subtitle || '').replace(/"/g, '\\"')}",
+      lang: "${lang}",
+      title: "${(data.title || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",
       price: "${(data.price || '').replace(/"/g, '\\"')}",
-      priceOld: "${(data.priceOld || '').replace(/"/g, '\\"')}",
       currency: "${data.currency || 'USD'}",
-      beds: "${data.beds || ''}",
-      baths: "${data.baths || ''}",
-      garage: "${data.garage || ''}",
-      year: "${data.year || ''}",
-      construction: "${data.construction || ''}",
-      lot: "${data.lot || ''}",
-      hoa: "${(data.hoa || '').replace(/"/g, '\\"')}",
-      predial: "${(data.predial || '').replace(/"/g, '\\"')}",
       publicUrl: "${(data.publicUrl || '').replace(/"/g, '\\"')}",
-      description: "${(data.description || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}",
       highlights: ${highlightsJSON},
       images: ${imagesJSON}
     };
 
-    const agent = { name: "Sabrina Crémona", role: "Real Estate Advisor", email: "Sales@signature-sc.com" };
     const el = (id) => document.getElementById(id);
-    const setText = (id, value) => { const node = el(id); if (node) node.textContent = value || ""; };
-
     const langMap = [
       { id: "langFr", code: "fr" }, { id: "langEn", code: "en" }, { id: "langEs", code: "es" }
     ];
     langMap.forEach(item => {
       const node = el(item.id); if (!node) return;
       const active = item.code === listing.lang;
-      node.classList.remove("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]", "text-[#223256]/35", "hover:text-[#223256]/60");
-      if (active) node.classList.add("text-[#61BDCC]", "border-b-2", "border-[#61BDCC]");
-      else node.classList.add("text-[#223256]/35", "hover:text-[#223256]/60");
+      node.classList.remove("text-[#61BDCC]","border-b-2","border-[#61BDCC]","text-[#223256]/35","hover:text-[#223256]/60");
+      if (active) node.classList.add("text-[#61BDCC]","border-b-2","border-[#61BDCC]");
+      else node.classList.add("text-[#223256]/35","hover:text-[#223256]/60");
     });
-
-    setText("locationLine", listing.location);
-    setText("title", listing.title);
-    setText("subtitle", listing.subtitle || "");
-    setText("price", listing.price + " " + listing.currency);
-    setText("priceOld", listing.priceOld ? listing.priceOld + " " + listing.currency : "");
-    setText("beds", listing.beds); setText("baths", listing.baths); setText("garage", listing.garage);
-    setText("year", listing.year); setText("construction", listing.construction); setText("lot", listing.lot);
-    setText("description", listing.description);
-    setText("agentName", agent.name); setText("agentRole", agent.role);
-
-    const buildWaText = (type) => {
-      const intro = type === 'visit' ? "Bonjour Sabrina, je souhaite organiser une visite pour ce bien." : "Bonjour Sabrina, je souhaite obtenir des informations sur ce bien :";
-      return intro + "\\n\\nTitre : " + listing.title + "\\nPrix : " + listing.price + " " + listing.currency + "\\nLien : " + listing.publicUrl;
-    };
-    const waBtn = el("waBtn"); if (waBtn) { waBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('info')); waBtn.target = "_blank"; }
-    const visitBtn = el("visitBtn"); if (visitBtn) { visitBtn.href = "https://wa.me/529842696189?text=" + encodeURIComponent(buildWaText('visit')); visitBtn.target = "_blank"; }
-    const mailBtn = el("mailBtn");
-    if (mailBtn) {
-      const subject = "Demande d'informations - " + listing.title;
-      const body = "Bonjour Sabrina,\\n\\nJe souhaite obtenir des informations sur ce bien :\\nTitre : " + listing.title + "\\nPrix : " + listing.price + " " + listing.currency + "\\nLien : " + listing.publicUrl + "\\n\\nMerci,";
-      mailBtn.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(agent.email) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-      mailBtn.target = "_blank";
-    }
 
     const highlightsEl = el("highlights");
     if (highlightsEl) {
-      highlightsEl.innerHTML = "";
       listing.highlights.forEach(t => {
         const li = document.createElement("li");
         li.className = "flex items-start gap-2";
@@ -448,8 +541,8 @@ function buildTemplate(data) {
 
     const highlightThumb = () => {
       Array.from(document.querySelectorAll("[data-thumb]")).forEach((n, i) => {
-        if (i === state.index) n.classList.add("ring-2", "ring-[#61BDCC]");
-        else n.classList.remove("ring-2", "ring-[#61BDCC]");
+        if (i === state.index) n.classList.add("ring-2","ring-[#61BDCC]");
+        else n.classList.remove("ring-2","ring-[#61BDCC]");
       });
     };
 
@@ -464,38 +557,48 @@ function buildTemplate(data) {
       strip.innerHTML = "";
       state.photos.forEach((url, idx) => {
         const btn = document.createElement("button");
-        btn.type = "button"; btn.setAttribute("data-thumb", "1");
+        btn.type = "button"; btn.setAttribute("data-thumb","1");
         btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white";
         btn.addEventListener("click", () => setMain(idx));
         const img = document.createElement("img");
-        img.src = url; img.alt = "Photo " + (idx + 1);
+        img.src = url; img.alt = "Photo " + (idx+1);
         img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
         btn.appendChild(img); strip.appendChild(btn);
       });
     }
 
     if (state.photos.length) setMain(0);
-    const scrollStrip = (dir) => { if (strip) strip.scrollBy({ left: dir * 320, behavior: "smooth" }); };
-    el("stripLeft")?.addEventListener("click", () => scrollStrip(-1));
-    el("stripRight")?.addEventListener("click", () => scrollStrip(1));
+    el("stripLeft")?.addEventListener("click", () => strip.scrollBy({left:-320,behavior:"smooth"}));
+    el("stripRight")?.addEventListener("click", () => strip.scrollBy({left:320,behavior:"smooth"}));
     el("prevMain")?.addEventListener("click", () => setMain(state.index - 1));
     el("nextMain")?.addEventListener("click", () => setMain(state.index + 1));
 
-    const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
+    const openModal = () => { if (!state.photos.length) return; el("modal").classList.remove("hidden"); renderModal(); };
     const closeModal = () => el("modal").classList.add("hidden");
-    const renderModal = () => { el("modalImg").src = state.photos[state.index] || ""; el("counter").textContent = state.photos.length ? (state.index + 1) + " / " + state.photos.length : ""; };
-    const prev = () => { setMain(state.index - 1); renderModal(); };
-    const next = () => { setMain(state.index + 1); renderModal(); };
+    const renderModal = () => { el("modalImg").src = state.photos[state.index] || ""; el("counter").textContent = state.photos.length ? (state.index+1) + " / " + state.photos.length : ""; };
+    const prev = () => { setMain(state.index-1); renderModal(); };
+    const next = () => { setMain(state.index+1); renderModal(); };
+
     if (mainImg) mainImg.addEventListener("click", openModal);
     el("closeBtn")?.addEventListener("click", closeModal);
     el("prevBtn")?.addEventListener("click", prev);
     el("nextBtn")?.addEventListener("click", next);
     document.addEventListener("keydown", (e) => {
       if (el("modal").classList.contains("hidden")) return;
-      if (e.key === "Escape") closeModal();
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
+      if (e.key==="Escape") closeModal();
+      if (e.key==="ArrowLeft") prev();
+      if (e.key==="ArrowRight") next();
     });
+
+    const waIntro = "${L.waIntro.replace(/"/g, '\\"')}";
+    const waVisit = "${L.waVisit.replace(/"/g, '\\"')}";
+    const waText = waIntro + "\\n\\nTitre : " + listing.title + "\\nPrix : " + listing.price + " " + listing.currency + "\\nLien : " + listing.publicUrl;
+    const waVisitText = waVisit + "\\n\\nTitre : " + listing.title + "\\nPrix : " + listing.price + " " + listing.currency + "\\nLien : " + listing.publicUrl;
+    el("waBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent(waText);
+    el("visitBtn").href = "https://wa.me/529842696189?text=" + encodeURIComponent(waVisitText);
+    const subject = "${L.mailSubject.replace(/"/g, '\\"')}" + listing.title;
+    const body = "${L.mailBody.replace(/"/g, '\\"')}" + listing.title + "${L.mailBody2.replace(/"/g, '\\"')}" + listing.price + " " + listing.currency + "${L.mailBody3.replace(/"/g, '\\"')}" + listing.publicUrl + "${L.mailBody4.replace(/"/g, '\\"')}";
+    el("mailBtn").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent("Sales@signature-sc.com") + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
 
     el("yearNow").textContent = String(new Date().getFullYear());
     window.addEventListener("load", () => setTimeout(() => window.scrollTo({ top: 0, behavior: "instant" }), 10));
@@ -504,58 +607,65 @@ function buildTemplate(data) {
 </html>`;
 }
 
+// ── Generate ──────────────────────────────────────────────────────
 async function generateListing() {
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+
+  if (currentMode === 'translate') {
+    await translateListing();
+  } else {
+    await extractListing();
+  }
+}
+
+// ── Mode collaborateur ────────────────────────────────────────────
+async function extractListing() {
   const url = document.getElementById('listing-url').value.trim();
   const slug = document.getElementById('listing-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-|-$/g, '') || '';
   const lang = document.getElementById('listing-lang').value;
 
-  if (!url) { showStatus('error', 'Veuillez entrer un lien de listing.'); return; }
-  if (!url.startsWith('http')) { showStatus('error', 'Le lien doit commencer par http:// ou https://'); return; }
-  if (!slug) { showStatus('error', 'Veuillez entrer un slug pour ce bien (ex: casa-xaman-ek).'); return; }
+  if (!url) { showStatus('error', 'Veuillez entrer un lien de listing.'); document.getElementById('btn-generate').disabled = false; return; }
+  if (!url.startsWith('http')) { showStatus('error', 'Le lien doit commencer par http:// ou https://'); document.getElementById('btn-generate').disabled = false; return; }
+  if (!slug) { showStatus('error', 'Veuillez entrer un slug pour ce bien.'); document.getElementById('btn-generate').disabled = false; return; }
 
   currentSlug = slug;
   currentLang = lang;
   const publicUrl = `https://listing.signature-sc.com/for-sale/${slug}/${lang}/`;
-  const btn = document.getElementById('btn-generate');
-  btn.disabled = true;
+  const langLabel = lang === 'fr' ? 'français' : lang === 'en' ? 'anglais' : 'espagnol (Mexique)';
+
   showStatus('loading', 'Lecture de la page en cours…');
 
   try {
     showStatus('loading', 'Claude extrait les informations du listing…');
-    const langLabel = lang === 'fr' ? 'français' : lang === 'en' ? 'anglais' : 'espagnol (Mexique)';
+
     const systemPrompt = `Tu es un extracteur de données pour des listings immobiliers.
 Tu reçois le contenu texte d'une page immobilière et tu dois extraire toutes les informations disponibles.
 Tu dois répondre UNIQUEMENT avec un objet JSON valide, sans texte avant ni après, sans backticks markdown.
 
 Structure JSON attendue :
 {
-  "title": "nom propre du bien en ${langLabel} (ex: Casa Xaman Ek, Villa Marina, etc.)",
-  "subtitle": "courte accroche élégante en ${langLabel} (ex: Résidence de luxe face à la marina)",
+  "title": "nom propre du bien en ${langLabel}",
+  "subtitle": "courte accroche élégante en ${langLabel}",
   "location": "ville, pays",
   "area": "quartier/zone",
   "price": "$X,XXX,XXX",
   "priceOld": "",
-  "currency": "USD ou MXN",
+  "currency": "USD",
   "beds": "nombre",
   "baths": "nombre",
-  "garage": "nombre ou description",
-  "year": "année construction",
+  "garage": "nombre",
+  "year": "année",
   "construction": "Xm²",
   "lot": "Xm²",
   "hoa": "",
   "predial": "",
-  "description": "belle description originale en ${langLabel}, 3 à 4 paragraphes, ton luxueux et élégant, style Signature ˢᶜ. Ne pas utiliser de tirets comme ponctuation. Rédiger comme un texte de présentation haut de gamme.",
+  "description": "belle description en ${langLabel}, 3-4 paragraphes, ton luxueux, sans tirets comme ponctuation",
   "highlights": ["point fort 1", "point fort 2", "point fort 3", "point fort 4", "point fort 5", "point fort 6"],
-  "images": ["url_image_1", "url_image_2"],
+  "images": ["url1", "url2"],
   "lat": "",
   "lng": ""
-}
-
-IMPORTANT: Le title doit être le NOM PROPRE du bien, pas une description générique.
-Les highlights doivent être en ${langLabel}, concis, 4 à 6 maximum.
-La description doit être rédigée en ${langLabel} avec un ton élégant.`;
-
-    const userPrompt = `Voici le contenu de la page du listing immobilier (URL: ${url}). Extrait toutes les informations et retourne le JSON. Utilise UNIQUEMENT les informations présentes dans ce contenu.`;
+}`;
 
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -564,32 +674,26 @@ La description doit être rédigée en ${langLabel} avec un ton élégant.`;
         model: "claude-sonnet-4-20250514",
         max_tokens: 8000,
         system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt + "\n\nURL à analyser : " + url }]
+        messages: [{ role: "user", content: "URL à analyser : " + url }]
       })
     });
 
     if (!response.ok) throw new Error('Erreur API: ' + response.status);
     const apiData = await response.json();
-    showStatus('loading', 'Construction du listing Signature SC…');
+    showStatus('loading', 'Construction du listing Signature ˢᶜ…');
 
     let rawText = '';
-    for (const block of (apiData.content || [])) {
-      if (block.type === 'text') rawText += block.text;
-    }
+    for (const block of (apiData.content || [])) { if (block.type === 'text') rawText += block.text; }
 
     let listingData = {};
     try {
       const jsonMatch = rawText.match(/\{[\s\S]*\}/);
       if (jsonMatch) listingData = JSON.parse(jsonMatch[0]);
       else throw new Error('Aucun JSON trouvé dans la réponse');
-    } catch (parseErr) {
-      console.error('Parse error:', parseErr, rawText);
-      throw new Error('Impossible de parser les données extraites.');
-    }
+    } catch (e) { throw new Error('Impossible de parser les données extraites.'); }
 
     listingData.publicUrl = publicUrl;
     listingData.lang = lang;
-    listingData.source = url;
     listingData.slug = slug;
 
     const finalHtml = buildTemplate(listingData);
@@ -597,12 +701,111 @@ La description doit être rédigée en ${langLabel} avec un ton élégant.`;
     showResult(listingData, finalHtml);
 
   } catch (err) {
-    console.error(err);
-    showStatus('error', err.message || 'Une erreur est survenue. Réessayez.');
-    btn.disabled = false;
+    showStatus('error', err.message || 'Une erreur est survenue.');
+    document.getElementById('btn-generate').disabled = false;
   }
 }
 
+// ── Mode traduction ───────────────────────────────────────────────
+async function translateListing() {
+  const url = document.getElementById('translate-url').value.trim();
+  const slug = document.getElementById('translate-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-|-$/g, '') || '';
+  const targetLang = document.getElementById('translate-lang').value;
+
+  if (!url) { showStatus('error', 'Veuillez entrer le lien de votre listing FR.'); document.getElementById('btn-generate').disabled = false; return; }
+  if (!url.includes('listing.signature-sc.com')) { showStatus('error', 'Le lien doit être un listing listing.signature-sc.com'); document.getElementById('btn-generate').disabled = false; return; }
+  if (!slug) { showStatus('error', 'Veuillez entrer le slug du bien.'); document.getElementById('btn-generate').disabled = false; return; }
+
+  currentSlug = slug;
+  currentLang = targetLang;
+  const publicUrl = `https://listing.signature-sc.com/for-sale/${slug}/${targetLang}/`;
+  const langLabel = targetLang === 'en' ? 'anglais' : 'espagnol (Mexique)';
+  const surfaceNote = targetLang === 'en'
+    ? 'IMPORTANT : Convertis les surfaces de m² en sq ft (1 m² = 10.764 sq ft). Arrondis au nombre entier.'
+    : 'IMPORTANT : Les surfaces restent en m².';
+
+  showStatus('loading', 'Lecture de votre listing FR…');
+
+  try {
+    showStatus('loading', `Traduction en ${langLabel} en cours…`);
+
+    const systemPrompt = `Tu es un traducteur spécialisé pour des listings immobiliers de luxe.
+Tu reçois le contenu HTML d'un listing immobilier en français et tu dois extraire toutes les données puis les traduire en ${langLabel}.
+Tu dois répondre UNIQUEMENT avec un objet JSON valide, sans texte avant ni après, sans backticks markdown.
+${surfaceNote}
+Ne jamais utiliser de tirets comme ponctuation dans la description.
+Traduire le titre, sous-titre, localisation, description et points forts en ${langLabel}.
+Conserver les valeurs numériques (prix, chambres, etc.) telles quelles.
+Conserver toutes les URLs des photos telles quelles.
+
+Structure JSON attendue :
+{
+  "title": "nom du bien traduit",
+  "subtitle": "accroche traduite",
+  "location": "ville, pays traduit",
+  "area": "zone",
+  "price": "$X,XXX,XXX",
+  "priceOld": "",
+  "currency": "USD",
+  "beds": "nombre",
+  "baths": "nombre",
+  "garage": "nombre",
+  "year": "année",
+  "construction": "surface traduite et convertie si EN",
+  "lot": "surface traduite et convertie si EN",
+  "description": "description traduite, 3-4 paragraphes, ton luxueux",
+  "highlights": ["point fort traduit 1", "..."],
+  "images": ["url1", "url2"],
+  "lat": "",
+  "lng": ""
+}`;
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 8000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: "URL du listing FR à traduire en " + langLabel + " : " + url }]
+      })
+    });
+
+    if (!response.ok) throw new Error('Erreur API: ' + response.status);
+    const apiData = await response.json();
+    showStatus('loading', 'Construction du listing traduit…');
+
+    let rawText = '';
+    for (const block of (apiData.content || [])) { if (block.type === 'text') rawText += block.text; }
+
+    let listingData = {};
+    try {
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) listingData = JSON.parse(jsonMatch[0]);
+      else throw new Error('Aucun JSON trouvé dans la réponse');
+    } catch (e) { throw new Error('Impossible de parser la traduction.'); }
+
+    // Conversion surfaces côté client en backup
+    if (targetLang === 'en') {
+      listingData.construction = convertSurface(listingData.construction, 'en');
+      listingData.lot = convertSurface(listingData.lot, 'en');
+    }
+
+    listingData.publicUrl = publicUrl;
+    listingData.lang = targetLang;
+    listingData.slug = slug;
+
+    const finalHtml = buildTemplate(listingData);
+    generatedCode = finalHtml;
+    showResult(listingData, finalHtml);
+
+  } catch (err) {
+    showStatus('error', err.message || 'Une erreur est survenue.');
+    document.getElementById('btn-generate').disabled = false;
+  }
+}
+
+// ── UI helpers ────────────────────────────────────────────────────
 function showResult(data, html) {
   document.getElementById('result-property-name').textContent = data.title || 'Listing généré';
   document.getElementById('result-path').textContent = `for-sale/${data.slug || 'listing'}/${data.lang}/index.html`;
@@ -640,9 +843,8 @@ function showTab(tab) {
 
 async function copyCode() {
   if (!generatedCode) return;
-  try {
-    await navigator.clipboard.writeText(generatedCode);
-  } catch (e) {
+  try { await navigator.clipboard.writeText(generatedCode); }
+  catch (e) {
     const ta = document.createElement('textarea');
     ta.value = generatedCode; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
@@ -670,7 +872,7 @@ async function publishToGitHub() {
   btn.disabled = true;
   btn.textContent = 'Publication…';
   const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
-  const message = `Add listing: ${currentSlug} (${currentLang})`;
+  const message = `${currentMode === 'translate' ? 'Translate' : 'Add'} listing: ${currentSlug} (${currentLang})`;
   try {
     const res = await fetch('/api/github-publish', {
       method: 'POST',
@@ -700,15 +902,12 @@ async function publishToGitHub() {
 function showStatus(type, text) {
   const bar = document.getElementById('status-bar');
   const spinner = document.getElementById('status-spinner');
-  const statusText = document.getElementById('status-text');
   bar.className = 'status-bar ' + type;
-  statusText.textContent = text;
+  document.getElementById('status-text').textContent = text;
   spinner.style.display = type === 'loading' ? 'block' : 'none';
 }
 
 function hideStatus() { document.getElementById('status-bar').className = 'status-bar'; }
-
-document.getElementById('listing-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') generateListing(); });
 </script>
 </body>
 </html>
