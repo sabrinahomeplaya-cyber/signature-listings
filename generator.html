@@ -232,20 +232,25 @@ function buildTemplate(data) {
   </header>
 
   <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
-      <div class="relative">
-        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo principale" />
-        <button id="prevMain" type="button" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Précédent"><span class="text-lg font-semibold">&#8249;</span></button>
-        <button id="nextMain" type="button" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 hover:bg-white ring-1 ring-black/10 shadow px-4 py-3 transition" aria-label="Suivant"><span class="text-lg font-semibold">&#8250;</span></button>
-      </div>
-      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
-        <div class="flex items-center gap-3">
-          <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à gauche">&#8249;</button>
-          <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-          <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition" aria-label="Défiler à droite">&#8250;</button>
+      <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+        <div class="relative">
+          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Main photo" />
+          <button id="prevMain" type="button" aria-label="Previous" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button id="nextMain" type="button" aria-label="Next" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
         </div>
-      </div>
-    </section>
+
+        <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+          <div class="flex items-center gap-3">
+            <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">‹</button>
+            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+            <button id="stripRight" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">›</button>
+          </div>
+        </div>
+      </section>
 
     <div class="mt-8 grid lg:grid-cols-12 gap-8">
       <section class="lg:col-span-8">
