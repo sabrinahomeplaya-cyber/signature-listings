@@ -72,6 +72,7 @@
 
     /* Preview */
     .editor-preview{background:white;padding:40px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px;}
+    #pdf-content{display:flex;flex-direction:column;gap:0;}
 
     /* A4 PAGES — dimensions fixes en px pour html2pdf */
     .a4-page{width:794px;background:white;box-shadow:0 4px 32px rgba(0,0,0,0.18);border-radius:2px;overflow:hidden;position:relative;}
@@ -385,8 +386,10 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
     const d=JSON.parse(m[0]);
     d.publicUrl=d.publicUrl||url;
 
-    // Récupérer les photos depuis GitHub via api/github-photos
-    // Extraire le slug depuis l'URL : /for-sale/SLUG/lang/
+    // 1. D'abord les photos extraites par Claude (toujours disponibles)
+    allPhotos=(d.images||[]).filter(u=>u&&u.startsWith('http'));
+
+    // 2. Essayer GitHub pour les listings avec album photos (les nôtres)
     const slugMatch = url.match(/for-sale\/([^\/]+)\//);
     if (slugMatch && slugMatch[1]) {
       try {
@@ -400,13 +403,9 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
             allPhotos = ghData.photos.map(f => base + f);
           }
         }
-      } catch(e) { /* fallback sur les photos extraites */ }
+      } catch(e) { /* pas d'album GitHub, on garde les photos Claude */ }
     }
 
-    // Si GitHub n'a rien donné, utiliser les photos extraites par Claude
-    if (!allPhotos.length) {
-      allPhotos=(d.images||[]).filter(u=>u&&u.startsWith('http'));
-    }
     coverPhotoUrl=allPhotos[0]||'';
     galleryPhotos=[...allPhotos.slice(1,9)];
     fillPanel(d);
