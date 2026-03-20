@@ -7,754 +7,563 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- html2canvas + jsPDF pour génération PDF fiable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    :root {
-      --navy: #223256;
-      --teal: #61BDCC;
-      --cream: #faf9f6;
-      --light: #f0f4f8;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #e8ecf0; color: var(--navy); min-height: 100vh; }
+    :root { --navy:#223256; --teal:#61BDCC; --cream:#faf9f6; --light:#f0f4f8; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:#e0e4ea;color:var(--navy);min-height:100vh;}
 
-    /* ── SETUP SCREEN ── */
-    #screen-setup {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-    .setup-card {
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 4px 40px rgba(34,50,86,0.1);
-      padding: 52px;
-      max-width: 600px;
-      width: 100%;
-    }
-    .setup-logo {
-      display: flex; align-items: flex-start; gap: 3px; margin-bottom: 32px;
-    }
-    .setup-logo-script { font-family: 'Allura', cursive; font-size: 2rem; color: var(--navy); line-height: 1; }
-    .setup-logo-sc { font-size: 0.55rem; font-weight: 700; color: var(--navy); text-transform: uppercase; margin-top: 3px; }
-    .setup-title { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 500; color: var(--navy); margin-bottom: 6px; line-height: 1.2; }
-    .setup-sub { font-size: 0.85rem; color: rgba(34,50,86,0.5); margin-bottom: 36px; }
-    .field-label { display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 8px; }
-    .field-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.14); border-radius: 10px; padding: 13px 16px; font-size: 0.88rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; }
-    .field-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.12); }
-    .field-input::placeholder { color: rgba(34,50,86,0.3); }
-    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-    .btn-primary { width: 100%; background: var(--navy); color: white; border: none; border-radius: 10px; padding: 15px 24px; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s, transform 0.15s; margin-top: 28px; }
-    .btn-primary:hover:not(:disabled) { background: #1a2845; transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-    .status-msg { margin-top: 16px; border-radius: 8px; padding: 12px 16px; font-size: 0.82rem; display: none; align-items: center; gap: 10px; }
-    .status-msg.loading { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); color: var(--navy); display: flex; }
-    .status-msg.error { background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2); color: #c0392b; display: flex; }
-    .spinner { width: 15px; height: 15px; border: 2px solid rgba(97,189,204,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ══ SETUP ══ */
+    #screen-setup{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+    .setup-card{background:white;border-radius:24px;box-shadow:0 4px 40px rgba(34,50,86,0.1);padding:52px;max-width:580px;width:100%;}
+    .setup-logo{display:flex;align-items:flex-start;gap:3px;margin-bottom:28px;}
+    .setup-logo-script{font-family:'Allura',cursive;font-size:2rem;color:var(--navy);line-height:1;}
+    .setup-logo-sc{font-size:0.55rem;font-weight:700;color:var(--navy);text-transform:uppercase;margin-top:3px;}
+    .setup-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:500;line-height:1.2;margin-bottom:6px;}
+    .setup-sub{font-size:0.84rem;color:rgba(34,50,86,0.5);margin-bottom:32px;line-height:1.5;}
+    .fl{display:block;font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;}
+    .fi{width:100%;border:1.5px solid rgba(34,50,86,0.14);border-radius:10px;padding:13px 16px;font-size:0.88rem;font-family:'Inter',sans-serif;color:var(--navy);background:var(--cream);outline:none;transition:border-color 0.2s;}
+    .fi:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(97,189,204,0.12);}
+    .fi::placeholder{color:rgba(34,50,86,0.3);}
+    .btn-go{width:100%;background:var(--navy);color:white;border:none;border-radius:10px;padding:15px 24px;font-size:0.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background 0.2s,transform 0.15s;margin-top:24px;}
+    .btn-go:hover:not(:disabled){background:#1a2845;transform:translateY(-1px);}
+    .btn-go:disabled{opacity:0.55;cursor:not-allowed;transform:none;}
+    .smsg{margin-top:16px;border-radius:8px;padding:12px 16px;font-size:0.82rem;display:none;align-items:center;gap:10px;}
+    .smsg.loading{background:rgba(97,189,204,0.08);border:1px solid rgba(97,189,204,0.25);color:var(--navy);display:flex;}
+    .smsg.error{background:rgba(220,53,69,0.06);border:1px solid rgba(220,53,69,0.2);color:#c0392b;display:flex;}
+    .spin{width:15px;height:15px;border:2px solid rgba(97,189,204,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+    @keyframes spin{to{transform:rotate(360deg);}}
 
-    /* ── EDITOR SCREEN ── */
-    #screen-editor { display: none; min-height: 100vh; flex-direction: column; }
-    .editor-topbar {
-      background: var(--navy);
-      padding: 14px 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; flex-wrap: wrap;
-      position: sticky; top: 0; z-index: 100;
-    }
-    .editor-topbar-left { display: flex; align-items: center; gap: 16px; }
-    .btn-back-white { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 6px; transition: color 0.15s, background 0.15s; }
-    .btn-back-white:hover { color: white; background: rgba(255,255,255,0.08); }
-    .editor-title { font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; text-transform: uppercase; }
-    .btn-pdf { background: var(--teal); color: var(--navy); border: none; border-radius: 8px; padding: 10px 22px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: opacity 0.15s; }
-    .btn-pdf:hover { opacity: 0.88; }
-
-    .editor-body { display: grid; grid-template-columns: 340px 1fr; gap: 0; flex: 1; }
-    @media (max-width: 900px) { .editor-body { grid-template-columns: 1fr; } }
+    /* ══ EDITOR ══ */
+    #screen-editor{display:none;min-height:100vh;flex-direction:column;}
+    .topbar{background:var(--navy);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
+    .topbar-l{display:flex;align-items:center;gap:12px;}
+    .btn-back{background:none;border:none;color:rgba(255,255,255,0.65);font-size:0.8rem;cursor:pointer;padding:6px 10px;border-radius:6px;transition:all 0.15s;}
+    .btn-back:hover{color:white;background:rgba(255,255,255,0.08);}
+    .topbar-name{font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0.08em;text-transform:uppercase;}
+    .btn-pdf{background:var(--teal);color:var(--navy);border:none;border-radius:8px;padding:9px 20px;font-size:0.84rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:opacity 0.15s;}
+    .btn-pdf:hover:not(:disabled){opacity:0.88;}
+    .btn-pdf:disabled{opacity:0.5;cursor:not-allowed;}
+    .editor-body{display:grid;grid-template-columns:320px 1fr;flex:1;}
+    @media(max-width:880px){.editor-body{grid-template-columns:1fr;}}
 
     /* Left panel */
-    .editor-panel {
-      background: white;
-      border-right: 1px solid rgba(34,50,86,0.08);
-      overflow-y: auto;
-      padding: 24px;
-      height: calc(100vh - 60px);
-      position: sticky; top: 60px;
-    }
-    .panel-section { margin-bottom: 28px; }
-    .panel-section-title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
-    .panel-field { margin-bottom: 12px; }
-    .panel-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(34,50,86,0.55); margin-bottom: 5px; display: block; }
-    .panel-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.1); border-radius: 7px; padding: 8px 10px; font-size: 0.82rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; }
-    .panel-input:focus { border-color: var(--teal); }
-    .panel-textarea { width: 100%; border: 1.5px solid rgba(34,50,86,0.1); border-radius: 7px; padding: 8px 10px; font-size: 0.82rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; resize: vertical; line-height: 1.5; transition: border-color 0.2s; }
-    .panel-textarea:focus { border-color: var(--teal); }
-    .panel-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .epanel{background:white;border-right:1px solid rgba(34,50,86,0.07);overflow-y:auto;padding:20px;height:calc(100vh - 56px);position:sticky;top:56px;}
+    .ps{margin-bottom:24px;}
+    .pst{font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
+    .pf{margin-bottom:10px;}
+    .pl{font-size:0.62rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(34,50,86,0.5);margin-bottom:4px;display:block;}
+    .pi{width:100%;border:1.5px solid rgba(34,50,86,0.1);border-radius:7px;padding:7px 10px;font-size:0.8rem;font-family:'Inter',sans-serif;color:var(--navy);background:var(--cream);outline:none;transition:border-color 0.2s;}
+    .pi:focus{border-color:var(--teal);}
+    .pta{width:100%;border:1.5px solid rgba(34,50,86,0.1);border-radius:7px;padding:7px 10px;font-size:0.8rem;font-family:'Inter',sans-serif;color:var(--navy);background:var(--cream);outline:none;resize:vertical;line-height:1.5;transition:border-color 0.2s;}
+    .pta:focus{border-color:var(--teal);}
+    .pg2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
-    /* Photo selector */
-    .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .photo-thumb {
-      position: relative; aspect-ratio: 4/3; border-radius: 6px; overflow: hidden;
-      cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s;
-    }
-    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-    .photo-thumb.selected { border-color: var(--teal); }
-    .photo-thumb .badge {
-      position: absolute; top: 3px; right: 3px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--teal); display: none; align-items: center; justify-content: center;
-      font-size: 9px; color: white; font-weight: 700;
-    }
-    .photo-thumb.selected .badge { display: flex; }
-    .photo-thumb.cover-selected { border-color: var(--navy); }
-    .photo-thumb.cover-selected .badge { background: var(--navy); }
-    .photo-count { font-size: 0.72rem; color: rgba(34,50,86,0.5); margin-top: 8px; }
-    .photo-mode-note { font-size: 0.72rem; color: rgba(34,50,86,0.5); margin-bottom: 10px; line-height: 1.4; }
+    /* Photo grids */
+    .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px;}
+    .pthumb{position:relative;aspect-ratio:4/3;border-radius:5px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;background:#e0e6ee;}
+    .pthumb img{width:100%;height:100%;object-fit:cover;}
+    .pthumb .ck{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--teal);display:none;align-items:center;justify-content:center;font-size:8px;color:white;font-weight:700;}
+    .pthumb.sel{border-color:var(--teal);}
+    .pthumb.sel .ck{display:flex;}
+    .pthumb.csel{border-color:var(--navy);}
+    .pthumb.csel .ck{display:flex;background:var(--navy);}
+    .pcnt{font-size:0.7rem;color:rgba(34,50,86,0.45);margin-bottom:10px;}
 
-    .btn-apply-panel { width: 100%; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 11px; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; margin-top: 20px; }
-    .btn-apply-panel:hover { background: #1a2845; }
+    .btn-apply{width:100%;background:var(--navy);color:white;border:none;border-radius:8px;padding:10px;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background 0.15s;margin-top:16px;}
+    .btn-apply:hover{background:#1a2845;}
 
-    /* Right — preview */
-    .editor-preview {
-      background: #d8dde4;
-      padding: 40px;
-      overflow-y: auto;
-      display: flex; flex-direction: column; align-items: center; gap: 24px;
-    }
+    /* Right preview */
+    .epreview{background:#cdd2da;padding:32px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:20px;}
 
-    /* ── A4 PAGES ── */
-    .a4-page {
-      width: 210mm;
-      min-height: 297mm;
-      background: white;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-      border-radius: 2px;
-      overflow: hidden;
-      position: relative;
-    }
+    /* ══ A4 PAGES — largeur fixe 794px (96dpi) ══ */
+    .a4{width:794px;background:white;box-shadow:0 4px 28px rgba(0,0,0,0.18);overflow:hidden;position:relative;}
+    .a4-p1{height:1123px;display:flex;flex-direction:column;}
+    .a4-p2{min-height:1123px;display:flex;flex-direction:column;}
 
     /* PAGE 1 */
-    .p1-header {
-      background: var(--navy);
-      padding: 18px 28px 16px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .p1-logo { display: flex; align-items: flex-start; gap: 3px; }
-    .p1-logo-script { font-family: 'Allura', cursive; font-size: 1.7rem; color: white; line-height: 1; }
-    .p1-logo-sc { font-size: 0.48rem; font-weight: 700; color: rgba(255,255,255,0.8); text-transform: uppercase; margin-top: 3px; }
-    .p1-header-right { text-align: right; }
-    .p1-header-tag { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); }
-    .p1-header-location { font-size: 0.72rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
+    .p1h{background:var(--navy);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .p1h img{height:32px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
+    .p1h-right{text-align:right;}
+    .p1h-tag{font-size:0.55rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);}
+    .p1h-loc{font-size:0.68rem;color:rgba(255,255,255,0.7);margin-top:2px;}
 
-    .p1-hero { padding: 20px 28px 0; }
-    .p1-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--navy); line-height: 1.1; margin-bottom: 4px; }
-    .p1-subtitle { font-size: 0.78rem; color: rgba(34,50,86,0.6); font-style: italic; margin-bottom: 14px; }
-    .p1-main-photo { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; display: block; background: #e0e6ee; }
-    .p1-main-photo-placeholder { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, #e8edf4, #d0d8e8); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: rgba(34,50,86,0.3); font-size: 0.8rem; }
+    .p1-hero{padding:18px 28px 0;flex-shrink:0;}
+    .p1-title{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:600;color:var(--navy);line-height:1.1;margin-bottom:3px;}
+    .p1-sub{font-size:0.74rem;color:rgba(34,50,86,0.55);font-style:italic;margin-bottom:12px;}
+    .p1-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:5px;display:block;background:#dde4ee;}
+    .p1-img-ph{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#e8edf4,#d0d8e8);border-radius:5px;display:flex;align-items:center;justify-content:center;color:rgba(34,50,86,0.3);font-size:0.75rem;}
 
-    .p1-price-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 28px; background: var(--light); margin-top: 14px; }
-    .p1-price { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 600; color: var(--navy); }
-    .p1-currency { font-size: 0.75rem; font-weight: 600; color: rgba(34,50,86,0.5); margin-left: 4px; }
-    .p1-loc { font-size: 0.78rem; color: rgba(34,50,86,0.65); font-style: italic; }
+    .p1-prow{display:flex;align-items:center;justify-content:space-between;padding:10px 28px;background:var(--light);margin-top:12px;flex-shrink:0;}
+    .p1-price{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:600;color:var(--navy);}
+    .p1-cur{font-size:0.7rem;font-weight:600;color:rgba(34,50,86,0.45);margin-left:3px;}
+    .p1-ploc{font-size:0.73rem;color:rgba(34,50,86,0.6);font-style:italic;}
 
-    .p1-details { padding: 14px 28px 0; }
-    .p1-details-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(34,50,86,0.08); border-radius: 8px; overflow: hidden; }
-    .p1-detail-cell { background: white; padding: 10px 14px; }
-    .p1-detail-label { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(34,50,86,0.45); margin-bottom: 3px; }
-    .p1-detail-value { font-size: 0.82rem; font-weight: 600; color: var(--navy); }
+    .p1-det{padding:12px 28px 0;flex-shrink:0;}
+    .p1-det-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(34,50,86,0.08);border-radius:7px;overflow:hidden;}
+    .p1-det-cell{background:white;padding:8px 12px;}
+    .p1-det-lbl{font-size:0.54rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(34,50,86,0.4);margin-bottom:2px;}
+    .p1-det-val{font-size:0.78rem;font-weight:600;color:var(--navy);}
 
-    .p1-desc { padding: 14px 28px 0; }
-    .p1-section-title {
-      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--teal); margin-bottom: 8px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .p1-section-title::after { content: ''; flex: 1; height: 1px; background: rgba(97,189,204,0.3); }
-    .p1-desc-text { font-size: 0.72rem; line-height: 1.65; color: rgba(34,50,86,0.8); column-count: 2; column-gap: 18px; }
+    .sec-title{font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;display:flex;align-items:center;gap:7px;}
+    .sec-title::after{content:'';flex:1;height:1px;background:rgba(97,189,204,0.3);}
 
-    .p1-highlights { padding: 12px 28px 0; }
-    .p1-hl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
-    .p1-hl-item { display: flex; align-items: flex-start; gap: 6px; font-size: 0.68rem; color: rgba(34,50,86,0.85); line-height: 1.4; }
-    .p1-hl-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 4px; }
+    .p1-desc{padding:10px 28px 0;flex-shrink:0;}
+    .p1-desc-txt{font-size:0.69rem;line-height:1.65;color:rgba(34,50,86,0.8);column-count:2;column-gap:16px;}
 
-    .p1-footer {
-      margin-top: 14px;
-      padding: 12px 28px;
-      background: var(--navy);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .p1-footer-link { font-size: 0.65rem; color: var(--teal); text-decoration: underline; letter-spacing: 0.02em; }
-    .p1-footer-brand { font-size: 0.6rem; color: rgba(255,255,255,0.4); }
+    .p1-hl{padding:9px 28px 0;flex-shrink:0;}
+    .p1-hl-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;}
+    .p1-hl-item{display:flex;align-items:flex-start;gap:5px;font-size:0.65rem;color:rgba(34,50,86,0.85);line-height:1.4;}
+    .p1-hl-dot{width:4px;height:4px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:4px;}
+
+    .p1-foot{margin-top:auto;padding:11px 28px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .p1-foot-link{font-size:0.62rem;color:var(--teal);text-decoration:underline;letter-spacing:0.02em;word-break:break-all;}
+    .p1-foot-brand{font-size:0.56rem;color:rgba(255,255,255,0.35);}
 
     /* PAGE 2 */
-    .p2-header {
-      background: var(--navy);
-      padding: 14px 28px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .p2-header-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 500; color: white; }
-    .p2-header-sub { font-size: 0.6rem; color: rgba(255,255,255,0.45); margin-top: 1px; letter-spacing: 0.08em; text-transform: uppercase; }
-    .p2-teal-bar { height: 3px; background: linear-gradient(90deg, var(--teal), var(--navy)); }
+    .p2h{background:var(--navy);padding:13px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .p2h-left{}
+    .p2h-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500;color:white;}
+    .p2h-sub{font-size:0.55rem;color:rgba(255,255,255,0.4);margin-top:1px;letter-spacing:0.08em;text-transform:uppercase;}
+    .p2h img{height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
+    .p2-teal-bar{height:3px;background:linear-gradient(90deg,var(--teal),var(--navy));flex-shrink:0;}
 
-    .p2-photos { padding: 16px 28px 0; }
-    .p2-photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .p2-photo-item { aspect-ratio: 16/9; border-radius: 5px; overflow: hidden; background: #e0e6ee; }
-    .p2-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .p2-photo-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e8edf4, #d0d8e8); display: flex; align-items: center; justify-content: center; color: rgba(34,50,86,0.2); font-size: 0.7rem; }
+    .p2-photos{padding:16px 28px 0;flex-shrink:0;}
+    .p2-pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+    .p2-pitem{aspect-ratio:16/9;border-radius:5px;overflow:hidden;background:#dde4ee;}
+    .p2-pitem img{width:100%;height:100%;object-fit:cover;display:block;}
+    .p2-pph{width:100%;height:100%;background:linear-gradient(135deg,#e8edf4,#d0d8e8);}
 
-    .p2-notes { padding: 18px 28px 0; }
-    .p2-notes-lines { display: flex; flex-direction: column; gap: 14px; }
-    .p2-notes-line { height: 1px; background: rgba(34,50,86,0.1); }
+    /* Bottom 2 colonnes : notes + contact */
+    .p2-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 28px 0;flex:1;}
+    .p2-notes-col{}
+    .p2-note-lines{display:flex;flex-direction:column;gap:13px;margin-top:6px;}
+    .p2-note-line{height:1px;background:rgba(34,50,86,0.09);}
 
-    /* Layout 2 colonnes bas page 2 */
-    .p2-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px 28px 0; align-items: start; }
-    .p2-bottom-notes {}
-    .p2-bottom-contact {}
-    .p2-contact-card {
-      background: var(--navy);
-      border-radius: 8px;
-      padding: 14px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .p2-contact-top { display: flex; align-items: center; gap: 10px; }
-    .p2-contact-photo { width: 52px; height: 66px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
-    .p2-contact-info { flex: 1; min-width: 0; }
-    .p2-contact-name { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 600; color: white; margin-bottom: 1px; white-space: nowrap; }
-    .p2-contact-role { font-size: 0.55rem; color: var(--teal); letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.3; }
-    .p2-contact-logo { height: 24px; width: auto; object-fit: contain; opacity: 0.9; display: block; margin: 0 auto; }
-    .p2-contact-lines { display: flex; flex-direction: column; gap: 5px; }
-    .p2-contact-line { display: flex; align-items: center; gap: 6px; font-size: 0.6rem; color: rgba(255,255,255,0.7); }
-    .p2-contact-icon { width: 11px; height: 11px; flex-shrink: 0; opacity: 0.7; }
+    /* Carte de visite — photo grande à droite */
+    .p2-contact-col{}
+    .p2-card{background:var(--navy);border-radius:8px;overflow:hidden;display:flex;height:160px;}
+    .p2-card-left{flex:1;padding:16px 14px;display:flex;flex-direction:column;justify-content:space-between;}
+    .p2-card-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:white;line-height:1.1;}
+    .p2-card-role{font-size:0.56rem;color:var(--teal);letter-spacing:0.05em;text-transform:uppercase;margin-top:3px;line-height:1.3;}
+    .p2-card-contacts{display:flex;flex-direction:column;gap:5px;}
+    .p2-card-line{display:flex;align-items:center;gap:6px;font-size:0.6rem;color:rgba(255,255,255,0.75);text-decoration:none;}
+    .p2-card-line svg{width:10px;height:10px;flex-shrink:0;opacity:0.7;}
+    .p2-card-photo{width:100px;flex-shrink:0;object-fit:cover;object-position:center top;}
 
-    .p2-footer {
-      margin-top: 16px;
-      padding: 10px 28px;
-      background: var(--light);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .p2-footer-txt { font-size: 0.6rem; color: rgba(34,50,86,0.4); }
-    .p2-footer-teal { width: 32px; height: 2px; background: var(--teal); border-radius: 1px; }
-
-    /* ── PRINT / PDF STYLES ── */
-    @media print {
-      body { background: white !important; }
-      #screen-setup, #screen-editor .editor-topbar, .editor-panel, .editor-preview > *:not(.pdf-content) { display: none !important; }
-      .a4-page { box-shadow: none !important; border-radius: 0 !important; page-break-after: always; width: 100% !important; }
-    }
+    .p2-foot{margin-top:auto;padding:9px 28px;background:var(--light);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .p2-foot-txt{font-size:0.57rem;color:rgba(34,50,86,0.4);}
+    .p2-foot-logo{height:18px;width:auto;object-fit:contain;opacity:0.4;}
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     SCREEN 1 — SETUP
-═══════════════════════════════════════════════ -->
+<!-- ══ SETUP ══ -->
 <div id="screen-setup">
   <div class="setup-card">
-    <div class="setup-logo">
-      <span class="setup-logo-script">Signature</span>
-      <span class="setup-logo-sc">SC</span>
-    </div>
+    <div class="setup-logo"><span class="setup-logo-script">Signature</span><span class="setup-logo-sc">SC</span></div>
     <h1 class="setup-title">Générer une brochure<br>professionnelle</h1>
     <p class="setup-sub">Collez le lien d'un listing publié — la brochure se génère en quelques secondes.</p>
-
-    <div>
-      <label class="field-label" for="s-url">Lien du listing publié</label>
-      <input id="s-url" class="field-input" type="url" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/fr/" />
-    </div>
-
-    <div style="margin-top:16px">
-      <label class="field-label" for="s-lang">Langue de la brochure</label>
-      <select id="s-lang" class="field-input" style="cursor:pointer">
+    <div class="pf"><label class="fl" for="s-url">Lien du listing publié</label>
+      <input id="s-url" class="fi" type="url" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/fr/" /></div>
+    <div class="pf" style="margin-top:14px"><label class="fl" for="s-lang">Langue de la brochure</label>
+      <select id="s-lang" class="fi" style="cursor:pointer">
         <option value="fr">Français</option>
         <option value="en">English</option>
         <option value="es">Español</option>
-      </select>
-    </div>
-
-    <button class="btn-primary" id="btn-load" onclick="loadListing()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </select></div>
+    <button class="btn-go" id="btn-load" onclick="loadListing()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       Générer la brochure
     </button>
-    <div id="setup-status" class="status-msg">
-      <div class="spinner"></div>
-      <span id="setup-status-text"></span>
-    </div>
+    <div id="smsg" class="smsg"><div class="spin" id="spin"></div><span id="smsg-txt"></span></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     SCREEN 2 — EDITOR
-═══════════════════════════════════════════════ -->
+<!-- ══ EDITOR ══ -->
 <div id="screen-editor">
-  <div class="editor-topbar">
-    <div class="editor-topbar-left">
-      <button class="btn-back-white" onclick="backToSetup()">← Nouveau</button>
-      <span class="editor-title" id="editor-title">Brochure</span>
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="btn-back" onclick="goBack()">← Nouveau</button>
+      <span class="topbar-name" id="ed-title">Brochure</span>
     </div>
-    <button class="btn-pdf" onclick="downloadPDF()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <button class="btn-pdf" id="btn-pdf" onclick="downloadPDF()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Télécharger le PDF
     </button>
   </div>
 
   <div class="editor-body">
-    <!-- Left panel -->
-    <div class="editor-panel">
-
-      <div class="panel-section">
-        <div class="panel-section-title">📋 Informations</div>
-        <div class="panel-field"><label class="panel-label">Titre</label><input id="p-title" class="panel-input" type="text" /></div>
-        <div class="panel-field"><label class="panel-label">Accroche</label><input id="p-subtitle" class="panel-input" type="text" /></div>
-        <div class="panel-field"><label class="panel-label">Prix</label><input id="p-price" class="panel-input" type="text" /></div>
-        <div class="panel-field"><label class="panel-label">Devise</label><input id="p-currency" class="panel-input" type="text" placeholder="USD" /></div>
-        <div class="panel-field"><label class="panel-label">Localisation</label><input id="p-location" class="panel-input" type="text" /></div>
-        <div class="panel-field"><label class="panel-label">Lien du listing</label><input id="p-url" class="panel-input" type="text" /></div>
+    <!-- Panneau gauche -->
+    <div class="epanel">
+      <div class="ps"><div class="pst">📋 Informations</div>
+        <div class="pf"><label class="pl">Titre</label><input id="p-title" class="pi" type="text"/></div>
+        <div class="pf"><label class="pl">Accroche</label><input id="p-subtitle" class="pi" type="text"/></div>
+        <div class="pg2">
+          <div class="pf"><label class="pl">Prix</label><input id="p-price" class="pi" type="text"/></div>
+          <div class="pf"><label class="pl">Devise</label><input id="p-currency" class="pi" type="text" placeholder="USD"/></div>
+        </div>
+        <div class="pf"><label class="pl">Localisation</label><input id="p-location" class="pi" type="text"/></div>
+        <div class="pf"><label class="pl">Lien listing</label><input id="p-url" class="pi" type="text"/></div>
       </div>
 
-      <div class="panel-section">
-        <div class="panel-section-title">🏠 Détails</div>
-        <div class="panel-grid2">
-          <div class="panel-field"><label class="panel-label" id="lbl-beds">Chambres</label><input id="p-beds" class="panel-input" type="text" /></div>
-          <div class="panel-field"><label class="panel-label" id="lbl-baths">Salles de bain</label><input id="p-baths" class="panel-input" type="text" /></div>
-          <div class="panel-field"><label class="panel-label">Garage</label><input id="p-garage" class="panel-input" type="text" /></div>
-          <div class="panel-field"><label class="panel-label">Année</label><input id="p-year" class="panel-input" type="text" /></div>
-          <div class="panel-field"><label class="panel-label" id="lbl-construction">Construction</label><input id="p-construction" class="panel-input" type="text" /></div>
-          <div class="panel-field"><label class="panel-label" id="lbl-lot">Terrain</label><input id="p-lot" class="panel-input" type="text" /></div>
+      <div class="ps"><div class="pst">🏠 Détails</div>
+        <div class="pg2">
+          <div class="pf"><label class="pl" id="lbl-beds">Chambres</label><input id="p-beds" class="pi" type="text"/></div>
+          <div class="pf"><label class="pl" id="lbl-baths">Salles de bain</label><input id="p-baths" class="pi" type="text"/></div>
+          <div class="pf"><label class="pl">Garage</label><input id="p-garage" class="pi" type="text"/></div>
+          <div class="pf"><label class="pl">Année</label><input id="p-year" class="pi" type="text"/></div>
+          <div class="pf"><label class="pl" id="lbl-constr">Construction</label><input id="p-construction" class="pi" type="text"/></div>
+          <div class="pf"><label class="pl" id="lbl-lot">Terrain</label><input id="p-lot" class="pi" type="text"/></div>
         </div>
       </div>
 
-      <div class="panel-section">
-        <div class="panel-section-title">📝 Description (résumé)</div>
-        <div class="panel-field"><textarea id="p-desc" class="panel-textarea" rows="6"></textarea></div>
+      <div class="ps"><div class="pst">📝 Description (résumé)</div>
+        <textarea id="p-desc" class="pta" rows="5"></textarea>
       </div>
 
-      <div class="panel-section">
-        <div class="panel-section-title">⭐ Points forts (un par ligne)</div>
-        <div class="panel-field"><textarea id="p-hl" class="panel-textarea" rows="7"></textarea></div>
+      <div class="ps"><div class="pst">⭐ Points forts (un par ligne)</div>
+        <textarea id="p-hl" class="pta" rows="7"></textarea>
       </div>
 
-      <div class="panel-section">
-        <div class="panel-section-title">📸 Photo principale (page 1)</div>
-        <div class="photo-mode-note">Cliquez pour choisir la photo principale.</div>
-        <div id="cover-grid" class="photo-grid"></div>
+      <div class="ps"><div class="pst">📸 Photo principale (page 1)</div>
+        <div style="font-size:0.7rem;color:rgba(34,50,86,0.45);margin-bottom:8px">Cliquez pour sélectionner.</div>
+        <div id="cover-grid" class="pgrid"></div>
       </div>
 
-      <div class="panel-section">
-        <div class="panel-section-title">🖼 Photos galerie (page 2 — max 8)</div>
-        <div class="photo-mode-note">Cliquez pour sélectionner. Max 8 photos.</div>
-        <div id="gallery-grid" class="photo-grid"></div>
-        <div class="photo-count" id="gallery-count">0 / 8 photos sélectionnées</div>
+      <div class="ps"><div class="pst">🖼 Galerie page 2 — max 8</div>
+        <div style="font-size:0.7rem;color:rgba(34,50,86,0.45);margin-bottom:8px">Cliquez pour sélectionner.</div>
+        <div id="gallery-grid" class="pgrid"></div>
+        <div class="pcnt" id="gcnt">0 / 8 photos</div>
       </div>
 
-      <button class="btn-apply-panel" onclick="applyAndRender()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <button class="btn-apply" onclick="applyAndRender()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Appliquer et mettre à jour
       </button>
-
     </div>
 
-    <!-- Right — preview -->
-    <div class="editor-preview" id="editor-preview">
+    <!-- Prévisualisation -->
+    <div class="epreview">
       <div id="pdf-content">
-        <!-- Page 1 -->
-        <div class="a4-page" id="page1">
-          <div class="p1-header">
-            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Signature SC" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
-            <div class="p1-header-right">
-              <div class="p1-header-tag">Luxury Real Estate</div>
-              <div class="p1-header-location" id="r-location"></div>
+
+        <!-- PAGE 1 -->
+        <div class="a4 a4-p1" id="page1">
+          <div class="p1h">
+            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" onerror="this.style.display='none'" />
+            <div class="p1h-right">
+              <div class="p1h-tag">Luxury Real Estate · Riviera Maya</div>
+              <div class="p1h-loc" id="r-loc"></div>
             </div>
           </div>
 
           <div class="p1-hero">
             <div class="p1-title" id="r-title"></div>
-            <div class="p1-subtitle" id="r-subtitle"></div>
-            <img id="r-cover-img" class="p1-main-photo" src="" alt="" style="display:none" />
-            <div id="r-cover-placeholder" class="p1-main-photo-placeholder">Sélectionnez une photo principale</div>
+            <div class="p1-sub" id="r-sub"></div>
+            <img id="r-cover" class="p1-img" src="" alt="" style="display:none" />
+            <div id="r-cover-ph" class="p1-img-ph">Sélectionnez une photo principale</div>
           </div>
 
-          <div class="p1-price-row">
-            <div><span class="p1-price" id="r-price"></span><span class="p1-currency" id="r-currency"></span></div>
-            <div class="p1-loc" id="r-location2"></div>
+          <div class="p1-prow">
+            <div><span class="p1-price" id="r-price"></span><span class="p1-cur" id="r-cur"></span></div>
+            <div class="p1-ploc" id="r-loc2"></div>
           </div>
 
-          <div class="p1-details">
-            <div class="p1-details-grid" id="r-details-grid"></div>
+          <div class="p1-det">
+            <div class="p1-det-grid" id="r-det"></div>
           </div>
 
           <div class="p1-desc">
-            <div class="p1-section-title" id="r-desc-label">DESCRIPTION</div>
-            <div class="p1-desc-text" id="r-desc"></div>
+            <div class="sec-title" id="r-desc-lbl">DESCRIPTION</div>
+            <div class="p1-desc-txt" id="r-desc"></div>
           </div>
 
-          <div class="p1-highlights">
-            <div class="p1-section-title" id="r-hl-label">POINTS FORTS</div>
-            <div class="p1-hl-grid" id="r-hl-grid"></div>
+          <div class="p1-hl">
+            <div class="sec-title" id="r-hl-lbl">POINTS FORTS</div>
+            <div class="p1-hl-grid" id="r-hl"></div>
           </div>
 
-          <div class="p1-footer">
-            <a id="r-link" href="#" class="p1-footer-link"></a>
-            <div class="p1-footer-brand">Signature ˢᶜ Real Estate · Riviera Maya</div>
+          <div class="p1-foot">
+            <a id="r-link" href="#" class="p1-foot-link"></a>
+            <div class="p1-foot-brand">Signature ˢᶜ Real Estate · Riviera Maya</div>
           </div>
         </div>
 
-        <!-- Page 2 -->
-        <div class="a4-page" id="page2">
-          <div class="p2-header">
-            <div>
-              <div class="p2-header-title" id="r-title2"></div>
-              <div class="p2-header-sub" id="r-header-sub">Galerie photos</div>
+        <!-- PAGE 2 -->
+        <div class="a4 a4-p2" id="page2">
+          <div class="p2h">
+            <div class="p2h-left">
+              <div class="p2h-title" id="r-title2"></div>
+              <div class="p2h-sub" id="r-gallery-lbl">Galerie photos</div>
             </div>
-            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Signature SC" style="height:32px;width:auto;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
+            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" onerror="this.style.display='none'" />
           </div>
           <div class="p2-teal-bar"></div>
 
           <div class="p2-photos">
-            <div class="p2-photo-grid" id="r-photo-grid"></div>
+            <div class="p2-pgrid" id="r-pgrid"></div>
           </div>
 
           <div class="p2-bottom">
-            <!-- Colonne gauche : Notes -->
-            <div class="p2-bottom-notes">
-              <div class="p1-section-title" id="r-notes-label">NOTES</div>
-              <div class="p2-notes-lines">
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
-                <div class="p2-notes-line"></div>
+            <!-- Notes -->
+            <div class="p2-notes-col">
+              <div class="sec-title" id="r-notes-lbl">NOTES</div>
+              <div class="p2-note-lines">
+                <div class="p2-note-line"></div><div class="p2-note-line"></div>
+                <div class="p2-note-line"></div><div class="p2-note-line"></div>
+                <div class="p2-note-line"></div><div class="p2-note-line"></div>
+                <div class="p2-note-line"></div><div class="p2-note-line"></div>
+                <div class="p2-note-line"></div><div class="p2-note-line"></div>
               </div>
             </div>
-            <!-- Colonne droite : Carte contact -->
-            <div class="p2-bottom-contact">
-              <div class="p1-section-title" id="r-contact-label">CONTACT</div>
-              <div class="p2-contact-card">
-                <div class="p2-contact-top">
-                  <img id="r-agent-photo" class="p2-contact-photo" src="https://listing.signature-sc.com/agent.jpg" alt="Agent" onerror="this.style.display='none'" />
-                  <div class="p2-contact-info">
-                    <div class="p2-contact-name">Sabrina Crémona</div>
-                    <div class="p2-contact-role" id="r-agent-role">Founder & CEO · Real Estate Advisor</div>
+            <!-- Carte de visite -->
+            <div class="p2-contact-col">
+              <div class="sec-title" id="r-contact-lbl">CONTACT</div>
+              <div class="p2-card">
+                <div class="p2-card-left">
+                  <div>
+                    <div class="p2-card-name">Sabrina Crémona</div>
+                    <div class="p2-card-role" id="r-role">Founder & CEO · Real Estate Advisor</div>
                   </div>
-                  <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="p2-contact-logo" onerror="this.style.display='none'" />
+                  <div class="p2-card-contacts">
+                    <a href="https://wa.me/529842696189" class="p2-card-line">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+                      +52 984 309 8369
+                    </a>
+                    <a href="mailto:Sales@signature-sc.com" class="p2-card-line">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      Sales@signature-sc.com
+                    </a>
+                    <a href="https://www.signature-sc.com" class="p2-card-line">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                      www.signature-sc.com
+                    </a>
+                  </div>
                 </div>
-                <div class="p2-contact-lines">
-                  <a href="https://wa.me/529842696189" class="p2-contact-line" style="text-decoration:none">
-                    <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
-                    +52 984 309 8369
-                  </a>
-                  <a href="mailto:Sales@signature-sc.com" class="p2-contact-line" style="text-decoration:none">
-                    <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Sales@signature-sc.com
-                  </a>
-                  <a href="https://www.signature-sc.com" class="p2-contact-line" style="text-decoration:none">
-                    <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    www.signature-sc.com
-                  </a>
-                </div>
+                <img class="p2-card-photo" src="https://listing.signature-sc.com/agent.jpg" alt="Sabrina Crémona" onerror="this.style.display='none'" />
               </div>
             </div>
           </div>
 
-          <div class="p2-footer">
-            <div class="p2-footer-txt">Signature ˢᶜ Real Estate · Puerto Aventuras, Riviera Maya, México</div>
-            <div class="p2-footer-teal"></div>
+          <div class="p2-foot">
+            <div class="p2-foot-txt">Signature ˢᶜ Real Estate · Puerto Aventuras, Riviera Maya, México</div>
+            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="p2-foot-logo" onerror="this.style.display='none'" />
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+
+      </div><!-- /pdf-content -->
+    </div><!-- /epreview -->
+  </div><!-- /editor-body -->
 </div>
 
 <script>
-let listingData = {};
-let allPhotos = [];
-let coverPhotoUrl = '';
-let galleryPhotos = [];
-let currentLang = 'fr';
-
+const { jsPDF } = window.jspdf;
+let allPhotos = [], coverUrl = '', galleryPhotos = [], currentLang = 'fr';
 const el = id => document.getElementById(id);
 
-// ── Labels par langue ──────────────────────────────────────────────
 const L = {
-  fr: { beds:'Chambres', baths:'Salles de bain', construction:'Construction', lot:'Terrain',
-        desc:'DESCRIPTION', hl:'POINTS FORTS', notes:'NOTES', gallery:'Galerie photos',
-        role:'Fondatrice & CEO · Conseillère Immobilière', link:'Voir le listing en ligne' },
-  en: { beds:'Bedrooms', baths:'Bathrooms', construction:'Living area', lot:'Lot size',
-        desc:'DESCRIPTION', hl:'HIGHLIGHTS', notes:'NOTES', gallery:'Photo gallery',
-        role:'Founder & CEO · Real Estate Advisor', link:'View listing online' },
-  es: { beds:'Recámaras', baths:'Baños', construction:'Construcción', lot:'Terreno',
-        desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', notes:'NOTAS', gallery:'Galería de fotos',
-        role:'Fundadora & CEO · Asesora Inmobiliaria', link:'Ver el listing en línea' }
+  fr:{ beds:'Chambres', baths:'Salles de bain', constr:'Construction', lot:'Terrain', year:'Année',
+       desc:'DESCRIPTION', hl:'POINTS FORTS', notes:'NOTES', gallery:'Galerie photos', contact:'CONTACT',
+       role:'Fondatrice & CEO · Conseillère Immobilière' },
+  en:{ beds:'Bedrooms', baths:'Bathrooms', constr:'Living area', lot:'Lot size', year:'Year built',
+       desc:'DESCRIPTION', hl:'HIGHLIGHTS', notes:'NOTES', gallery:'Photo gallery', contact:'CONTACT',
+       role:'Founder & CEO · Real Estate Advisor' },
+  es:{ beds:'Recámaras', baths:'Baños', constr:'Construcción', lot:'Terreno', year:'Año',
+       desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', notes:'NOTAS', gallery:'Galería de fotos', contact:'CONTACTO',
+       role:'Fundadora & CEO · Asesora Inmobiliaria' }
 };
 
-// ── Load listing ──────────────────────────────────────────────────
+// ── Load ──────────────────────────────────────────────────────────
 async function loadListing() {
   const url = el('s-url').value.trim();
   const lang = el('s-lang').value;
   currentLang = lang;
-
-  if (!url || !url.startsWith('http')) { showSetupStatus('error', 'Lien invalide.'); return; }
-
+  if (!url || !url.startsWith('http')) { showMsg('error','Lien invalide.'); return; }
   el('btn-load').disabled = true;
-  showSetupStatus('loading', 'Lecture du listing…');
-
+  showMsg('loading','Lecture du listing…');
   try {
-    const sys = `Tu lis le contenu HTML d'un listing immobilier Signature SC et tu extrais les données.
-Réponds UNIQUEMENT avec un objet JSON valide, sans backticks.
-Pour la description, génère un résumé élégant en ${lang === 'fr' ? 'français' : lang === 'en' ? 'anglais' : 'espagnol'} de 4 à 6 lignes maximum, adapté à une brochure imprimée, sans tirets comme ponctuation.
-JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","description":"résumé court","highlights":["..."],"images":["url1","url2"],"publicUrl":"${url}"}`;
-
-    const res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        system: sys,
-        messages: [{ role: 'user', content: 'URL du listing: ' + url }]
-      })
-    });
-
-    if (!res.ok) throw new Error('Erreur API ' + res.status);
+    const sys = `Tu lis le contenu HTML d'un listing immobilier et tu extrais les données.
+Réponds UNIQUEMENT avec un JSON valide sans backticks.
+Pour "description" : résumé élégant en ${lang==='fr'?'français':lang==='en'?'anglais':'espagnol'}, 5 lignes max, sans tirets.
+JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","description":"","highlights":[""],"images":[""],"publicUrl":"${url}"}`;
+    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:sys,
+        messages:[{role:'user',content:'URL: '+url}]})});
+    if(!res.ok) throw new Error('API '+res.status);
     const api = await res.json();
-    showSetupStatus('loading', 'Construction de la brochure…');
-
-    let raw = ''; for (const b of api.content || []) if (b.type === 'text') raw += b.text;
-    const m = raw.match(/\{[\s\S]*\}/); if (!m) throw new Error('Données introuvables.');
-    const d = JSON.parse(m[0]);
-    d.publicUrl = d.publicUrl || url;
-
-    listingData = d;
-    allPhotos = (d.images || []).filter(u => u && u.startsWith('http'));
-    coverPhotoUrl = allPhotos[0] || '';
-    galleryPhotos = allPhotos.slice(1, 9);
-
+    showMsg('loading','Construction…');
+    let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
+    const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Données introuvables.');
+    const d=JSON.parse(m[0]);
+    d.publicUrl=d.publicUrl||url;
+    allPhotos=(d.images||[]).filter(u=>u&&u.startsWith('http'));
+    coverUrl=allPhotos[0]||'';
+    galleryPhotos=[...allPhotos.slice(1,9)];
     fillPanel(d);
-    buildPhotoGrids();
+    buildGrids();
     applyAndRender();
-
-    el('screen-setup').style.display = 'none';
-    const se = el('screen-editor');
-    se.style.display = 'flex'; se.style.flexDirection = 'column';
-    el('editor-title').textContent = d.title || 'Brochure';
-
-    // Agent photo fixe — déjà définie dans le HTML
-
-  } catch (err) {
-    showSetupStatus('error', err.message);
-  }
-  el('btn-load').disabled = false;
+    el('screen-setup').style.display='none';
+    const se=el('screen-editor'); se.style.display='flex'; se.style.flexDirection='column';
+    el('ed-title').textContent=d.title||'Brochure';
+  } catch(err){ showMsg('error',err.message); }
+  el('btn-load').disabled=false;
 }
 
-// ── Fill panel fields ─────────────────────────────────────────────
 function fillPanel(d) {
-  const labels = L[currentLang] || L.fr;
-  el('p-title').value = d.title || '';
-  el('p-subtitle').value = d.subtitle || '';
-  el('p-price').value = d.price || '';
-  el('p-currency').value = d.currency || 'USD';
-  el('p-location').value = d.location || '';
-  el('p-url').value = d.publicUrl || '';
-  el('p-desc').value = d.description || '';
-  el('p-hl').value = (d.highlights || []).join('\n');
-  el('p-beds').value = d.beds || '';
-  el('p-baths').value = d.baths || '';
-  el('p-garage').value = d.garage || '';
-  el('p-year').value = d.year || '';
-  el('p-construction').value = d.construction || '';
-  el('p-lot').value = d.lot || '';
-
-  // Labels
-  el('lbl-beds').textContent = labels.beds;
-  el('lbl-baths').textContent = labels.baths;
-  el('lbl-construction').textContent = labels.construction;
-  el('lbl-lot').textContent = labels.lot;
+  const lb=L[currentLang]||L.fr;
+  el('p-title').value=d.title||''; el('p-subtitle').value=d.subtitle||'';
+  el('p-price').value=d.price||''; el('p-currency').value=d.currency||'USD';
+  el('p-location').value=d.location||''; el('p-url').value=d.publicUrl||'';
+  el('p-desc').value=d.description||'';
+  el('p-hl').value=(d.highlights||[]).join('\n');
+  el('p-beds').value=d.beds||''; el('p-baths').value=d.baths||'';
+  el('p-garage').value=d.garage||''; el('p-year').value=d.year||'';
+  el('p-construction').value=d.construction||''; el('p-lot').value=d.lot||'';
+  el('lbl-beds').textContent=lb.beds; el('lbl-baths').textContent=lb.baths;
+  el('lbl-constr').textContent=lb.constr; el('lbl-lot').textContent=lb.lot;
 }
 
-// ── Build photo grids ─────────────────────────────────────────────
-function buildPhotoGrids() {
-  // Cover grid
-  const cg = el('cover-grid'); cg.innerHTML = '';
-  allPhotos.forEach((url, idx) => {
-    const div = document.createElement('div');
-    div.className = 'photo-thumb' + (url === coverPhotoUrl ? ' cover-selected' : '');
-    div.innerHTML = `<img src="${url}" loading="lazy" /><div class="badge">✓</div>`;
-    div.addEventListener('click', () => {
-      coverPhotoUrl = url;
-      document.querySelectorAll('#cover-grid .photo-thumb').forEach(t => t.classList.remove('cover-selected'));
-      div.classList.add('cover-selected');
-    });
-    cg.appendChild(div);
+// ── Photo grids ───────────────────────────────────────────────────
+function buildGrids() {
+  // Cover
+  const cg=el('cover-grid'); cg.innerHTML='';
+  allPhotos.forEach(url=>{
+    const d=document.createElement('div');
+    d.className='pthumb'+(url===coverUrl?' csel':'');
+    d.innerHTML=`<img src="${url}" loading="lazy"/><div class="ck">✓</div>`;
+    d.onclick=()=>{
+      coverUrl=url;
+      document.querySelectorAll('#cover-grid .pthumb').forEach(t=>t.classList.remove('csel'));
+      d.classList.add('csel');
+    };
+    cg.appendChild(d);
   });
-
-  // Gallery grid
-  const gg = el('gallery-grid'); gg.innerHTML = '';
-  allPhotos.forEach((url, idx) => {
-    const div = document.createElement('div');
-    const isSelected = galleryPhotos.includes(url);
-    div.className = 'photo-thumb' + (isSelected ? ' selected' : '');
-    div.innerHTML = `<img src="${url}" loading="lazy" /><div class="badge">✓</div>`;
-    div.addEventListener('click', () => {
-      if (div.classList.contains('selected')) {
-        div.classList.remove('selected');
-        galleryPhotos = galleryPhotos.filter(u => u !== url);
+  // Gallery
+  const gg=el('gallery-grid'); gg.innerHTML='';
+  allPhotos.forEach(url=>{
+    const d=document.createElement('div');
+    const sel=galleryPhotos.includes(url);
+    d.className='pthumb'+(sel?' sel':'');
+    d.innerHTML=`<img src="${url}" loading="lazy"/><div class="ck">✓</div>`;
+    d.onclick=()=>{
+      if(d.classList.contains('sel')){
+        d.classList.remove('sel'); galleryPhotos=galleryPhotos.filter(u=>u!==url);
       } else {
-        if (galleryPhotos.length >= 8) return;
-        div.classList.add('selected');
-        galleryPhotos.push(url);
+        if(galleryPhotos.length>=8) return;
+        d.classList.add('sel'); galleryPhotos.push(url);
       }
-      el('gallery-count').textContent = galleryPhotos.length + ' / 8 photos sélectionnées';
-    });
-    gg.appendChild(div);
+      el('gcnt').textContent=galleryPhotos.length+' / 8 photos';
+    };
+    gg.appendChild(d);
   });
-  el('gallery-count').textContent = galleryPhotos.length + ' / 8 photos sélectionnées';
+  el('gcnt').textContent=galleryPhotos.length+' / 8 photos';
 }
 
-// ── Apply and render ──────────────────────────────────────────────
+// ── Render ────────────────────────────────────────────────────────
 function applyAndRender() {
-  const labels = L[currentLang] || L.fr;
-
-  const title = el('p-title').value;
-  const subtitle = el('p-subtitle').value;
-  const price = el('p-price').value;
-  const currency = el('p-currency').value;
-  const location = el('p-location').value;
-  const url = el('p-url').value;
-  const desc = el('p-desc').value;
-  const highlights = el('p-hl').value.trim().split('\n').map(s => s.trim()).filter(Boolean);
+  const lb=L[currentLang]||L.fr;
+  const title=el('p-title').value, sub=el('p-subtitle').value;
+  const price=el('p-price').value, cur=el('p-currency').value;
+  const loc=el('p-location').value, url=el('p-url').value;
+  const desc=el('p-desc').value;
+  const hl=el('p-hl').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
 
   // Page 1
-  el('r-title').textContent = title;
-  el('r-subtitle').textContent = subtitle;
-  el('r-location').textContent = location;
-  el('r-location2').textContent = location;
-  el('r-price').textContent = price;
-  el('r-currency').textContent = ' ' + currency;
-  el('r-desc').textContent = desc;
-  el('r-desc-label').childNodes[0].textContent = labels.desc + ' ';
-  el('r-hl-label').childNodes[0].textContent = labels.hl + ' ';
+  el('r-title').textContent=title; el('r-sub').textContent=sub;
+  el('r-loc').textContent=loc; el('r-loc2').textContent=loc;
+  el('r-price').textContent=price; el('r-cur').textContent=' '+cur;
+  el('r-desc').textContent=desc;
+  el('r-desc-lbl').childNodes[0].textContent=lb.desc+' ';
+  el('r-hl-lbl').childNodes[0].textContent=lb.hl+' ';
 
-  // Cover photo
-  if (coverPhotoUrl) {
-    el('r-cover-img').src = coverPhotoUrl;
-    el('r-cover-img').style.display = 'block';
-    el('r-cover-placeholder').style.display = 'none';
+  if(coverUrl){
+    el('r-cover').src=coverUrl; el('r-cover').style.display='block';
+    el('r-cover-ph').style.display='none';
   } else {
-    el('r-cover-img').style.display = 'none';
-    el('r-cover-placeholder').style.display = 'flex';
+    el('r-cover').style.display='none'; el('r-cover-ph').style.display='flex';
   }
+  el('r-link').href=url; el('r-link').textContent=url;
 
-  // Link
-  el('r-link').href = url;
-  el('r-link').textContent = url;
-
-  // Details grid
-  const details = [
-    { label: labels.beds, value: el('p-beds').value },
-    { label: labels.baths, value: el('p-baths').value },
-    { label: 'Garage', value: el('p-garage').value },
-    { label: currentLang === 'en' ? 'Year built' : currentLang === 'es' ? 'Año' : 'Année', value: el('p-year').value },
-    { label: labels.construction, value: el('p-construction').value },
-    { label: labels.lot, value: el('p-lot').value }
-  ];
-  const dg = el('r-details-grid'); dg.innerHTML = '';
-  details.forEach(d => {
-    if (!d.value) return;
-    const cell = document.createElement('div');
-    cell.className = 'p1-detail-cell';
-    cell.innerHTML = `<div class="p1-detail-label">${d.label}</div><div class="p1-detail-value">${d.value}</div>`;
-    dg.appendChild(cell);
+  // Details
+  const dg=el('r-det'); dg.innerHTML='';
+  [{l:lb.beds,v:el('p-beds').value},{l:lb.baths,v:el('p-baths').value},
+   {l:'Garage',v:el('p-garage').value},{l:lb.year,v:el('p-year').value},
+   {l:lb.constr,v:el('p-construction').value},{l:lb.lot,v:el('p-lot').value}
+  ].forEach(({l,v})=>{
+    if(!v) return;
+    const c=document.createElement('div'); c.className='p1-det-cell';
+    c.innerHTML=`<div class="p1-det-lbl">${l}</div><div class="p1-det-val">${v}</div>`;
+    dg.appendChild(c);
   });
 
   // Highlights
-  const hg = el('r-hl-grid'); hg.innerHTML = '';
-  highlights.forEach(h => {
-    const item = document.createElement('div');
-    item.className = 'p1-hl-item';
-    item.innerHTML = `<div class="p1-hl-dot"></div><span>${h}</span>`;
-    hg.appendChild(item);
+  const hg=el('r-hl'); hg.innerHTML='';
+  hl.forEach(h=>{
+    const i=document.createElement('div'); i.className='p1-hl-item';
+    i.innerHTML=`<div class="p1-hl-dot"></div><span>${h}</span>`;
+    hg.appendChild(i);
   });
 
   // Page 2
-  el('r-title2').textContent = title;
-  el('r-header-sub').textContent = labels.gallery;
-  el('r-notes-label').childNodes[0].textContent = labels.notes + ' ';
-  if (el('r-contact-label')) el('r-contact-label').childNodes[0].textContent = (currentLang === 'en' ? 'CONTACT' : 'CONTACT') + ' ';
-  el('r-agent-role').textContent = labels.role;
+  el('r-title2').textContent=title;
+  el('r-gallery-lbl').textContent=lb.gallery;
+  el('r-notes-lbl').childNodes[0].textContent=lb.notes+' ';
+  el('r-contact-lbl').childNodes[0].textContent=lb.contact+' ';
+  el('r-role').textContent=lb.role;
 
-  // Gallery
-  const pg = el('r-photo-grid'); pg.innerHTML = '';
-  for (let i = 0; i < 8; i++) {
-    const item = document.createElement('div');
-    item.className = 'p2-photo-item';
-    if (galleryPhotos[i]) {
-      item.innerHTML = `<img src="${galleryPhotos[i]}" alt="Photo ${i+1}" />`;
-    } else {
-      item.innerHTML = `<div class="p2-photo-placeholder"></div>`;
-    }
+  const pg=el('r-pgrid'); pg.innerHTML='';
+  for(let i=0;i<8;i++){
+    const item=document.createElement('div'); item.className='p2-pitem';
+    if(galleryPhotos[i]) item.innerHTML=`<img src="${galleryPhotos[i]}" alt="" />`;
+    else item.innerHTML=`<div class="p2-pph"></div>`;
     pg.appendChild(item);
   }
 }
 
-// ── Download PDF ──────────────────────────────────────────────────
+// ── PDF : canvas page par page ────────────────────────────────────
 async function downloadPDF() {
   applyAndRender();
-  const title = (el('p-title').value || 'brochure').toLowerCase().replace(/[^a-z0-9]/g, '-');
-
-  // Générer page par page pour éviter la page blanche
-  const { jsPDF } = window.jspdf || {};
-  const page1 = el('page1');
-  const page2 = el('page2');
-
-  const opt = {
-    margin: 0,
-    image: { type: 'jpeg', quality: 0.95 },
-    html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, width: 794, windowWidth: 794 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
+  const btn=el('btn-pdf');
+  btn.disabled=true; btn.textContent='Génération…';
 
   try {
-    // Générer les deux pages séparément puis les fusionner
-    const worker = html2pdf()
-      .set(opt)
-      .from(el('pdf-content'))
-      .toPdf()
-      .get('pdf')
-      .then(pdf => {
-        pdf.deletePage(3); // Supprimer toute page blanche éventuelle
-        // Garder seulement 2 pages
-        while (pdf.getNumberOfPages() > 2) pdf.deletePage(pdf.getNumberOfPages());
-        pdf.save('signature-sc-' + title + '.pdf');
-      });
+    const pdf = new jsPDF({ unit:'px', format:[794,1123], hotfixes:['px_scaling'] });
+    const opts = { scale:1, useCORS:true, allowTaint:true, logging:false, width:794, windowWidth:794 };
+
+    // Page 1
+    const canvas1 = await html2canvas(el('page1'), opts);
+    pdf.addImage(canvas1.toDataURL('image/jpeg',0.95), 'JPEG', 0, 0, 794, 1123);
+
+    // Page 2
+    pdf.addPage([794,1123],'p');
+    const canvas2 = await html2canvas(el('page2'), {...opts, width:794, windowWidth:794});
+    const h2 = Math.round((canvas2.height / canvas2.width) * 794);
+    pdf.addImage(canvas2.toDataURL('image/jpeg',0.95), 'JPEG', 0, 0, 794, h2);
+
+    const title=(el('p-title').value||'brochure').toLowerCase().replace(/[^a-z0-9]/g,'-');
+    pdf.save('signature-sc-'+title+'.pdf');
   } catch(e) {
-    // Fallback simple
-    html2pdf().set(opt).from(el('pdf-content')).save('signature-sc-' + title + '.pdf');
+    alert('Erreur PDF : '+e.message);
   }
+  btn.disabled=false;
+  btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Télécharger le PDF';
 }
 
-// ── Helpers ───────────────────────────────────────────────────────
-function backToSetup() {
-  el('screen-editor').style.display = 'none';
-  el('screen-setup').style.display = 'flex';
+function goBack(){
+  el('screen-editor').style.display='none';
+  el('screen-setup').style.display='flex';
 }
-
-function showSetupStatus(type, text) {
-  const s = el('setup-status');
-  s.className = 'status-msg ' + type;
-  el('setup-status-text').textContent = text;
-  s.style.display = 'flex';
-  s.querySelector('.spinner').style.display = type === 'loading' ? 'block' : 'none';
+function showMsg(type,txt){
+  const s=el('smsg'); s.className='smsg '+type;
+  el('smsg-txt').textContent=txt;
+  s.style.display='flex';
+  el('spin').style.display=type==='loading'?'block':'none';
 }
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && el('screen-setup').style.display !== 'none') loadListing();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&el('screen-setup').style.display!=='none') loadListing();
 });
 </script>
 </body>
