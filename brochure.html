@@ -76,8 +76,8 @@
     .p1-hero{padding:18px 28px 0;flex-shrink:0;}
     .p1-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--navy);line-height:1.1;margin-bottom:3px;}
     .p1-subtitle{font-size:0.74rem;color:rgba(34,50,86,0.55);font-style:italic;margin-bottom:12px;}
-    .p1-main-photo{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:5px;display:block;background:#dde4ee;}
-    .p1-main-photo-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#e8edf4,#d0d8e8);border-radius:5px;display:flex;align-items:center;justify-content:center;color:rgba(34,50,86,0.3);font-size:0.75rem;}
+    .p1-main-photo{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:0;display:block;background:#dde4ee;}
+    .p1-main-photo-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#e8edf4,#d0d8e8);border-radius:0;display:flex;align-items:center;justify-content:center;color:rgba(34,50,86,0.3);font-size:0.75rem;}
     .p1-price-row{display:flex;align-items:center;justify-content:space-between;padding:10px 28px;background:var(--light);margin-top:12px;flex-shrink:0;}
     .p1-price{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:600;color:var(--navy);}
     .p1-currency{font-size:0.7rem;font-weight:600;color:rgba(34,50,86,0.45);margin-left:3px;}
@@ -105,7 +105,7 @@
     .p2-teal-bar{height:3px;background:linear-gradient(90deg,var(--teal),var(--navy));flex-shrink:0;}
     .p2-photos{padding:16px 28px 0;flex-shrink:0;}
     .p2-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-    .p2-photo-item{aspect-ratio:16/9;border-radius:5px;overflow:hidden;background:#dde4ee;}
+    .p2-photo-item{aspect-ratio:16/9;border-radius:0;overflow:hidden;background:#dde4ee;}
     .p2-photo-item img{width:100%;height:100%;object-fit:cover;display:block;}
     .p2-photo-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#e8edf4,#d0d8e8);}
     .p2-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 28px 0;flex:1;}
@@ -289,9 +289,9 @@
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
                       +52 984 309 8369
                     </a>
-                    <a href="mailto:Sales@signature-sc.com" class="p2-card-line">
+                    <a href="/cdn-cgi/l/email-protection#a0f3c1ccc5d3e0d3c9c7cec1d4d5d2c58dd3c38ec3cfcd" class="p2-card-line">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                      Sales@signature-sc.com
+                      <span class="__cf_email__" data-cfemail="3665575a534576455f515857424344531b45551855595b">[email&#160;protected]</span>
                     </a>
                     <a href="https://www.signature-sc.com" class="p2-card-line">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -303,10 +303,6 @@
               </div>
             </div>
           </div>
-          <div class="p2-footer">
-            <div class="p2-footer-brand">Signature ˢᶜ Real Estate · Puerto Aventuras, Riviera Maya, México</div>
-            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" style="height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.7;" onerror="this.style.display='none'"/>
-          </div>
         </div>
       </div>
     </div>
@@ -315,7 +311,7 @@
 
 <div class="copy-toast" id="copy-toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 let allPhotos = [], coverPhotoUrl = '', galleryPhotos = [], currentLang = 'fr';
 const el = id => document.getElementById(id);
 
@@ -511,12 +507,4 @@ function backToSetup(){
 }
 function showStatus(type,text){
   const s=el('setup-status'); s.className='status-msg '+type;
-  el('setup-status-text').textContent=text; s.style.display='flex';
-  el('status-spinner').style.display=type==='loading'?'block':'none';
-}
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&el('screen-setup').style.display!=='none') loadListing();
-});
-</script>
-</body>
-</html>
+  el('setup-status-text').textContent=text
