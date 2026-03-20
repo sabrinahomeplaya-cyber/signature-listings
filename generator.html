@@ -1,1014 +1,150 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Signature ˢᶜ — Générateur de Listings</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root { --navy: #223256; --teal: #61BDCC; --cream: #faf9f6; }
-    * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
+export const config = {
+  maxDuration: 60
+};
 
-    /* ── Generator screen ── */
-    #screen-generator { min-height: 100vh; display: flex; flex-direction: column; }
-    .gen-header { background: var(--navy); padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; }
-    .gen-logo { display: flex; align-items: flex-start; gap: 4px; }
-    .gen-logo-script { font-family: 'Allura', cursive; font-size: 2.2rem; color: white; line-height: 1; }
-    .gen-logo-sc { font-size: 0.6rem; font-weight: 700; color: rgba(255,255,255,0.85); text-transform: uppercase; margin-top: 4px; }
-    .gen-badge { font-size: 0.7rem; font-weight: 500; color: var(--teal); border: 1px solid var(--teal); border-radius: 100px; padding: 4px 12px; letter-spacing: 0.1em; text-transform: uppercase; }
-    .gen-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
-    .gen-card { background: white; border-radius: 24px; box-shadow: 0 4px 40px rgba(34,50,86,0.08); padding: 56px; max-width: 640px; width: 100%; }
-    @media (max-width: 640px) { .gen-card { padding: 36px 24px; } .gen-header { padding: 20px 24px; } }
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    .mode-toggle { display: flex; background: rgba(34,50,86,0.06); border-radius: 12px; padding: 4px; margin-bottom: 32px; }
-    .mode-btn { flex: 1; font-size: 0.8rem; font-weight: 600; padding: 10px 12px; border-radius: 9px; border: none; cursor: pointer; background: transparent; color: rgba(34,50,86,0.5); transition: all 0.15s; text-align: center; line-height: 1.3; }
-    .mode-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 4px rgba(34,50,86,0.12); }
-    .mode-btn span { display: block; font-size: 0.68rem; font-weight: 400; opacity: 0.7; margin-top: 2px; }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    .input-label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
-    .url-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.12); border-radius: 12px; padding: 14px 18px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; }
-    .url-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.12); }
-    .url-input::placeholder { color: rgba(34,50,86,0.35); }
-    .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
-    @media (max-width: 480px) { .opt-grid { grid-template-columns: 1fr; } }
-    .small-input { width: 100%; border: 1.5px solid rgba(34,50,86,0.12); border-radius: 10px; padding: 11px 14px; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; }
-    .small-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.12); }
-    .small-input::placeholder { color: rgba(34,50,86,0.35); }
-    .info-box { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); border-radius: 10px; padding: 12px 16px; font-size: 0.8rem; color: rgba(34,50,86,0.7); line-height: 1.5; margin-bottom: 24px; }
-    .divider { border: none; border-top: 1px solid rgba(34,50,86,0.07); margin: 28px 0; }
-    .step-list { display: flex; flex-direction: column; gap: 12px; }
-    .step-item { display: flex; align-items: flex-start; gap: 12px; font-size: 0.83rem; color: rgba(34,50,86,0.6); line-height: 1.5; }
-    .step-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: rgba(97,189,204,0.15); color: var(--teal); font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-    .btn-generate { width: 100%; background: var(--navy); color: white; border: none; border-radius: 12px; padding: 16px 24px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s, transform 0.15s; margin-top: 32px; }
-    .btn-generate:hover:not(:disabled) { background: #1a2845; transform: translateY(-1px); }
-    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .status-bar { margin-top: 20px; border-radius: 10px; padding: 14px 18px; font-size: 0.83rem; display: none; align-items: center; gap: 10px; }
-    .status-bar.loading { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); color: var(--navy); display: flex; }
-    .status-bar.error { background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2); color: #c0392b; display: flex; }
-    .spinner { width: 16px; height: 16px; border: 2px solid rgba(97,189,204,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
 
-    /* ── Result screen ── */
-    #screen-result { display: none; min-height: 100vh; flex-direction: column; }
-    .result-topbar { background: white; border-bottom: 1px solid rgba(34,50,86,0.07); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
-    .topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .btn-back { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 500; color: rgba(34,50,86,0.6); cursor: pointer; background: none; border: none; padding: 8px 10px; border-radius: 8px; transition: background 0.15s; white-space: nowrap; }
-    .btn-back:hover { background: rgba(34,50,86,0.06); color: var(--navy); }
-    .topbar-name { font-size: 0.8rem; font-weight: 600; color: rgba(34,50,86,0.45); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
-    .topbar-path { font-size: 0.7rem; color: rgba(34,50,86,0.3); font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-    .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-    .btn-sm { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 600; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
-    .btn-teal { background: var(--teal); color: white; } .btn-teal:hover { background: #4daab9; }
-    .btn-navy-light { background: rgba(34,50,86,0.08); color: var(--navy); } .btn-navy-light:hover { background: rgba(34,50,86,0.14); }
-    .btn-outline { background: white; color: var(--navy); border: 1.5px solid rgba(34,50,86,0.18); } .btn-outline:hover { border-color: var(--navy); }
-    .btn-green { background: #2d6a4f; color: white; } .btn-green:hover:not(:disabled) { background: #245a42; } .btn-green:disabled { opacity: 0.6; cursor: not-allowed; }
+  try {
+    const body = req.body;
+    const userMessage = body.messages?.[0]?.content || '';
+    const urlMatch = userMessage.match(/https?:\/\/[^\s]+/);
+    const listingUrl = urlMatch ? urlMatch[0] : null;
 
-    .result-tabs { display: flex; background: rgba(34,50,86,0.05); border-radius: 10px; padding: 3px; }
-    .tab-btn { font-size: 0.78rem; font-weight: 600; padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer; background: transparent; color: rgba(34,50,86,0.5); transition: all 0.15s; white-space: nowrap; }
-    .tab-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 4px rgba(34,50,86,0.1); }
+    let pageContent = '';
 
-    /* Preview pane */
-    #preview-pane { flex: 1; border: none; width: 100%; min-height: calc(100vh - 60px); }
+    if (listingUrl) {
+      try {
+        const pageResponse = await fetch(listingUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
+          },
+          redirect: 'follow'
+        });
 
-    /* Edit pane */
-    #edit-pane { display: none; flex: 1; overflow-y: auto; background: var(--cream); padding: 32px; }
-    .edit-section { background: white; border-radius: 16px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(34,50,86,0.06); }
-    .edit-section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal); margin-bottom: 20px; }
-    .edit-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .edit-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-    @media (max-width: 600px) { .edit-grid-2, .edit-grid-3 { grid-template-columns: 1fr; } }
-    .field-group { display: flex; flex-direction: column; gap: 6px; }
-    .field-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(34,50,86,0.6); }
-    .field-input { border: 1.5px solid rgba(34,50,86,0.12); border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.2s; width: 100%; }
-    .field-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.1); }
-    .field-textarea { border: 1.5px solid rgba(34,50,86,0.12); border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: var(--navy); background: var(--cream); outline: none; resize: vertical; width: 100%; line-height: 1.6; transition: border-color 0.2s; }
-    .field-textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(97,189,204,0.1); }
+        if (pageResponse.ok) {
+          const html = await pageResponse.text();
+          const imageUrls = new Set();
 
-    /* Photos section */
-    .photos-toggle { display: flex; background: rgba(34,50,86,0.06); border-radius: 10px; padding: 3px; margin-bottom: 20px; }
-    .photos-mode-btn { flex: 1; font-size: 0.78rem; font-weight: 600; padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; background: transparent; color: rgba(34,50,86,0.5); transition: all 0.15s; text-align: center; }
-    .photos-mode-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 3px rgba(34,50,86,0.1); }
+          // ── 1. Liens <a href="..."> directs vers images (Howes Realty pattern) ──
+          const aHrefRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>/gi;
+          let m;
+          while ((m = aHrefRegex.exec(html)) !== null) {
+            if (isValidPhoto(m[1])) imageUrls.add(m[1]);
+          }
 
-    /* Source photos grid */
-    #sourcePhotosGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; }
-    .source-photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
-    .source-photo-item.selected { border-color: var(--teal); }
-    .source-photo-item img { width: 100%; height: 100%; object-fit: cover; }
-    .source-photo-item .check { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--teal); display: none; align-items: center; justify-content: center; }
-    .source-photo-item.selected .check { display: flex; }
+          // ── 2. src="..." dans <img> ──
+          const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
+          while ((m = imgRegex.exec(html)) !== null) {
+            const src = m[1];
+            // ShortPixel : extraire la vraie URL depuis sp-ao.shortpixel.ai/client/.../https://...
+            const spMatch = src.match(/https?:\/\/[^/]+shortpixel[^/]*\/[^/]+\/(https?:\/\/.+)/i);
+            if (spMatch) {
+              const realUrl = decodeURIComponent(spMatch[1]);
+              if (isValidPhoto(realUrl)) imageUrls.add(realUrl);
+            } else if (isValidPhoto(src)) {
+              imageUrls.add(src);
+            }
+          }
 
-    /* Own photos */
-    #ownPhotosArea { border: 2px dashed rgba(34,50,86,0.15); border-radius: 10px; padding: 20px; text-align: center; font-size: 0.83rem; color: rgba(34,50,86,0.5); cursor: pointer; transition: border-color 0.2s; margin-bottom: 12px; }
-    #ownPhotosArea:hover { border-color: var(--teal); }
-    #ownPhotosList { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
-    .own-photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; cursor: grab; border: 2px solid rgba(34,50,86,0.08); }
-    .own-photo-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-    .own-photo-item .remove-btn { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
-    .own-photo-item.drag-over { border-color: var(--teal); opacity: 0.7; }
+          // ── 3. data-src="..." (lazy loading) ──
+          const dataSrcRegex = /data-src=["']([^"']+)["']/gi;
+          while ((m = dataSrcRegex.exec(html)) !== null) {
+            const spMatch = m[1].match(/https?:\/\/[^/]+shortpixel[^/]*\/[^/]+\/(https?:\/\/.+)/i);
+            if (spMatch) {
+              const realUrl = decodeURIComponent(spMatch[1]);
+              if (isValidPhoto(realUrl)) imageUrls.add(realUrl);
+            } else if (isValidPhoto(m[1])) {
+              imageUrls.add(m[1]);
+            }
+          }
 
-    /* Path builder */
-    .path-builder { background: rgba(34,50,86,0.03); border: 1px solid rgba(34,50,86,0.08); border-radius: 8px; padding: 14px; }
-    .path-preview { font-size: 0.75rem; font-family: monospace; color: var(--navy); background: rgba(34,50,86,0.04); padding: 6px 10px; border-radius: 6px; margin-top: 8px; word-break: break-all; }
+          // ── 4. srcset ──
+          const srcsetRegex = /srcset=["']([^"']+)["']/gi;
+          while ((m = srcsetRegex.exec(html)) !== null) {
+            for (const part of m[1].split(',')) {
+              const url = part.trim().split(/\s+/)[0];
+              if (isValidPhoto(url)) imageUrls.add(url);
+            }
+          }
 
-    .btn-apply { background: var(--navy); color: white; border: none; border-radius: 10px; padding: 12px 24px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.15s; margin-top: 8px; }
-    .btn-apply:hover { background: #1a2845; }
+          // ── 5. og:image meta ──
+          const metaRegex = /<meta[^>]+content=["']([^"']+)["'][^>]*>/gi;
+          while ((m = metaRegex.exec(html)) !== null) {
+            if (isValidPhoto(m[1])) imageUrls.add(m[1]);
+          }
 
-    .copy-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: white; font-size: 0.82rem; font-weight: 500; padding: 10px 22px; border-radius: 100px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 9999; white-space: nowrap; }
-    .copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  </style>
-</head>
-<body>
+          const uniqueImages = [...imageUrls];
 
-<!-- ══════════════════════════════════════════════
-     SCREEN 1 — GENERATOR
-═══════════════════════════════════════════════ -->
-<div id="screen-generator">
-  <header class="gen-header">
-    <div class="gen-logo">
-      <span class="gen-logo-script">Signature</span>
-      <span class="gen-logo-sc">SC</span>
-    </div>
-    <span class="gen-badge">Générateur de listings</span>
-  </header>
-  <main class="gen-main">
-    <div class="gen-card">
-      <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:12px">Signature ˢᶜ Real Estate</div>
-      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:500;line-height:1.2;margin-bottom:8px">Créer un listing<br>en quelques secondes</h1>
-      <p style="font-size:0.88rem;color:rgba(34,50,86,0.55);line-height:1.6;margin-bottom:32px">Choisissez votre mode, collez un lien, et obtenez votre listing prêt à publier.</p>
+          // ── Nettoyer le HTML en texte ──
+          const textContent = html
+            .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .substring(0, 12000);
 
-      <div class="mode-toggle">
-        <button class="mode-btn active" id="modeCollabBtn" onclick="setMode('collab')">
-          🔗 Listing collaborateur
-          <span>Extraire depuis un site externe</span>
-        </button>
-        <button class="mode-btn" id="modeTranslateBtn" onclick="setMode('translate')">
-          🌐 Traduire mon listing
-          <span>FR → EN ou ES</span>
-        </button>
-      </div>
+          const imagesSection = uniqueImages.length > 0
+            ? `\n\n=== IMAGES (${uniqueImages.length} photos) ===\n` + uniqueImages.join('\n')
+            : '\n\n=== AUCUNE IMAGE TROUVÉE ===';
 
-      <!-- Panel collaborateur -->
-      <div id="panelCollab">
-        <div style="margin-bottom:24px">
-          <label class="input-label" for="listing-url">Lien du listing collaborateur</label>
-          <input id="listing-url" type="url" class="url-input" placeholder="https://howesrealty.com/es/property/..." autocomplete="off" spellcheck="false" />
-        </div>
-        <div class="opt-grid">
-          <div>
-            <label class="input-label" for="listing-slug" style="font-size:0.68rem">Slug du bien</label>
-            <input id="listing-slug" type="text" class="small-input" placeholder="casa-xaman-ek" autocomplete="off" spellcheck="false" />
-            <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview">casa-xaman-ek</strong>/fr</div>
-          </div>
-          <div>
-            <label class="input-label" for="listing-lang" style="font-size:0.68rem">Langue</label>
-            <select id="listing-lang" class="small-input" style="cursor:pointer">
-              <option value="fr">Français</option>
-              <option value="en">English</option>
-              <option value="es">Español</option>
-            </select>
-          </div>
-        </div>
-        <hr class="divider" style="margin-top:0">
-        <div class="step-list">
-          <div class="step-item"><span class="step-num">1</span><span>Collez le lien public du listing collaborateur.</span></div>
-          <div class="step-item"><span class="step-num">2</span><span>Claude extrait les informations et photos automatiquement.</span></div>
-          <div class="step-item"><span class="step-num">3</span><span>Modifiez si nécessaire, puis cliquez <strong>Publier</strong>.</span></div>
-        </div>
-      </div>
+          pageContent = textContent + imagesSection;
+        }
+      } catch (fetchErr) {
+        console.error('Page fetch error:', fetchErr.message);
+      }
+    }
 
-      <!-- Panel traduction -->
-      <div id="panelTranslate" style="display:none">
-        <div class="info-box">
-          Collez le lien d'un de vos listings <strong>déjà publié en français</strong>. Claude traduit et convertit les surfaces automatiquement <strong>(m² → sq ft pour l'anglais)</strong>.
-        </div>
-        <div style="margin-bottom:24px">
-          <label class="input-label" for="translate-url">Lien de votre listing en français</label>
-          <input id="translate-url" type="url" class="url-input" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/fr/" autocomplete="off" spellcheck="false" />
-        </div>
-        <div class="opt-grid">
-          <div>
-            <label class="input-label" for="translate-slug" style="font-size:0.68rem">Slug du bien</label>
-            <input id="translate-slug" type="text" class="small-input" placeholder="quinta-luna-penthouse" autocomplete="off" spellcheck="false" />
-            <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview-t">listing</strong>/<span id="lang-preview-t">en</span></div>
-          </div>
-          <div>
-            <label class="input-label" for="translate-lang" style="font-size:0.68rem">Langue cible</label>
-            <select id="translate-lang" class="small-input" style="cursor:pointer">
-              <option value="en">English</option>
-              <option value="es">Español</option>
-            </select>
-          </div>
-        </div>
-        <hr class="divider" style="margin-top:0">
-        <div class="step-list">
-          <div class="step-item"><span class="step-num">1</span><span>Collez le lien de votre listing FR déjà publié.</span></div>
-          <div class="step-item"><span class="step-num">2</span><span>Choisissez la langue cible. Surfaces converties automatiquement.</span></div>
-          <div class="step-item"><span class="step-num">3</span><span>Modifiez si nécessaire, puis cliquez <strong>Publier</strong>.</span></div>
-        </div>
-      </div>
+    const enhancedMessages = [{
+      role: 'user',
+      content: pageContent
+        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON. Utilise les URLs de la section IMAGES pour le champ "images". Prends uniquement les photos du bien, pas les logos ou photos de profil.`
+        : (body.messages?.[0]?.content || '')
+    }];
 
-      <button class="btn-generate" id="btn-generate" onclick="generateListing()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span id="btn-label">Générer le listing</span>
-      </button>
-      <div id="status-bar" class="status-bar">
-        <div class="spinner" id="status-spinner"></div>
-        <span id="status-text"></span>
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN 2 — RESULT
-═══════════════════════════════════════════════ -->
-<div id="screen-result">
-  <div class="result-topbar">
-    <div class="topbar-left">
-      <button class="btn-back" onclick="backToGenerator()">← Nouveau</button>
-      <span class="topbar-name" id="result-name">Listing</span>
-      <span class="topbar-path" id="result-path"></span>
-    </div>
-    <div class="topbar-actions">
-      <div class="result-tabs">
-        <button class="tab-btn active" id="tab-preview" onclick="showTab('preview')">👁 Aperçu</button>
-        <button class="tab-btn" id="tab-edit" onclick="showTab('edit')">✏️ Modifier</button>
-      </div>
-      <button class="btn-sm btn-teal" onclick="copyCode()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copier
-      </button>
-      <button class="btn-sm btn-navy-light" onclick="downloadCode()">↓ Télécharger</button>
-      <button class="btn-sm btn-outline" onclick="openInNewTab()">↗ Onglet</button>
-      <button class="btn-sm btn-green" id="btn-publish" onclick="publishToGitHub()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        Publier
-      </button>
-    </div>
-  </div>
-
-  <!-- Preview -->
-  <div id="preview-pane-wrapper" style="flex:1;display:flex;flex-direction:column">
-    <iframe id="preview-pane" title="Aperçu"></iframe>
-  </div>
-
-  <!-- Edit -->
-  <div id="edit-pane">
-    <div style="max-width:860px;margin:0 auto">
-
-      <!-- Infos principales -->
-      <div class="edit-section">
-        <div class="edit-section-title">📋 Informations principales</div>
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div class="edit-grid-2">
-            <div class="field-group">
-              <label class="field-label">Titre</label>
-              <input id="e-title" class="field-input" type="text" />
-            </div>
-            <div class="field-group">
-              <label class="field-label">Sous-titre / Accroche</label>
-              <input id="e-subtitle" class="field-input" type="text" />
-            </div>
-          </div>
-          <div class="edit-grid-2">
-            <div class="field-group">
-              <label class="field-label">Localisation</label>
-              <input id="e-location" class="field-input" type="text" placeholder="Puerto Aventuras, Mexique" />
-            </div>
-            <div class="field-group">
-              <label class="field-label">Devise</label>
-              <select id="e-currency" class="field-input" style="cursor:pointer">
-                <option value="USD">USD</option>
-                <option value="MXN">MXN</option>
-                <option value="EUR">EUR</option>
-              </select>
-            </div>
-          </div>
-          <div class="edit-grid-2">
-            <div class="field-group">
-              <label class="field-label">Prix</label>
-              <input id="e-price" class="field-input" type="text" placeholder="$1,600,000" />
-            </div>
-            <div class="field-group">
-              <label class="field-label">Prix barré (optionnel)</label>
-              <input id="e-price-old" class="field-input" type="text" placeholder="$1,800,000" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Détails -->
-      <div class="edit-section">
-        <div class="edit-section-title">🏠 Détails du bien</div>
-        <div class="edit-grid-3">
-          <div class="field-group"><label class="field-label">Chambres</label><input id="e-beds" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">Salles de bain</label><input id="e-baths" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">Garage</label><input id="e-garage" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">Année</label><input id="e-year" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">Construction</label><input id="e-construction" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">Terrain / Terrasse</label><input id="e-lot" class="field-input" type="text" /></div>
-        </div>
-      </div>
-
-      <!-- Description -->
-      <div class="edit-section">
-        <div class="edit-section-title">📝 Description</div>
-        <div class="field-group">
-          <label class="field-label">Texte de description</label>
-          <textarea id="e-description" class="field-textarea" rows="10"></textarea>
-        </div>
-      </div>
-
-      <!-- Points forts -->
-      <div class="edit-section">
-        <div class="edit-section-title">⭐ Points forts</div>
-        <div class="field-group">
-          <label class="field-label">Un point fort par ligne</label>
-          <textarea id="e-highlights" class="field-textarea" rows="8" placeholder="Vue mer et intimité totale&#10;Plage privée, piscine et gym&#10;Suite principale avec double douche..."></textarea>
-        </div>
-      </div>
-
-      <!-- Carte -->
-      <div class="edit-section">
-        <div class="edit-section-title">📍 Localisation GPS</div>
-        <div class="edit-grid-2">
-          <div class="field-group"><label class="field-label">Latitude</label><input id="e-lat" class="field-input" type="text" placeholder="20.503725" /></div>
-          <div class="field-group"><label class="field-label">Longitude</label><input id="e-lng" class="field-input" type="text" placeholder="-87.217809" /></div>
-        </div>
-      </div>
-
-      <!-- Photos -->
-      <div class="edit-section">
-        <div class="edit-section-title">📷 Photos</div>
-        <div class="photos-toggle">
-          <button class="photos-mode-btn active" id="photoModeSource" onclick="setPhotosMode('source')">Photos du listing source</button>
-          <button class="photos-mode-btn" id="photoModeOwn" onclick="setPhotosMode('own')">Mes propres photos</button>
-        </div>
-
-        <!-- Photos source -->
-        <div id="panelPhotoSource">
-          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Cliquez sur les photos pour les sélectionner / désélectionner. Glissez-déposez pour réordonner.</div>
-          <div id="sourcePhotosGrid"></div>
-          <div style="font-size:0.72rem;color:rgba(34,50,86,0.4);margin-top:8px"><span id="sourcePhotoCount">0</span> photos sélectionnées</div>
-        </div>
-
-        <!-- Photos perso -->
-        <div id="panelPhotoOwn" style="display:none">
-          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Entrez le chemin GitHub de vos photos et la liste des noms de fichiers.</div>
-          <div class="path-builder">
-            <div class="field-group" style="margin-bottom:12px">
-              <label class="field-label">Chemin GitHub</label>
-              <input id="e-photo-path" class="field-input" type="text" placeholder="for-sale/quinta-luna-penthouse/photos/" />
-            </div>
-            <div class="field-group">
-              <label class="field-label">Noms des fichiers (un par ligne)</label>
-              <textarea id="e-photo-files" class="field-textarea" rows="5" placeholder="4.jpeg&#10;5.jpeg&#10;6.jpeg&#10;7.jpeg"></textarea>
-            </div>
-            <div class="path-preview" id="path-preview-box">Les URLs générées apparaîtront ici</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bouton appliquer -->
-      <div style="text-align:center;padding:8px 0 32px">
-        <button class="btn-apply" onclick="applyChanges()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Appliquer les modifications et mettre à jour l'aperçu
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="copy-toast" id="copy-toast">✓ Copié</div>
-
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════════ -->
-<script>
-// ── State ─────────────────────────────────────────────────────────
-let generatedCode = '';
-let currentSlug = '';
-let currentLang = 'fr';
-let currentMode = 'collab';
-let listingData = {};
-let photosMode = 'source';
-let ownPhotos = []; // { name, url (blob), base64, ext }
-let dragSrcIndex = null;
-
-const SQM_TO_SQFT = 10.7639;
-
-// ── Init ──────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  // Collab slug/lang preview
-  const slugInput = document.getElementById('listing-slug');
-  const langSelect = document.getElementById('listing-lang');
-  slugInput.addEventListener('input', () => {
-    document.getElementById('slug-preview').textContent = (slugInput.value.trim() || 'listing') + '/' + langSelect.value;
-  });
-  langSelect.addEventListener('change', () => {
-    document.getElementById('slug-preview').textContent = (slugInput.value.trim() || 'listing') + '/' + langSelect.value;
-  });
-
-  // Translate slug/lang preview + auto-fill
-  const tUrl = document.getElementById('translate-url');
-  const tSlug = document.getElementById('translate-slug');
-  const tLang = document.getElementById('translate-lang');
-  const updateTP = () => {
-    document.getElementById('slug-preview-t').textContent = tSlug.value.trim() || 'listing';
-    document.getElementById('lang-preview-t').textContent = tLang.value;
-  };
-  tUrl.addEventListener('input', () => {
-    const m = tUrl.value.match(/for-sale\/([^\/]+)\//);
-    if (m && m[1]) tSlug.value = m[1];
-    updateTP();
-  });
-  tSlug.addEventListener('input', updateTP);
-  tLang.addEventListener('change', updateTP);
-
-  // Enter key
-  document.getElementById('listing-url').addEventListener('keydown', e => { if (e.key === 'Enter') generateListing(); });
-  tUrl.addEventListener('keydown', e => { if (e.key === 'Enter') generateListing(); });
-
-  // Path preview for own photos
-  document.getElementById('e-photo-path').addEventListener('input', updatePathPreview);
-  document.getElementById('e-photo-files').addEventListener('input', updatePathPreview);
-});
-
-// ── Mode toggle ───────────────────────────────────────────────────
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById('panelCollab').style.display = mode === 'collab' ? 'block' : 'none';
-  document.getElementById('panelTranslate').style.display = mode === 'translate' ? 'block' : 'none';
-  document.getElementById('modeCollabBtn').classList.toggle('active', mode === 'collab');
-  document.getElementById('modeTranslateBtn').classList.toggle('active', mode === 'translate');
-  document.getElementById('btn-label').textContent = mode === 'translate' ? 'Traduire le listing' : 'Générer le listing';
-}
-
-// ── Photos mode ───────────────────────────────────────────────────
-function setPhotosMode(mode) {
-  photosMode = mode;
-  document.getElementById('panelPhotoSource').style.display = mode === 'source' ? 'block' : 'none';
-  document.getElementById('panelPhotoOwn').style.display = mode === 'own' ? 'block' : 'none';
-  document.getElementById('photoModeSource').classList.toggle('active', mode === 'source');
-  document.getElementById('photoModeOwn').classList.toggle('active', mode === 'own');
-}
-
-function updatePathPreview() {
-  const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/, '/');
-  const files = document.getElementById('e-photo-files').value.trim().split('\n').map(s => s.trim()).filter(Boolean);
-  if (!files.length) { document.getElementById('path-preview-box').textContent = 'Les URLs générées apparaîtront ici'; return; }
-  const base = 'https://listing.signature-sc.com/' + path;
-  const preview = files.slice(0, 3).map(f => base + f).join('\n') + (files.length > 3 ? '\n… +' + (files.length - 3) + ' photos' : '');
-  document.getElementById('path-preview-box').textContent = preview;
-}
-
-// ── Source photos grid ────────────────────────────────────────────
-function buildSourcePhotosGrid(images) {
-  const grid = document.getElementById('sourcePhotosGrid');
-  grid.innerHTML = '';
-  images.forEach((url, idx) => {
-    const div = document.createElement('div');
-    div.className = 'source-photo-item selected';
-    div.dataset.url = url;
-    div.dataset.idx = idx;
-    div.draggable = true;
-    div.innerHTML = `<img src="${url}" loading="lazy" /><div class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>`;
-    div.addEventListener('click', () => {
-      div.classList.toggle('selected');
-      updateSourceCount();
-    });
-    // Drag to reorder
-    div.addEventListener('dragstart', () => dragSrcIndex = idx);
-    div.addEventListener('dragover', e => { e.preventDefault(); div.style.opacity = '0.5'; });
-    div.addEventListener('dragleave', () => { div.style.opacity = '1'; });
-    div.addEventListener('drop', e => {
-      e.preventDefault(); div.style.opacity = '1';
-      const items = Array.from(grid.querySelectorAll('.source-photo-item'));
-      const targetIdx = items.indexOf(div);
-      if (dragSrcIndex === null || dragSrcIndex === targetIdx) return;
-      const dragged = items[dragSrcIndex];
-      if (dragSrcIndex < targetIdx) grid.insertBefore(dragged, div.nextSibling);
-      else grid.insertBefore(dragged, div);
-      dragSrcIndex = null;
-      updateSourceCount();
-    });
-    grid.appendChild(div);
-  });
-  updateSourceCount();
-}
-
-function updateSourceCount() {
-  const selected = document.querySelectorAll('.source-photo-item.selected').length;
-  document.getElementById('sourcePhotoCount').textContent = selected;
-}
-
-function getSelectedSourcePhotos() {
-  return Array.from(document.querySelectorAll('.source-photo-item.selected')).map(el => el.dataset.url);
-}
-
-// ── Conversion surfaces ───────────────────────────────────────────
-function convertSurface(value, toLang) {
-  if (!value) return value;
-  const sqftMatch = value.match(/([\d,\.]+)\s*sq\s*ft/i);
-  if (sqftMatch && toLang !== 'en') {
-    const sqm = (parseFloat(sqftMatch[1].replace(/,/g, '')) / SQM_TO_SQFT).toFixed(1);
-    return sqm + ' m²';
-  }
-  const sqmMatch = value.match(/([\d,\.]+)\s*m²/i);
-  if (sqmMatch && toLang === 'en') {
-    const sqft = Math.round(parseFloat(sqmMatch[1].replace(/,/g, '')) * SQM_TO_SQFT).toLocaleString('en-US');
-    return sqft + ' sq ft';
-  }
-  return value;
-}
-
-// ── Build template ────────────────────────────────────────────────
-function buildTemplate(data) {
-  const images = data.images || [];
-  const imagesJSON = JSON.stringify(images, null, 6);
-  const highlightsJSON = JSON.stringify(data.highlights || [], null, 6);
-  const lat = data.lat || '20.496833';
-  const lng = data.lng || '-87.236444';
-  const mapLabel = (data.location || 'Puerto Aventuras').toUpperCase().split(',')[0].trim();
-  const base = `https://listing.signature-sc.com/for-sale/${data.slug || 'listing'}/`;
-  const lang = data.lang || 'fr';
-
-  const L = {
-    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', garage:'Garage', year:'Année', construction:'Construction', lot:'Terrain', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
-    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', garage:'Garage', year:'Year built', construction:'Living area', lot:'Lot size', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
-    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', garage:'Cochera', year:'Año', construction:'Construcción', lot:'Terreno', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
-  }[lang] || {};
-
-  const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
-  const esc = s => (s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
-  const escHtml = s => (s||'').replace(/"/g,'&quot;');
-
-  return `<!doctype html>
-<html lang="${lang}">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="${data.publicUrl||''}" />
-  <meta property="og:title" content="Signature ˢᶜ | ${escHtml(data.title)}" />
-  <meta property="og:description" content="${escHtml(data.location)} · ${data.price||''} ${data.currency||'USD'}" />
-  <meta property="og:image" content="${images[0]||''}" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:locale" content="${lang==='en'?'en_US':lang==='es'?'es_MX':'fr_FR'}" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="${images[0]||''}" />
-  <title>Signature ˢᶜ | ${escHtml(data.title)}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
-  <script src="https://cdn.tailwindcss.com"><\/script>
-  <style>
-    @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
-    html { scroll-padding-top: 120px; }
-  </style>
-</head>
-<body class="bg-white text-[#223256]">
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-      <img src="/logo-site.png" alt="Signature ˢᶜ" class="h-20 sm:h-28 w-auto object-contain" />
-      <nav class="flex items-center gap-4">
-        <a id="langFr" href="${base}fr/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
-        <a id="langEn" href="${base}en/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
-        <a id="langEs" href="${base}es/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
-      <div class="relative">
-        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo" />
-        <button id="prevMain" type="button" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button id="nextMain" type="button" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
-        <div class="flex items-center gap-3">
-          <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
-          <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-          <button id="stripRight" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8250;</button>
-        </div>
-      </div>
-    </section>
-
-    <div class="mt-8 grid lg:grid-cols-12 gap-8">
-      <section class="lg:col-span-8">
-        <div class="grid sm:grid-cols-12 gap-4 items-start">
-          <div class="sm:col-span-8">
-            <div class="text-xs tracking-widest text-[#223256]/70">${escHtml(data.location)}</div>
-            <h1 class="text-2xl sm:text-3xl font-semibold mt-2">${escHtml(data.title)}</h1>
-            <p class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1">${escHtml(data.subtitle)}</p>
-          </div>
-          <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
-            <div class="text-xs tracking-widest text-[#223256]/70">${L.price}</div>
-            <div class="text-3xl font-semibold mt-2">${data.price||''} ${data.currency||'USD'}</div>
-            ${data.priceOld ? `<div class="text-base text-[#223256]/60 line-through mt-1">${data.priceOld} ${data.currency||'USD'}</div>` : ''}
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">${L.details}</div>
-          </div>
-          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.beds}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.beds||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.baths}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.baths||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.garage}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.garage||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.year}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.year||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.construction||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.lot||''}</div></div>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
-          <div class="flex items-center gap-3">
-            <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">${L.desc}</div>
-          </div>
-          <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">${escHtml(data.description)}</div>
-          <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
-            <div class="text-xs tracking-widest text-[#223256]/70">${L.hl}</div>
-            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
-          </div>
-        </div>
-
-        <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">${L.loc}</div>
-          </div>
-          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
-            <iframe src="https://maps.google.com/maps?ll=${lat},${lng}&z=16&t=m&hl=${lang}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
-            <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">${mapLabel}</div>
-          </div>
-          <div class="mt-4 text-xs text-[#223256]/60 text-center">*${L.locNote}</div>
-        </div>
-      </section>
-
-      <aside class="lg:col-span-4 mb-8 lg:mb-0">
-        <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
-          <div class="p-8">
-            <div class="flex items-center gap-4 mb-8">
-              <div class="shrink-0 h-56 w-32 rounded-xl overflow-hidden shadow-lg">
-                <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
-              </div>
-              <div class="flex-1 flex flex-col items-center justify-center min-w-0 h-56">
-                <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-20 w-auto object-contain mb-2" />
-                <div class="text-left px-2">
-                  <div class="text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis">Sabrina Crémona</div>
-                  <div class="text-sm font-light text-white/60 mt-1">${agentRole}</div>
-                </div>
-              </div>
-            </div>
-            <div class="grid gap-3">
-              <a id="waBtn" href="#" target="_blank" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-[#61BDCC] text-[#223256] font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#61BDCC]/20">${L.wa}</a>
-              <a id="mailBtn" href="#" target="_blank" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white text-[#223256] font-bold text-sm hover:bg-neutral-100 transition shadow-lg">${L.mail}</a>
-              <a id="visitBtn" href="#" target="_blank" rel="noopener" class="inline-flex justify-center items-center rounded-full px-5 py-3.5 bg-white/10 text-white font-semibold text-sm ring-1 ring-white/10 hover:bg-white/20 transition">${L.visit}</a>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-  <footer class="mt-4 bg-[#223256] text-white">
-    <div class="max-w-6xl mx-auto px-4 py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <div class="flex items-start gap-1">
-          <span style="font-family:'Allura',cursive" class="text-4xl text-white leading-none">Signature</span>
-          <span class="text-[10px] font-bold text-white/90 uppercase mt-1">SC</span>
-        </div>
-        <div class="text-xs text-white/75 mt-1">Luxury Real Estate | Riviera Maya</div>
-      </div>
-      <div class="text-xs text-white/70">© <span id="yearNow"></span> Signature ˢᶜ ${L.rights}</div>
-    </div>
-  </footer>
-
-  <div id="modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/80"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.close}</button>
-        <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-          <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <button id="prevBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.prev}</button>
-          <div id="counter" class="text-xs text-white/80"></div>
-          <button id="nextBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.next}</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const listing = {
-      lang: "${lang}",
-      title: "${esc(data.title)}",
-      price: "${esc(data.price)}",
-      currency: "${data.currency||'USD'}",
-      publicUrl: "${esc(data.publicUrl)}",
-      highlights: ${highlightsJSON},
-      images: ${imagesJSON}
+    const claudeBody = {
+      model: body.model || 'claude-sonnet-4-20250514',
+      max_tokens: body.max_tokens || 8000,
+      system: body.system || '',
+      messages: enhancedMessages
     };
-    const el = id => document.getElementById(id);
-    const langMap = [{id:'langFr',code:'fr'},{id:'langEn',code:'en'},{id:'langEs',code:'es'}];
-    langMap.forEach(({id,code}) => {
-      const n = el(id); if(!n) return;
-      n.classList.remove('text-[#61BDCC]','border-b-2','border-[#61BDCC]','text-[#223256]/35','hover:text-[#223256]/60');
-      if(code===listing.lang) n.classList.add('text-[#61BDCC]','border-b-2','border-[#61BDCC]');
-      else n.classList.add('text-[#223256]/35','hover:text-[#223256]/60');
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify(claudeBody)
     });
-    const hl = el('highlights');
-    listing.highlights.forEach(t => {
-      const li = document.createElement('li');
-      li.className = 'flex items-start gap-2';
-      li.innerHTML = "<span class='mt-1 h-2 w-2 rounded-full bg-[#61BDCC]'><\\/span><span class='text-[#223256]/90'>"+t+"<\\/span>";
-      hl.appendChild(li);
-    });
-    const photos = listing.images.filter(Boolean);
-    const state = {index:0};
-    const mainImg = el('mainImg');
-    const strip = el('strip');
-    const hilite = () => document.querySelectorAll('[data-thumb]').forEach((n,i) => {
-      i===state.index ? n.classList.add('ring-2','ring-[#61BDCC]') : n.classList.remove('ring-2','ring-[#61BDCC]');
-    });
-    const setMain = idx => {
-      if(!photos.length||!mainImg) return;
-      state.index=(idx+photos.length)%photos.length;
-      mainImg.src=photos[state.index]; hilite();
-    };
-    photos.forEach((url,idx) => {
-      const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-thumb','1');
-      btn.className='shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white';
-      btn.onclick=()=>setMain(idx);
-      const img=document.createElement('img'); img.src=url; img.className='h-20 w-28 sm:h-24 sm:w-36 object-cover';
-      btn.appendChild(img); strip.appendChild(btn);
-    });
-    if(photos.length) setMain(0);
-    el('stripLeft').onclick=()=>strip.scrollBy({left:-320,behavior:'smooth'});
-    el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
-    el('prevMain').onclick=()=>setMain(state.index-1);
-    el('nextMain').onclick=()=>setMain(state.index+1);
-    const openModal=()=>{ if(!photos.length) return; el('modal').classList.remove('hidden'); renderModal(); };
-    const closeModal=()=>el('modal').classList.add('hidden');
-    const renderModal=()=>{ el('modalImg').src=photos[state.index]||''; el('counter').textContent=photos.length?(state.index+1)+' / '+photos.length:''; };
-    const prev=()=>{ setMain(state.index-1); renderModal(); };
-    const next=()=>{ setMain(state.index+1); renderModal(); };
-    mainImg.onclick=openModal;
-    el('closeBtn').onclick=closeModal; el('prevBtn').onclick=prev; el('nextBtn').onclick=next;
-    document.addEventListener('keydown',e=>{ if(el('modal').classList.contains('hidden')) return; if(e.key==='Escape') closeModal(); if(e.key==='ArrowLeft') prev(); if(e.key==='ArrowRight') next(); });
-    const wa1="${esc(L.waIntro)}"; const wa2="${esc(L.waVisit)}";
-    const liveUrl=listing.publicUrl;
-    el('waBtn').href='https://wa.me/529842696189?text='+encodeURIComponent(wa1+'\\n\\n'+listing.title+'\\n'+listing.price+' '+listing.currency+'\\n'+liveUrl);
-    el('visitBtn').href='https://wa.me/529842696189?text='+encodeURIComponent(wa2+'\\n\\n'+listing.title+'\\n'+listing.price+' '+listing.currency+'\\n'+liveUrl);
-    const sub="${esc(L.mSub)}"+listing.title;
-    const bod="${esc(L.mBody)}"+listing.title+"${esc(L.mB2)}"+listing.price+" "+listing.currency+"${esc(L.mB3)}"+liveUrl+"${esc(L.mB4)}";
-    el('mailBtn').href='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent('Sales@signature-sc.com')+'&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(bod);
-    el('yearNow').textContent=String(new Date().getFullYear());
-    window.addEventListener('load',()=>setTimeout(()=>window.scrollTo({top:0,behavior:'instant'}),10));
-  <\/script>
-</body>
-</html>`;
-}
 
-// ── Generate / Translate ──────────────────────────────────────────
-async function generateListing() {
-  document.getElementById('btn-generate').disabled = true;
-  currentMode === 'translate' ? await translateListing() : await extractListing();
-}
+    const data = await response.json();
+    if (!response.ok) return res.status(response.status).json(data);
+    return res.status(200).json(data);
 
-async function extractListing() {
-  const url = document.getElementById('listing-url').value.trim();
-  const slug = document.getElementById('listing-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-|-$/g,'');
-  const lang = document.getElementById('listing-lang').value;
-  if (!url || !url.startsWith('http')) { showStatus('error','Lien invalide.'); document.getElementById('btn-generate').disabled=false; return; }
-  if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
-  currentSlug=slug; currentLang=lang;
-  const publicUrl=`https://listing.signature-sc.com/for-sale/${slug}/${lang}/`;
-  const langLabel = lang==='fr'?'français':lang==='en'?'anglais':'espagnol (Mexique)';
-  showStatus('loading','Lecture de la page…');
-  try {
-    const sys = `Tu es un extracteur de données immobilières. Réponds UNIQUEMENT avec un JSON valide, sans backticks.
-JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"Xm²","lot":"Xm²","description":"3-4 paragraphes ton luxueux en ${langLabel}, sans tirets comme ponctuation","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
-    if(!res.ok) throw new Error('Erreur API '+res.status);
-    const api = await res.json();
-    showStatus('loading','Construction du listing…');
-    let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
-    const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
-    const d=JSON.parse(m[0]);
-    d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
-    showResult(d);
-  } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
-}
-
-async function translateListing() {
-  const url = document.getElementById('translate-url').value.trim();
-  const slug = document.getElementById('translate-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-|-$/g,'');
-  const targetLang = document.getElementById('translate-lang').value;
-  if (!url||!url.includes('listing.signature-sc.com')) { showStatus('error','URL listing.signature-sc.com requis.'); document.getElementById('btn-generate').disabled=false; return; }
-  if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
-  currentSlug=slug; currentLang=targetLang;
-  const publicUrl=`https://listing.signature-sc.com/for-sale/${slug}/${targetLang}/`;
-  const langLabel=targetLang==='en'?'anglais':'espagnol (Mexique)';
-  const surfNote=targetLang==='en'?'Convertis m² en sq ft (1m²=10.764sqft, arrondi entier).':'Surfaces restent en m².';
-  showStatus('loading',`Traduction en ${langLabel}…`);
-  try {
-    const sys = `Tu traduis un listing immobilier de luxe du français en ${langLabel}. Réponds UNIQUEMENT avec un JSON valide, sans backticks.
-${surfNote}
-JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","description":"traduit, 3-4 paragraphes, ton luxueux, sans tirets comme ponctuation","highlights":["traduit"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing FR à traduire: '+url}]})});
-    if(!res.ok) throw new Error('Erreur API '+res.status);
-    const api = await res.json();
-    showStatus('loading','Construction du listing traduit…');
-    let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
-    const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
-    const d=JSON.parse(m[0]);
-    if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
-    d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
-    showResult(d);
-  } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
-}
-
-// ── Show result ───────────────────────────────────────────────────
-function showResult(data) {
-  listingData = data;
-  generatedCode = buildTemplate(data);
-
-  // Fill edit fields
-  document.getElementById('e-title').value = data.title||'';
-  document.getElementById('e-subtitle').value = data.subtitle||'';
-  document.getElementById('e-location').value = data.location||'';
-  document.getElementById('e-currency').value = data.currency||'USD';
-  document.getElementById('e-price').value = data.price||'';
-  document.getElementById('e-price-old').value = data.priceOld||'';
-  document.getElementById('e-beds').value = data.beds||'';
-  document.getElementById('e-baths').value = data.baths||'';
-  document.getElementById('e-garage').value = data.garage||'';
-  document.getElementById('e-year').value = data.year||'';
-  document.getElementById('e-construction').value = data.construction||'';
-  document.getElementById('e-lot').value = data.lot||'';
-  document.getElementById('e-description').value = data.description||'';
-  document.getElementById('e-highlights').value = (data.highlights||[]).join('\n');
-  document.getElementById('e-lat').value = data.lat||'';
-  document.getElementById('e-lng').value = data.lng||'';
-
-  // Source photos
-  buildSourcePhotosGrid(data.images||[]);
-
-  // Own photos: prefill path from slug
-  document.getElementById('e-photo-path').value = `for-sale/${data.slug||'listing'}/photos/`;
-  updatePathPreview();
-
-  document.getElementById('result-name').textContent = data.title||'Listing';
-  document.getElementById('result-path').textContent = `for-sale/${data.slug||'listing'}/${data.lang}/index.html`;
-
-  // Show result screen
-  document.getElementById('screen-generator').style.display = 'none';
-  const rs = document.getElementById('screen-result');
-  rs.style.display = 'flex'; rs.style.flexDirection = 'column';
-
-  refreshPreview();
-  hideStatus();
-  document.getElementById('btn-generate').disabled = false;
-}
-
-// ── Apply changes ─────────────────────────────────────────────────
-function applyChanges() {
-  // Read fields
-  listingData.title = document.getElementById('e-title').value.trim();
-  listingData.subtitle = document.getElementById('e-subtitle').value.trim();
-  listingData.location = document.getElementById('e-location').value.trim();
-  listingData.currency = document.getElementById('e-currency').value;
-  listingData.price = document.getElementById('e-price').value.trim();
-  listingData.priceOld = document.getElementById('e-price-old').value.trim();
-  listingData.beds = document.getElementById('e-beds').value.trim();
-  listingData.baths = document.getElementById('e-baths').value.trim();
-  listingData.garage = document.getElementById('e-garage').value.trim();
-  listingData.year = document.getElementById('e-year').value.trim();
-  listingData.construction = document.getElementById('e-construction').value.trim();
-  listingData.lot = document.getElementById('e-lot').value.trim();
-  listingData.description = document.getElementById('e-description').value.trim();
-  listingData.highlights = document.getElementById('e-highlights').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
-  listingData.lat = document.getElementById('e-lat').value.trim();
-  listingData.lng = document.getElementById('e-lng').value.trim();
-
-  // Photos
-  if (photosMode === 'source') {
-    listingData.images = getSelectedSourcePhotos();
-  } else {
-    const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/,'/');
-    const files = document.getElementById('e-photo-files').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
-    listingData.images = files.map(f => 'https://listing.signature-sc.com/' + path + f);
-  }
-
-  generatedCode = buildTemplate(listingData);
-  refreshPreview();
-
-  // Switch to preview tab
-  showTab('preview');
-  toast('✓ Modifications appliquées');
-}
-
-function refreshPreview() {
-  const iframe = document.getElementById('preview-pane');
-  const blob = new Blob([generatedCode], {type:'text/html;charset=utf-8'});
-  iframe.src = URL.createObjectURL(blob);
-}
-
-// ── Tabs ──────────────────────────────────────────────────────────
-function showTab(tab) {
-  const pw = document.getElementById('preview-pane-wrapper');
-  const ep = document.getElementById('edit-pane');
-  const tp = document.getElementById('tab-preview');
-  const te = document.getElementById('tab-edit');
-  if (tab === 'preview') {
-    pw.style.display='flex'; ep.style.display='none';
-    tp.classList.add('active'); te.classList.remove('active');
-  } else {
-    pw.style.display='none'; ep.style.display='block';
-    te.classList.add('active'); tp.classList.remove('active');
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
 
-// ── Publish ───────────────────────────────────────────────────────
-async function publishToGitHub() {
-  if (!generatedCode) return;
-  const btn = document.getElementById('btn-publish');
-  btn.disabled = true; btn.textContent = 'Publication…';
-  const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
-  const message = `${currentMode==='translate'?'Translate':'Add'} listing: ${currentSlug} (${currentLang})`;
-  try {
-    const res = await fetch('/api/github-publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path,content:generatedCode,message})});
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error||'Erreur GitHub');
-    toast('✓ Publié sur listing.signature-sc.com/'+path);
-    btn.textContent='✓ Publié'; btn.style.background='#1a3d2e';
-    setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier'; btn.style.background=''; },5000);
-  } catch(err) {
-    alert('Erreur : '+err.message);
-    btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier';
-  }
+function isValidPhoto(url) {
+  if (!url || !url.startsWith('http')) return false;
+  if (!/\.(jpg|jpeg|png|webp)/i.test(url)) return false;
+  const lower = url.toLowerCase();
+  const exclude = ['logo', 'icon', 'favicon', 'avatar', 'badge', 'pixel', 'tracking',
+                   'placeholder', 'blank', 'spacer', '1x1', 'sprite', 'flag',
+                   'shortpixel', 'profile', 'agent', 'team'];
+  return !exclude.some(word => lower.includes(word));
 }
-
-// ── Helpers ───────────────────────────────────────────────────────
-function backToGenerator() {
-  document.getElementById('screen-result').style.display='none';
-  document.getElementById('screen-generator').style.display='flex';
-  showTab('preview');
-}
-
-async function copyCode() {
-  if (!generatedCode) return;
-  try { await navigator.clipboard.writeText(generatedCode); }
-  catch(e) { const t=document.createElement('textarea'); t.value=generatedCode; t.style.cssText='position:fixed;opacity:0'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
-  toast('✓ Code copié dans le presse-papiers');
-}
-
-function downloadCode() {
-  if (!generatedCode) return;
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generatedCode],{type:'text/html;charset=utf-8'})); a.download='index.html'; a.click();
-}
-
-function openInNewTab() {
-  if (!generatedCode) return;
-  window.open(URL.createObjectURL(new Blob([generatedCode],{type:'text/html;charset=utf-8'})),'_blank');
-}
-
-function showStatus(type, text) {
-  const bar=document.getElementById('status-bar');
-  bar.className='status-bar '+type;
-  document.getElementById('status-text').textContent=text;
-  document.getElementById('status-spinner').style.display=type==='loading'?'block':'none';
-}
-function hideStatus() { document.getElementById('status-bar').className='status-bar'; }
-
-function toast(msg) {
-  const t=document.getElementById('copy-toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-</script>
-</body>
-</html>
