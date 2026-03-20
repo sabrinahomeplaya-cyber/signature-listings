@@ -12,6 +12,8 @@
     :root { --navy:#223256; --teal:#61BDCC; --cream:#faf9f6; --light:#f0f4f8; }
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Inter',sans-serif;background:white;color:var(--navy);min-height:100vh;}
+
+    /* SETUP */
     #screen-setup{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
     .setup-card{background:white;border-radius:24px;box-shadow:0 4px 40px rgba(34,50,86,0.1);padding:52px;max-width:600px;width:100%;}
     .setup-logo{display:flex;align-items:flex-start;gap:3px;margin-bottom:32px;}
@@ -31,6 +33,8 @@
     .status-msg.error{background:rgba(220,53,69,0.06);border:1px solid rgba(220,53,69,0.2);color:#c0392b;display:flex;}
     .spinner{width:15px;height:15px;border:2px solid rgba(97,189,204,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
     @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* EDITOR */
     #screen-editor{display:none;min-height:100vh;flex-direction:column;}
     .editor-topbar{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
     .editor-topbar-left{display:flex;align-items:center;gap:16px;}
@@ -41,6 +45,8 @@
     .btn-pdf:hover{opacity:0.88;}
     .editor-body{display:grid;grid-template-columns:340px 1fr;gap:0;flex:1;}
     @media(max-width:900px){.editor-body{grid-template-columns:1fr;}}
+
+    /* Panel */
     .editor-panel{background:white;border-right:1px solid rgba(34,50,86,0.08);overflow-y:auto;padding:24px;height:calc(100vh - 60px);position:sticky;top:60px;}
     .panel-section{margin-bottom:28px;}
     .panel-section-title{font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
@@ -63,11 +69,17 @@
     .photo-mode-note{font-size:0.72rem;color:rgba(34,50,86,0.5);margin-bottom:10px;}
     .btn-apply-panel{width:100%;background:var(--navy);color:white;border:none;border-radius:8px;padding:11px;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s;margin-top:20px;}
     .btn-apply-panel:hover{background:#1a2845;}
+
+    /* Preview */
     .editor-preview{background:white;padding:40px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px;}
     #pdf-content{display:flex;flex-direction:column;gap:0;}
+
+    /* A4 PAGES — dimensions fixes en px pour html2pdf */
     .a4-page{width:794px;background:white;box-shadow:0 4px 32px rgba(0,0,0,0.18);border-radius:2px;overflow:hidden;position:relative;}
     .a4-page-1{height:1123px;display:flex;flex-direction:column;}
     .a4-page-2{height:1123px;display:flex;flex-direction:column;}
+
+    /* PAGE 1 */
     .p1h{background:var(--navy);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
     .p1h img{height:32px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
     .p1h-right{text-align:right;}
@@ -98,6 +110,8 @@
     .p1-footer{margin-top:auto;padding:11px 28px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
     .p1-footer-link{font-size:0.62rem;color:var(--teal);text-decoration:underline;letter-spacing:0.02em;word-break:break-all;}
     .p1-footer-brand{font-size:0.56rem;color:rgba(255,255,255,0.35);}
+
+    /* PAGE 2 */
     .p2h{background:var(--navy);padding:13px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
     .p2h-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500;color:white;}
     .p2h-sub{font-size:0.55rem;color:rgba(255,255,255,0.4);margin-top:1px;letter-spacing:0.08em;text-transform:uppercase;}
@@ -108,9 +122,15 @@
     .p2-photo-item{aspect-ratio:16/9;border-radius:0;overflow:hidden;background:#dde4ee;}
     .p2-photo-item img{width:100%;height:100%;object-fit:cover;display:block;}
     .p2-photo-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#e8edf4,#d0d8e8);}
+
+    /* Bottom 2 colonnes */
     .p2-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 28px 0;flex:1;}
+
+    /* Notes */
     .p2-note-lines{display:flex;flex-direction:column;gap:14px;margin-top:6px;}
     .p2-note-line{height:1px;background:rgba(34,50,86,0.09);}
+
+    /* Carte de visite — photo à droite, texte à gauche */
     .p2-card{background:var(--navy);border-radius:8px;overflow:hidden;display:flex;height:155px;}
     .p2-card-left{flex:1;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;}
     .p2-card-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:white;line-height:1.1;}
@@ -119,14 +139,18 @@
     .p2-card-line{display:flex;align-items:center;gap:6px;font-size:0.6rem;color:rgba(255,255,255,0.75);text-decoration:none;}
     .p2-card-line svg{width:10px;height:10px;flex-shrink:0;opacity:0.7;}
     .p2-card-photo{width:95px;flex-shrink:0;object-fit:cover;object-position:center top;height:100%;}
+
     .p2-footer{margin-top:auto;padding:11px 28px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .p2-footer-link{font-size:0.56rem;color:rgba(255,255,255,0.35);}
     .p2-footer-brand{font-size:0.56rem;color:rgba(255,255,255,0.35);}
+
     .copy-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;font-size:0.82rem;font-weight:500;padding:10px 22px;border-radius:100px;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;z-index:9999;white-space:nowrap;}
     .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
 
+<!-- SETUP -->
 <div id="screen-setup">
   <div class="setup-card">
     <div class="setup-logo"><span class="setup-logo-script">Signature</span><span class="setup-logo-sc">SC</span></div>
@@ -155,6 +179,7 @@
   </div>
 </div>
 
+<!-- EDITOR -->
 <div id="screen-editor">
   <div class="editor-topbar">
     <div class="editor-topbar-left">
@@ -166,6 +191,7 @@
       Télécharger le PDF
     </button>
   </div>
+
   <div class="editor-body">
     <div class="editor-panel">
       <div class="panel-section">
@@ -217,6 +243,7 @@
 
     <div class="editor-preview">
       <div id="pdf-content">
+
         <!-- PAGE 1 -->
         <div class="a4-page a4-page-1" id="page1">
           <div class="p1h">
@@ -267,6 +294,7 @@
             <div class="p2-photo-grid" id="r-photo-grid"></div>
           </div>
           <div class="p2-bottom">
+            <!-- Notes -->
             <div>
               <div class="p1-section-title" id="r-notes-label">NOTES</div>
               <div class="p2-note-lines">
@@ -277,6 +305,7 @@
                 <div class="p2-note-line"></div><div class="p2-note-line"></div>
               </div>
             </div>
+            <!-- Carte de visite -->
             <div>
               <div class="p2-card">
                 <div class="p2-card-left">
@@ -289,9 +318,9 @@
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
                       +52 984 309 8369
                     </a>
-                    <a href="/cdn-cgi/l/email-protection#a0f3c1ccc5d3e0d3c9c7cec1d4d5d2c58dd3c38ec3cfcd" class="p2-card-line">
+                    <a href="mailto:Sales@signature-sc.com" class="p2-card-line">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                      <span class="__cf_email__" data-cfemail="3665575a534576455f515857424344531b45551855595b">[email&#160;protected]</span>
+                      Sales@signature-sc.com
                     </a>
                     <a href="https://www.signature-sc.com" class="p2-card-line">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -304,6 +333,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -311,19 +341,19 @@
 
 <div class="copy-toast" id="copy-toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 let allPhotos = [], coverPhotoUrl = '', galleryPhotos = [], currentLang = 'fr';
 const el = id => document.getElementById(id);
 
 const L = {
   fr:{beds:'Chambres',baths:'Salles de bain',constr:'Construction',lot:'Terrain',year:'Année',
-      desc:'DESCRIPTION',hl:'POINTS FORTS',notes:'NOTES',gallery:'Galerie photos',
+      desc:'DESCRIPTION',hl:'POINTS FORTS',notes:'NOTES',gallery:'Galerie photos',contact:'CONTACT',
       role:'Fondatrice & CEO · Conseillère Immobilière'},
   en:{beds:'Bedrooms',baths:'Bathrooms',constr:'Living area',lot:'Lot size',year:'Year built',
-      desc:'DESCRIPTION',hl:'HIGHLIGHTS',notes:'NOTES',gallery:'Photo gallery',
+      desc:'DESCRIPTION',hl:'HIGHLIGHTS',notes:'NOTES',gallery:'Photo gallery',contact:'CONTACT',
       role:'Founder & CEO · Real Estate Advisor'},
   es:{beds:'Recámaras',baths:'Baños',constr:'Construcción',lot:'Terreno',year:'Año',
-      desc:'DESCRIPCIÓN',hl:'PUNTOS DESTACADOS',notes:'NOTAS',gallery:'Galería de fotos',
+      desc:'DESCRIPCIÓN',hl:'PUNTOS DESTACADOS',notes:'NOTAS',gallery:'Galería de fotos',contact:'CONTACTO',
       role:'Fundadora & CEO · Asesora Inmobiliaria'}
 };
 
@@ -352,13 +382,14 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
     const d=JSON.parse(m[0]);
     d.publicUrl=d.publicUrl||url;
 
-    // 1. Photos extraites par Claude (listings collaborateurs)
+    // 1. D'abord les photos extraites par Claude (toujours disponibles)
     allPhotos=(d.images||[]).filter(u=>u&&u.startsWith('http'));
 
-    // 2. Si listing Signature SC, essayer GitHub pour les photos
+    // 2. Essayer GitHub pour les listings avec album photos (les nôtres)
     const slugMatch = url.match(/for-sale\/([^\/]+)\//);
     if (slugMatch && slugMatch[1]) {
       try {
+        showStatus('loading','Chargement des photos…');
         const slug = slugMatch[1];
         const ghRes = await fetch('/api/github-photos?path=for-sale/'+slug+'/photos');
         if (ghRes.ok) {
@@ -368,7 +399,7 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
             allPhotos = ghData.photos.map(f => base + f);
           }
         }
-      } catch(e) {}
+      } catch(e) { /* pas d'album GitHub, on garde les photos Claude */ }
     }
 
     coverPhotoUrl=allPhotos[0]||'';
@@ -398,6 +429,7 @@ function fillPanel(d) {
 }
 
 function buildPhotoGrids() {
+  // Cover grid
   const cg=el('cover-grid'); cg.innerHTML='';
   allPhotos.forEach(url=>{
     const div=document.createElement('div');
@@ -412,6 +444,7 @@ function buildPhotoGrids() {
     });
     cg.appendChild(div);
   });
+  // Gallery grid
   const gg=el('gallery-grid'); gg.innerHTML='';
   allPhotos.forEach(url=>{
     const div=document.createElement('div');
@@ -448,6 +481,7 @@ function applyAndRender() {
   el('r-agent-role').textContent=lb.role;
   el('r-gallery-lbl').textContent=lb.gallery;
   el('r-title2').textContent=el('p-title').value;
+  // Cover
   if(coverPhotoUrl){
     el('r-cover-img').src=coverPhotoUrl; el('r-cover-img').style.display='block';
     el('r-cover-placeholder').style.display='none';
@@ -455,6 +489,7 @@ function applyAndRender() {
     el('r-cover-img').style.display='none'; el('r-cover-placeholder').style.display='flex';
   }
   el('r-link').href=el('p-url').value; el('r-link').textContent=el('p-url').value;
+  // Details
   const dg=el('r-details-grid'); dg.innerHTML='';
   [{l:lb.beds,v:el('p-beds').value},{l:lb.baths,v:el('p-baths').value},
    {l:'Garage',v:el('p-garage').value},{l:lb.year,v:el('p-year').value},
@@ -465,12 +500,14 @@ function applyAndRender() {
     c.innerHTML=`<div class="p1-detail-label">${l}</div><div class="p1-detail-value">${v}</div>`;
     dg.appendChild(c);
   });
+  // Highlights
   const hg=el('r-hl-grid'); hg.innerHTML='';
   el('p-hl').value.trim().split('\n').map(s=>s.trim()).filter(Boolean).forEach(h=>{
     const i=document.createElement('div'); i.className='p1-hl-item';
     i.innerHTML=`<div class="p1-hl-dot"></div><span>${h}</span>`;
     hg.appendChild(i);
   });
+  // Gallery photos
   const pg=el('r-photo-grid'); pg.innerHTML='';
   for(let i=0;i<8;i++){
     const item=document.createElement('div'); item.className='p2-photo-item';
@@ -480,25 +517,18 @@ function applyAndRender() {
   }
 }
 
-// PDF : page 1 puis page 2 séparément — évite l'espace blanc
 function downloadPDF() {
   applyAndRender();
   const title=(el('p-title').value||'brochure').toLowerCase().replace(/[^a-z0-9]/g,'-');
   const opt = {
     margin:0,
+    filename:'signature-sc-'+title+'.pdf',
     image:{type:'jpeg',quality:0.95},
     html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false},
-    jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'}
+    jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
+    pagebreak:{mode:'css',before:'#page2'}
   };
-  const page1=el('page1');
-  const page2=el('page2');
-  html2pdf().set(opt).from(page1).toPdf().get('pdf').then(pdf=>{
-    return html2pdf().set(opt).from(page2).toCanvas().get('canvas').then(canvas=>{
-      pdf.addPage([794,1123],'p');
-      pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,794,1123);
-      pdf.save('signature-sc-'+title+'.pdf');
-    });
-  });
+  html2pdf().set(opt).from(el('pdf-content')).save();
 }
 
 function backToSetup(){
@@ -507,4 +537,16 @@ function backToSetup(){
 }
 function showStatus(type,text){
   const s=el('setup-status'); s.className='status-msg '+type;
-  el('setup-status-text').textContent=text
+  el('setup-status-text').textContent=text; s.style.display='flex';
+  el('status-spinner').style.display=type==='loading'?'block':'none';
+}
+function toast(msg){
+  const t=el('copy-toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&el('screen-setup').style.display!=='none') loadListing();
+});
+</script>
+</body>
+</html>
