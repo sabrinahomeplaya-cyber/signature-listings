@@ -71,12 +71,12 @@
     .btn-apply-panel:hover{background:#1a2845;}
 
     /* Preview */
-    .editor-preview{background:#d8dde4;padding:40px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px;}
+    .editor-preview{background:white;padding:40px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px;}
 
     /* A4 PAGES — dimensions fixes en px pour html2pdf */
     .a4-page{width:794px;background:white;box-shadow:0 4px 32px rgba(0,0,0,0.18);border-radius:2px;overflow:hidden;position:relative;}
     .a4-page-1{height:1123px;display:flex;flex-direction:column;}
-    .a4-page-2{min-height:600px;display:flex;flex-direction:column;}
+    .a4-page-2{height:1123px;display:flex;flex-direction:column;}
 
     /* PAGE 1 */
     .p1h{background:var(--navy);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
@@ -137,9 +137,9 @@
     .p2-card-contacts{display:flex;flex-direction:column;gap:5px;}
     .p2-card-line{display:flex;align-items:center;gap:6px;font-size:0.6rem;color:rgba(255,255,255,0.75);text-decoration:none;}
     .p2-card-line svg{width:10px;height:10px;flex-shrink:0;opacity:0.7;}
-    .p2-card-photo{width:95px;flex-shrink:0;object-fit:cover;object-position:center top;}
+    .p2-card-photo{width:95px;flex-shrink:0;object-fit:cover;object-position:center top;height:100%;}
 
-    .p2-footer{padding:9px 28px;background:var(--light);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-top:12px;}
+    .p2-footer{margin-top:auto;padding:9px 28px;background:var(--light);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
     .p2-footer-txt{font-size:0.57rem;color:rgba(34,50,86,0.4);}
     .p2-footer-logo{height:16px;width:auto;object-fit:contain;opacity:0.35;}
 
@@ -306,7 +306,6 @@
             </div>
             <!-- Carte de visite -->
             <div>
-              <div class="p1-section-title" id="r-contact-label">CONTACT</div>
               <div class="p2-card">
                 <div class="p2-card-left">
                   <div>
@@ -462,7 +461,6 @@ function applyAndRender() {
   el('r-desc-label').childNodes[0].textContent=lb.desc+' ';
   el('r-hl-label').childNodes[0].textContent=lb.hl+' ';
   el('r-notes-label').childNodes[0].textContent=lb.notes+' ';
-  el('r-contact-label').childNodes[0].textContent=lb.contact+' ';
   el('r-agent-role').textContent=lb.role;
   el('r-gallery-lbl').textContent=lb.gallery;
   el('r-title2').textContent=el('p-title').value;
