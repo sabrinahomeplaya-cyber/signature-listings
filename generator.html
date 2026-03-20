@@ -358,12 +358,19 @@
 
         <!-- Photos perso -->
         <div id="panelPhotoOwn" style="display:none">
-          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Entrez le chemin GitHub de vos photos et la liste des noms de fichiers.</div>
+          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Entrez le chemin GitHub de vos photos, puis cliquez <strong>Lire le dossier</strong> pour charger automatiquement la liste.</div>
           <div class="path-builder">
-            <div class="field-group" style="margin-bottom:12px">
-              <label class="field-label">Chemin GitHub</label>
-              <input id="e-photo-path" class="field-input" type="text" placeholder="for-sale/quinta-luna-penthouse/photos/" />
+            <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:12px">
+              <div class="field-group" style="flex:1">
+                <label class="field-label">Chemin GitHub</label>
+                <input id="e-photo-path" class="field-input" type="text" placeholder="for-sale/quinta-luna-penthouse/photos/" />
+              </div>
+              <button onclick="readGithubFolder()" id="btn-read-folder" style="flex-shrink:0;background:var(--teal);color:white;border:none;border-radius:8px;padding:10px 16px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;height:42px;display:flex;align-items:center;gap:6px;transition:background 0.15s" onmouseover="this.style.background='#4daab9'" onmouseout="this.style.background='var(--teal)'">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Lire le dossier
+              </button>
             </div>
+            <div id="folder-status" style="display:none;font-size:0.75rem;margin-bottom:8px;padding:8px 12px;border-radius:6px;"></div>
             <div class="field-group">
               <label class="field-label">Noms des fichiers (un par ligne)</label>
               <textarea id="e-photo-files" class="field-textarea" rows="5" placeholder="4.jpeg&#10;5.jpeg&#10;6.jpeg&#10;7.jpeg"></textarea>
@@ -457,6 +464,54 @@ function setPhotosMode(mode) {
   document.getElementById('panelPhotoOwn').style.display = mode === 'own' ? 'block' : 'none';
   document.getElementById('photoModeSource').classList.toggle('active', mode === 'source');
   document.getElementById('photoModeOwn').classList.toggle('active', mode === 'own');
+}
+
+// ── Lire le dossier GitHub ────────────────────────────────────────
+async function readGithubFolder() {
+  const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/, '/').replace(/^\//, '');
+  const status = document.getElementById('folder-status');
+  const btn = document.getElementById('btn-read-folder');
+
+  if (!path || path === '/') {
+    status.style.display = 'block';
+    status.style.background = 'rgba(220,53,69,0.08)';
+    status.style.color = '#c0392b';
+    status.textContent = 'Veuillez entrer un chemin valide.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Lecture…';
+  status.style.display = 'block';
+  status.style.background = 'rgba(97,189,204,0.08)';
+  status.style.color = 'var(--navy)';
+  status.textContent = 'Lecture du dossier GitHub…';
+
+  try {
+    const res = await fetch('/api/github-photos?path=' + encodeURIComponent(path.replace(/\/$/, '')));
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || 'Erreur GitHub');
+
+    if (data.photos.length === 0) {
+      status.style.background = 'rgba(255,193,7,0.1)';
+      status.style.color = '#856404';
+      status.textContent = 'Aucune photo trouvée dans ce dossier.';
+    } else {
+      document.getElementById('e-photo-files').value = data.photos.join('\n');
+      status.style.background = 'rgba(40,167,69,0.08)';
+      status.style.color = '#1a6830';
+      status.textContent = '✓ ' + data.photos.length + ' photo(s) chargée(s) automatiquement.';
+      updatePathPreview();
+    }
+  } catch (err) {
+    status.style.background = 'rgba(220,53,69,0.08)';
+    status.style.color = '#c0392b';
+    status.textContent = 'Erreur : ' + err.message;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Lire le dossier';
 }
 
 function updatePathPreview() {
