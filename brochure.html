@@ -187,7 +187,7 @@
       background: var(--navy);
       display: flex; align-items: center; justify-content: space-between;
     }
-    .p1-footer-link { font-size: 0.65rem; color: var(--teal); text-decoration: none; letter-spacing: 0.02em; }
+    .p1-footer-link { font-size: 0.65rem; color: var(--teal); text-decoration: underline; letter-spacing: 0.02em; }
     .p1-footer-brand { font-size: 0.6rem; color: rgba(255,255,255,0.4); }
 
     /* PAGE 2 */
@@ -200,9 +200,9 @@
     .p2-header-sub { font-size: 0.6rem; color: rgba(255,255,255,0.45); margin-top: 1px; letter-spacing: 0.08em; text-transform: uppercase; }
     .p2-teal-bar { height: 3px; background: linear-gradient(90deg, var(--teal), var(--navy)); }
 
-    .p2-photos { padding: 20px 28px 0; }
-    .p2-photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-    .p2-photo-item { aspect-ratio: 4/3; border-radius: 5px; overflow: hidden; background: #e0e6ee; }
+    .p2-photos { padding: 16px 28px 0; }
+    .p2-photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .p2-photo-item { aspect-ratio: 16/9; border-radius: 5px; overflow: hidden; background: #e0e6ee; }
     .p2-photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .p2-photo-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e8edf4, #d0d8e8); display: flex; align-items: center; justify-content: center; color: rgba(34,50,86,0.2); font-size: 0.7rem; }
 
@@ -365,10 +365,7 @@
         <!-- Page 1 -->
         <div class="a4-page" id="page1">
           <div class="p1-header">
-            <div class="p1-logo">
-              <span class="p1-logo-script">Signature</span>
-              <span class="p1-logo-sc">SC</span>
-            </div>
+            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Signature SC" style="height:36px;width:auto;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
             <div class="p1-header-right">
               <div class="p1-header-tag">Luxury Real Estate</div>
               <div class="p1-header-location" id="r-location"></div>
@@ -414,10 +411,7 @@
               <div class="p2-header-title" id="r-title2"></div>
               <div class="p2-header-sub" id="r-header-sub">Galerie photos</div>
             </div>
-            <div class="p1-logo">
-              <span class="p1-logo-script">Signature</span>
-              <span class="p1-logo-sc">SC</span>
-            </div>
+            <img src="https://listing.signature-sc.com/logo-contact.png" alt="Signature SC" style="height:32px;width:auto;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
           </div>
           <div class="p2-teal-bar"></div>
 
@@ -439,22 +433,22 @@
 
           <div class="p2-contact">
             <div class="p2-contact-card">
-              <img id="r-agent-photo" class="p2-contact-photo" src="" alt="Agent" onerror="this.style.display='none'" />
+              <img id="r-agent-photo" class="p2-contact-photo" src="https://listing.signature-sc.com/agent.jpg" alt="Agent" onerror="this.style.display='none'" />
               <div class="p2-contact-info">
                 <div class="p2-contact-name">Sabrina Crémona</div>
                 <div class="p2-contact-role" id="r-agent-role">Founder & CEO · Real Estate Advisor</div>
-                <div class="p2-contact-line">
+                <a href="https://wa.me/529842696189" class="p2-contact-line" style="text-decoration:none;color:rgba(255,255,255,0.7)">
                   <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
                   +52 984 309 8369
-                </div>
-                <div class="p2-contact-line">
+                </a>
+                <a href="mailto:Sales@signature-sc.com" class="p2-contact-line" style="text-decoration:none;color:rgba(255,255,255,0.7)">
                   <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                   Sales@signature-sc.com
-                </div>
-                <div class="p2-contact-line">
+                </a>
+                <a href="https://www.signature-sc.com" class="p2-contact-line" style="text-decoration:none;color:rgba(255,255,255,0.7)">
                   <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                   www.signature-sc.com
-                </div>
+                </a>
               </div>
               <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="p2-contact-logo" onerror="this.style.display='none'" />
             </div>
@@ -543,8 +537,7 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
     se.style.display = 'flex'; se.style.flexDirection = 'column';
     el('editor-title').textContent = d.title || 'Brochure';
 
-    // Agent photo fixe
-    el('r-agent-photo').src = 'https://listing.signature-sc.com/agent.jpg';
+    // Agent photo fixe — déjà définie dans le HTML
 
   } catch (err) {
     showSetupStatus('error', err.message);
@@ -709,11 +702,28 @@ function downloadPDF() {
     margin: 0,
     filename: 'signature-sc-' + title + '.pdf',
     image: { type: 'jpeg', quality: 0.96 },
-    html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
+    html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, windowWidth: 794 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['avoid-all', 'css'], before: '#page2' }
+    pagebreak: { mode: 'css', before: '#page2', avoid: [] }
   };
-  html2pdf().set(opt).from(el('pdf-content')).save();
+
+  // Forcer les dimensions exactes A4 avant génération
+  const pages = document.querySelectorAll('.a4-page');
+  pages.forEach(p => {
+    p.style.width = '210mm';
+    p.style.minHeight = '297mm';
+    p.style.maxHeight = '297mm';
+    p.style.overflow = 'hidden';
+    p.style.pageBreakAfter = 'always';
+  });
+
+  html2pdf().set(opt).from(el('pdf-content')).save().then(() => {
+    // Restaurer après export
+    pages.forEach(p => {
+      p.style.maxHeight = '';
+      p.style.overflow = '';
+    });
+  });
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
