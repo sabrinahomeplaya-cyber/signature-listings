@@ -207,30 +207,28 @@
     .p2-photo-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e8edf4, #d0d8e8); display: flex; align-items: center; justify-content: center; color: rgba(34,50,86,0.2); font-size: 0.7rem; }
 
     .p2-notes { padding: 18px 28px 0; }
-    .p2-notes-box {
-      border: 1px solid rgba(34,50,86,0.12);
-      border-radius: 6px;
-      padding: 14px 16px;
-      min-height: 56px;
-    }
-    .p2-notes-lines { display: flex; flex-direction: column; gap: 10px; }
-    .p2-notes-line { height: 1px; background: rgba(34,50,86,0.08); }
+    .p2-notes-lines { display: flex; flex-direction: column; gap: 14px; }
+    .p2-notes-line { height: 1px; background: rgba(34,50,86,0.1); }
 
-    .p2-contact { margin: 18px 28px 0; }
+    /* Layout 2 colonnes bas page 2 */
+    .p2-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px 28px 0; align-items: start; }
+    .p2-bottom-notes {}
+    .p2-bottom-contact {}
     .p2-contact-card {
       background: var(--navy);
       border-radius: 8px;
-      padding: 16px 20px;
-      display: flex; align-items: center; gap: 16px;
+      padding: 14px;
+      display: flex; flex-direction: column; gap: 10px;
     }
-    .p2-contact-photo { width: 64px; height: 82px; border-radius: 5px; object-fit: cover; flex-shrink: 0; }
-    .p2-contact-photo-placeholder { width: 64px; height: 82px; border-radius: 5px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
-    .p2-contact-info { flex: 1; }
-    .p2-contact-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: white; margin-bottom: 2px; }
-    .p2-contact-role { font-size: 0.65rem; color: var(--teal); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
-    .p2-contact-line { display: flex; align-items: center; gap: 7px; font-size: 0.68rem; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
-    .p2-contact-icon { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.7; }
-    .p2-contact-logo { height: 36px; width: auto; object-fit: contain; opacity: 0.9; flex-shrink: 0; }
+    .p2-contact-top { display: flex; align-items: center; gap: 10px; }
+    .p2-contact-photo { width: 52px; height: 66px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+    .p2-contact-info { flex: 1; min-width: 0; }
+    .p2-contact-name { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 600; color: white; margin-bottom: 1px; white-space: nowrap; }
+    .p2-contact-role { font-size: 0.55rem; color: var(--teal); letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.3; }
+    .p2-contact-logo { height: 24px; width: auto; object-fit: contain; opacity: 0.9; display: block; margin: 0 auto; }
+    .p2-contact-lines { display: flex; flex-direction: column; gap: 5px; }
+    .p2-contact-line { display: flex; align-items: center; gap: 6px; font-size: 0.6rem; color: rgba(255,255,255,0.7); }
+    .p2-contact-icon { width: 11px; height: 11px; flex-shrink: 0; opacity: 0.7; }
 
     .p2-footer {
       margin-top: 16px;
@@ -419,38 +417,48 @@
             <div class="p2-photo-grid" id="r-photo-grid"></div>
           </div>
 
-          <div class="p2-notes">
-            <div class="p1-section-title" id="r-notes-label">NOTES</div>
-            <div class="p2-notes-box">
+          <div class="p2-bottom">
+            <!-- Colonne gauche : Notes -->
+            <div class="p2-bottom-notes">
+              <div class="p1-section-title" id="r-notes-label">NOTES</div>
               <div class="p2-notes-lines">
+                <div class="p2-notes-line"></div>
+                <div class="p2-notes-line"></div>
+                <div class="p2-notes-line"></div>
+                <div class="p2-notes-line"></div>
                 <div class="p2-notes-line"></div>
                 <div class="p2-notes-line"></div>
                 <div class="p2-notes-line"></div>
                 <div class="p2-notes-line"></div>
               </div>
             </div>
-          </div>
-
-          <div class="p2-contact">
-            <div class="p2-contact-card">
-              <img id="r-agent-photo" class="p2-contact-photo" src="https://listing.signature-sc.com/agent.jpg" alt="Agent" onerror="this.style.display='none'" />
-              <div class="p2-contact-info">
-                <div class="p2-contact-name">Sabrina Crémona</div>
-                <div class="p2-contact-role" id="r-agent-role">Founder & CEO · Real Estate Advisor</div>
-                <a href="https://wa.me/529842696189" class="p2-contact-line" style="text-decoration:none;color:rgba(255,255,255,0.7)">
-                  <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
-                  +52 984 309 8369
-                </a>
-                <a href="mailto:Sales@signature-sc.com" class="p2-contact-line" style="text-decoration:none;color:rgba(255,255,255,0.7)">
-                  <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  Sales@signature-sc.com
-                </a>
-                <a href="https://www.signature-sc.com" class="p2-contact-line" style="text-decoration:none;color:rgba(255,255,255,0.7)">
-                  <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                  www.signature-sc.com
-                </a>
+            <!-- Colonne droite : Carte contact -->
+            <div class="p2-bottom-contact">
+              <div class="p1-section-title" id="r-contact-label">CONTACT</div>
+              <div class="p2-contact-card">
+                <div class="p2-contact-top">
+                  <img id="r-agent-photo" class="p2-contact-photo" src="https://listing.signature-sc.com/agent.jpg" alt="Agent" onerror="this.style.display='none'" />
+                  <div class="p2-contact-info">
+                    <div class="p2-contact-name">Sabrina Crémona</div>
+                    <div class="p2-contact-role" id="r-agent-role">Founder & CEO · Real Estate Advisor</div>
+                  </div>
+                  <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="p2-contact-logo" onerror="this.style.display='none'" />
+                </div>
+                <div class="p2-contact-lines">
+                  <a href="https://wa.me/529842696189" class="p2-contact-line" style="text-decoration:none">
+                    <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+                    +52 984 309 8369
+                  </a>
+                  <a href="mailto:Sales@signature-sc.com" class="p2-contact-line" style="text-decoration:none">
+                    <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Sales@signature-sc.com
+                  </a>
+                  <a href="https://www.signature-sc.com" class="p2-contact-line" style="text-decoration:none">
+                    <svg class="p2-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    www.signature-sc.com
+                  </a>
+                </div>
               </div>
-              <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="p2-contact-logo" onerror="this.style.display='none'" />
             </div>
           </div>
 
@@ -524,7 +532,7 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
     d.publicUrl = d.publicUrl || url;
 
     listingData = d;
-    allPhotos = (d.images || []).filter(Boolean);
+    allPhotos = (d.images || []).filter(u => u && u.startsWith('http'));
     coverPhotoUrl = allPhotos[0] || '';
     galleryPhotos = allPhotos.slice(1, 9);
 
@@ -678,6 +686,7 @@ function applyAndRender() {
   el('r-title2').textContent = title;
   el('r-header-sub').textContent = labels.gallery;
   el('r-notes-label').childNodes[0].textContent = labels.notes + ' ';
+  if (el('r-contact-label')) el('r-contact-label').childNodes[0].textContent = (currentLang === 'en' ? 'CONTACT' : 'CONTACT') + ' ';
   el('r-agent-role').textContent = labels.role;
 
   // Gallery
@@ -695,35 +704,39 @@ function applyAndRender() {
 }
 
 // ── Download PDF ──────────────────────────────────────────────────
-function downloadPDF() {
+async function downloadPDF() {
   applyAndRender();
-  const title = (el('p-title').value || 'brochure').toLowerCase().replace(/\s+/g, '-');
+  const title = (el('p-title').value || 'brochure').toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+  // Générer page par page pour éviter la page blanche
+  const { jsPDF } = window.jspdf || {};
+  const page1 = el('page1');
+  const page2 = el('page2');
+
   const opt = {
     margin: 0,
-    filename: 'signature-sc-' + title + '.pdf',
-    image: { type: 'jpeg', quality: 0.96 },
-    html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, windowWidth: 794 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: 'css', before: '#page2', avoid: [] }
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, width: 794, windowWidth: 794 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  // Forcer les dimensions exactes A4 avant génération
-  const pages = document.querySelectorAll('.a4-page');
-  pages.forEach(p => {
-    p.style.width = '210mm';
-    p.style.minHeight = '297mm';
-    p.style.maxHeight = '297mm';
-    p.style.overflow = 'hidden';
-    p.style.pageBreakAfter = 'always';
-  });
-
-  html2pdf().set(opt).from(el('pdf-content')).save().then(() => {
-    // Restaurer après export
-    pages.forEach(p => {
-      p.style.maxHeight = '';
-      p.style.overflow = '';
-    });
-  });
+  try {
+    // Générer les deux pages séparément puis les fusionner
+    const worker = html2pdf()
+      .set(opt)
+      .from(el('pdf-content'))
+      .toPdf()
+      .get('pdf')
+      .then(pdf => {
+        pdf.deletePage(3); // Supprimer toute page blanche éventuelle
+        // Garder seulement 2 pages
+        while (pdf.getNumberOfPages() > 2) pdf.deletePage(pdf.getNumberOfPages());
+        pdf.save('signature-sc-' + title + '.pdf');
+      });
+  } catch(e) {
+    // Fallback simple
+    html2pdf().set(opt).from(el('pdf-content')).save('signature-sc-' + title + '.pdf');
+  }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
