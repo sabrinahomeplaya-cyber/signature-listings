@@ -109,7 +109,7 @@ export default async function handler(req, res) {
     const enhancedMessages = [{
       role: 'user',
       content: pageContent
-        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON. Utilise les URLs de la section IMAGES pour le champ "images". Prends uniquement les photos du bien, pas les logos ou photos de profil.`
+        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON. Pour le champ "images" : inclus TOUTES les URLs listées dans la section IMAGES ci-dessus sans aucune limite ni sélection — chaque URL doit être dans le tableau. Ne jamais tronquer ou limiter la liste des photos.`
         : (body.messages?.[0]?.content || '')
     }];
 
