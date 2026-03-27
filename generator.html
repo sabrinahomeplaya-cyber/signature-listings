@@ -312,7 +312,21 @@
           <div class="field-group"><label class="field-label">Construction</label><input id="e-construction" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Terrain / Terrasse</label><input id="e-lot" class="field-input" type="text" /></div>
         </div>
-      </div>
+      </div> 
+
+      
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
+                <span class="text-[#223256]/70">HOA</span>
+                <span id="hoa" class="font-semibold text-[#223256]"></span>
+              </div>
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
+                <span class="text-[#223256]/70">Predial</span>
+                <span id="predial" class="font-semibold text-[#223256]"></span>
+              </div>
+            </div>
+
+          </div>
 
       <!-- Description -->
       <div class="edit-section">
@@ -693,6 +707,19 @@ function buildTemplate(data) {
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.lot||''}</div></div>
           </div>
         </div>
+        
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
+                <span class="text-[#223256]/70">HOA</span>
+                <span id="hoa" class="font-semibold text-[#223256]"></span>
+              </div>
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5">
+                <span class="text-[#223256]/70">Predial</span>
+                <span id="predial" class="font-semibold text-[#223256]"></span>
+              </div>
+            </div>
+
+          </div>
 
         <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
           <div class="flex items-center gap-3">
