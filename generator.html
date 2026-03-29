@@ -311,8 +311,10 @@
           <div class="field-group"><label class="field-label">Année</label><input id="e-year" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Construction</label><input id="e-construction" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Terrain / Terrasse</label><input id="e-lot" class="field-input" type="text" /></div>
+          <div class="field-group"><label class="field-label">HOA</label><input id="e-hoa" class="field-input" type="text" placeholder="ex: $1,600 MXN per month." /></div>
+          <div class="field-group"><label class="field-label">Predial</label><input id="e-predial" class="field-input" type="text" placeholder="ex: $11,000 MXN per year." /></div>
         </div>
-      </div> 
+      </div>
 
       <!-- Description -->
       <div class="edit-section">
@@ -595,9 +597,9 @@ function buildTemplate(data) {
   const lang = data.lang || 'fr';
 
   const L = {
-    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', garage:'Garage', year:'Année', construction:'Construction', lot:'Terrain', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
-    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', garage:'Garage', year:'Year built', construction:'Living area', lot:'Lot size', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
-    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', garage:'Cochera', year:'Año', construction:'Construcción', lot:'Terreno', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
+    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', garage:'Garage', year:'Année', construction:'Construction', lot:'Terrain', hoa:'HOA', predial:'Predial', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
+    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', garage:'Garage', year:'Year built', construction:'Living area', lot:'Lot size', hoa:'HOA', predial:'Predial', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
+    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', garage:'Cochera', year:'Año', construction:'Construcción', lot:'Terreno', hoa:'HOA', predial:'Predial', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
   }[lang] || {};
 
   const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
@@ -692,6 +694,10 @@ function buildTemplate(data) {
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.construction||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.lot||''}</div></div>
           </div>
+          ${(data.hoa||data.predial)?`<div class="grid sm:grid-cols-2 gap-4 text-sm mt-4">
+            ${data.hoa?`<div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">${L.hoa}</span><span class="font-semibold text-[#223256]">${data.hoa}</span></div>`:''}
+            ${data.predial?`<div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">${L.predial}</span><span class="font-semibold text-[#223256]">${data.predial}</span></div>`:''}
+          </div>`:''}
         </div>
 
         <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
@@ -865,7 +871,7 @@ async function extractListing() {
   showStatus('loading','Lecture de la page…');
   try {
     const sys = `Tu es un extracteur de données immobilières. Réponds UNIQUEMENT avec un JSON valide, sans backticks.
-JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"Xm²","lot":"Xm²","description":"3-4 paragraphes ton luxueux en ${langLabel}, sans tirets comme ponctuation","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
+JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"Xm²","lot":"Xm²","hoa":"","predial":"","description":"3-4 paragraphes ton luxueux en ${langLabel}, sans tirets comme ponctuation","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
@@ -892,7 +898,7 @@ async function translateListing() {
   try {
     const sys = `Tu traduis un listing immobilier de luxe du français en ${langLabel}. Réponds UNIQUEMENT avec un JSON valide, sans backticks.
 ${surfNote}
-JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","description":"traduit, 3-4 paragraphes, ton luxueux, sans tirets comme ponctuation","highlights":["traduit"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
+JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit, 3-4 paragraphes, ton luxueux, sans tirets comme ponctuation","highlights":["traduit"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing FR à traduire: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
@@ -924,6 +930,8 @@ function showResult(data) {
   document.getElementById('e-year').value = data.year||'';
   document.getElementById('e-construction').value = data.construction||'';
   document.getElementById('e-lot').value = data.lot||'';
+  document.getElementById('e-hoa').value = data.hoa||'';
+  document.getElementById('e-predial').value = data.predial||'';
   document.getElementById('e-description').value = data.description||'';
   document.getElementById('e-highlights').value = (data.highlights||[]).join('\n');
   document.getElementById('e-lat').value = data.lat||'';
@@ -964,6 +972,8 @@ function applyChanges() {
   listingData.year = document.getElementById('e-year').value.trim();
   listingData.construction = document.getElementById('e-construction').value.trim();
   listingData.lot = document.getElementById('e-lot').value.trim();
+  listingData.hoa = document.getElementById('e-hoa').value.trim();
+  listingData.predial = document.getElementById('e-predial').value.trim();
   listingData.description = document.getElementById('e-description').value.trim();
   listingData.highlights = document.getElementById('e-highlights').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
   listingData.lat = document.getElementById('e-lat').value.trim();
