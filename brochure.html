@@ -858,7 +858,7 @@ function printFiche(){
   document.querySelectorAll('style').forEach(s=>win.document.write('<style>'+s.innerHTML+'</style>'));
   win.document.write('</head><body>');
   win.document.write(fiche.outerHTML);
-  win.document.write('<script>window.onload=function(){window.print();window.close();}<\/script>');
+  win.document.write('<script>window.onload=function(){window.print();};window.onafterprint=function(){window.close();};<\/script>');
   win.document.write('</body></html>');
   win.document.close();
 }
