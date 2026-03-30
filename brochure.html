@@ -554,12 +554,39 @@ async function loadListing() {
   el('btn-load').disabled = true;
   showStatus('loading','Lecture du listing…');
   try {
-    const langLabel = lang==='fr'?'français':lang==='en'?'anglais':'espagnol';
-    const sys = `Tu lis le contenu HTML d'un listing immobilier et tu extrais les données.
-Réponds UNIQUEMENT avec un JSON valide sans backticks.
-Pour "description" : résumé élégant en ${langLabel}, 5 lignes max, sans tirets comme ponctuation.
+    const langLabel = lang==='fr'?'français':lang==='en'?'anglais':'espagnol (Mexique)';
+    const isSignature = url.includes('listing.signature-sc.com');
+    const sys = isSignature
+      ? `Tu es le traducteur officiel de l'agence "Signature ˢᶜ". Tu appliques la règle de FIDÉLITÉ ABSOLUE pour la génération de brochures et fiches client.
+
+Extrais et copie-colle fidèlement les informations du listing fourni. Ton unique rôle est de structurer et de mettre en forme ces données brutes sans jamais altérer les mots validés par la direction. Interdiction formelle de reformuler, d'inventer ou de supprimer quoi que ce soit.
+
+RÈGLES DE FORMATAGE CRITIQUES :
+1. INTERDICTION FORMELLE d'utiliser le tiret cadratin (—) ou le tiret court (-) pour lier des mots ou des phrases.
+2. INTERDICTION FORMELLE d'utiliser des tirets du bas (_).
+3. Les points forts doivent être UNIQUEMENT des mots-clés ou groupes de mots concis. AUCUNE phrase descriptive.
+
 Inclure TOUTES les URLs d'images dans le tableau "images".
-JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"","highlights":[""],"images":[""],"publicUrl":"${url}"}`;
+Réponds UNIQUEMENT avec un JSON valide sans backticks.
+JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"copie fidèle des paragraphes du listing source sans aucune reformulation","highlights":["copie fidèle des points forts"],"images":[""],"publicUrl":"${url}"}`
+      : `Tu es le rédacteur en chef immobilier de l'agence "Signature ˢᶜ", spécialisée dans l'immobilier de prestige sur la Riviera Maya. Ta mission est de transformer des données de propriétés en descriptions immobilières de très haut niveau.
+
+RÈGLE ABSOLUE DE TON : "Luxe Discret"
+Ton écriture doit être élégante, sensorielle, chaleureuse et sincère. Banni le jargon de vendeur agressif, les exclamations excessives et le ton "corporate".
+
+RÈGLES DE FORMATAGE ET D'INTERDICTION (CRITIQUES) :
+1. INTERDICTION FORMELLE d'utiliser le tiret cadratin (—) ou le tiret court (-) pour lier des mots ou des phrases.
+2. INTERDICTION FORMELLE d'utiliser des tirets du bas (_).
+3. Les points forts : UNIQUEMENT des mots-clés ou groupes de mots concis. AUCUNE phrase descriptive.
+
+RÈGLE DE LOCALISATION :
+${lang==='en'?'Anglais (standards US) : Convertis IMPÉRATIVEMENT tous les m² en sq ft. Utilise "showing" (jamais "viewing").':lang==='es'?'Espagnol (Mexique) : vocabulaire immobilier MX. Convertis sq ft en m².':'Français : m² et sq ft entre parenthèses. Terminologie haut de gamme.'}
+
+STRUCTURE DESCRIPTION : 4 paragraphes narratifs (L\'Atmosphère, La Résidence, L\'Oasis Privée, Le Style de Vie).
+
+Inclure TOUTES les URLs d'images dans le tableau "images".
+Réponds UNIQUEMENT avec un JSON valide sans backticks.
+JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"4 paragraphes Luxe Discret en ${langLabel}","highlights":["..."],"images":[""],"publicUrl":"${url}"}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:sys,
         messages:[{role:'user',content:'URL du listing: '+url}]})});
