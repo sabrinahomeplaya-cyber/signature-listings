@@ -853,7 +853,7 @@ function switchEditorMode(mode) {
 function printFiche(){
   const fiche=el('fiche-page');
   const win=window.open('','_blank','width=900,height=1200');
-  win.document.write('<html><head><title>Fiche Client</title><style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:white;display:flex;justify-content:center;}@media print{@page{size:A4 portrait;margin:0;}}</style>');
+  win.document.write('<html><head><title>Fiche Client</title><style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}@media print{@page{size:A4 portrait;margin:0;}}</style>');
   // Copy all stylesheets
   document.querySelectorAll('style').forEach(s=>win.document.write('<style>'+s.innerHTML+'</style>'));
   win.document.write('</head><body>');
