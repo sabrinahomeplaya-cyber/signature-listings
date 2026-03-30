@@ -851,14 +851,11 @@ function downloadPDF() {
       margin:0,
       filename:'signature-sc-fiche-'+title+'.pdf',
       image:{type:'jpeg',quality:0.95},
-      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false},
+      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false,scrollY:-document.documentElement.scrollTop},
       jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
       pagebreak:{avoid:'.fc-page'}
     };
-    const clone=el('fiche-page').cloneNode(true);
-    clone.style.cssText='position:absolute;top:0;left:-10000px;display:block;';
-    document.body.appendChild(clone);
-    html2pdf().set(opt).from(clone).save().then(()=>document.body.removeChild(clone));
+    html2pdf().set(opt).from(el('fiche-page')).save();
   } else {
     const opt={
       margin:0,
