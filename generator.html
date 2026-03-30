@@ -307,7 +307,6 @@
         <div class="edit-grid-3">
           <div class="field-group"><label class="field-label">Chambres</label><input id="e-beds" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Salles de bain</label><input id="e-baths" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">Garage</label><input id="e-garage" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Année</label><input id="e-year" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Construction</label><input id="e-construction" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Terrain / Terrasse</label><input id="e-lot" class="field-input" type="text" /></div>
@@ -597,14 +596,32 @@ function buildTemplate(data) {
   const lang = data.lang || 'fr';
 
   const L = {
-    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', garage:'Garage', year:'Année', construction:'Construction', lot:'Terrain', hoa:'HOA', predial:'Predial', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
-    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', garage:'Garage', year:'Year built', construction:'Living area', lot:'Lot size', hoa:'HOA', predial:'Predial', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
-    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', garage:'Cochera', year:'Año', construction:'Construcción', lot:'Terreno', hoa:'HOA', predial:'Predial', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
+    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m²', hoa:'HOA', predial:'Predial', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
+    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', year:'Year built', construction:'Construction', lot:'Lot size', pricePerArea:'Price / sq ft', hoa:'HOA', predial:'Predial', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
+    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', year:'Año', construction:'Construcción', lot:'Terreno', pricePerArea:'Precio / m²', hoa:'HOA', predial:'Predial', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
   }[lang] || {};
 
   const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
   const esc = s => (s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
   const escHtml = s => (s||'').replace(/"/g,'&quot;');
+
+  const pricePerArea = (() => {
+    if (!data.price || !data.construction) return '';
+    const priceNum = parseFloat(data.price.replace(/[^0-9.]/g, ''));
+    if (!priceNum) return '';
+    const sqftMatch = data.construction.match(/([\d,\.]+)\s*sq\s*ft/i);
+    const sqmMatch  = data.construction.match(/([\d,\.]+)\s*m[²2]/i);
+    let area = null;
+    if (lang === 'en') {
+      if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,''));
+      else if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,'')) * 10.764;
+    } else {
+      if (sqmMatch)  area = parseFloat(sqmMatch[1].replace(/,/g,''));
+      else if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,'')) / 10.764;
+    }
+    if (!area) return '';
+    return '$' + Math.round(priceNum / area).toLocaleString('en-US');
+  })();
 
   return `<!doctype html>
 <html lang="${lang}">
@@ -689,10 +706,10 @@ function buildTemplate(data) {
           <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.beds}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.beds||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.baths}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.baths||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.garage}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.garage||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.year}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.year||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.construction||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.lot||''}</div></div>
+            ${pricePerArea?`<div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.pricePerArea}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${pricePerArea}</div></div>`:''}
           </div>
           ${(data.hoa||data.predial)?`<div class="grid sm:grid-cols-2 gap-4 text-sm mt-4">
             ${data.hoa?`<div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">${L.hoa}</span><span class="font-semibold text-[#223256]">${data.hoa}</span></div>`:''}
@@ -871,7 +888,7 @@ async function extractListing() {
   showStatus('loading','Lecture de la page…');
   try {
     const sys = `Tu es un extracteur de données immobilières. Réponds UNIQUEMENT avec un JSON valide, sans backticks.
-JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"Xm²","lot":"Xm²","hoa":"","predial":"","description":"3-4 paragraphes ton luxueux en ${langLabel}, sans tirets comme ponctuation","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
+JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"Xm²","lot":"Xm²","hoa":"","predial":"","description":"3-4 paragraphes ton luxueux en ${langLabel}, sans tirets comme ponctuation","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
@@ -898,7 +915,7 @@ async function translateListing() {
   try {
     const sys = `Tu traduis un listing immobilier de luxe du français en ${langLabel}. Réponds UNIQUEMENT avec un JSON valide, sans backticks.
 ${surfNote}
-JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit, 3-4 paragraphes, ton luxueux, sans tirets comme ponctuation","highlights":["traduit"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
+JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit, 3-4 paragraphes, ton luxueux, sans tirets comme ponctuation","highlights":["traduit"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing FR à traduire: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
@@ -926,7 +943,6 @@ function showResult(data) {
   document.getElementById('e-price-old').value = data.priceOld||'';
   document.getElementById('e-beds').value = data.beds||'';
   document.getElementById('e-baths').value = data.baths||'';
-  document.getElementById('e-garage').value = data.garage||'';
   document.getElementById('e-year').value = data.year||'';
   document.getElementById('e-construction').value = data.construction||'';
   document.getElementById('e-lot').value = data.lot||'';
@@ -968,7 +984,6 @@ function applyChanges() {
   listingData.priceOld = document.getElementById('e-price-old').value.trim();
   listingData.beds = document.getElementById('e-beds').value.trim();
   listingData.baths = document.getElementById('e-baths').value.trim();
-  listingData.garage = document.getElementById('e-garage').value.trim();
   listingData.year = document.getElementById('e-year').value.trim();
   listingData.construction = document.getElementById('e-construction').value.trim();
   listingData.lot = document.getElementById('e-lot').value.trim();
