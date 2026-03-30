@@ -98,6 +98,15 @@ export default async function handler(req, res) {
 
           const uniqueImages = [...imageUrls];
 
+          // ── 7. Highlights depuis l'objet JS inline (listing.signature-sc.com) ──
+          let inlineHighlights = [];
+          const hlScriptMatch = html.match(/const listing\s*=\s*\{[\s\S]*?highlights\s*:\s*\[([\s\S]*?)\]/);
+          if (hlScriptMatch) {
+            const hlRaw = hlScriptMatch[1];
+            const hlItems = hlRaw.match(/"([^"]+)"/g);
+            if (hlItems) inlineHighlights = hlItems.map(s => s.replace(/^"|"$/g, ''));
+          }
+
           // ── Nettoyer le HTML en texte ──
           const textContent = html
             .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
@@ -111,7 +120,11 @@ export default async function handler(req, res) {
             ? `\n\n=== IMAGES (${uniqueImages.length} photos) ===\n` + uniqueImages.join('\n')
             : '\n\n=== AUCUNE IMAGE TROUVÉE ===';
 
-          pageContent = textContent + imagesSection;
+          const highlightsSection = inlineHighlights.length > 0
+            ? `\n\n=== HIGHLIGHTS OBLIGATOIRES (copie exacte, aucune modification) ===\n` + inlineHighlights.map(h => `- ${h}`).join('\n')
+            : '';
+
+          pageContent = textContent + imagesSection + highlightsSection;
         }
       } catch (fetchErr) {
         console.error('Page fetch error:', fetchErr.message);
@@ -121,7 +134,7 @@ export default async function handler(req, res) {
     const enhancedMessages = [{
       role: 'user',
       content: pageContent
-        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON. Pour le champ "images" : inclus TOUTES les URLs listées dans la section IMAGES ci-dessus sans aucune limite ni sélection — chaque URL doit être dans le tableau. Ne jamais tronquer ou limiter la liste des photos.`
+        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Pour le champ "images" : inclus TOUTES les URLs listées dans la section IMAGES ci-dessus sans aucune limite ni sélection.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS utiliser ces highlights tels quels dans le champ "highlights" du JSON, sans aucune modification, traduction ou reformulation.`
         : (body.messages?.[0]?.content || '')
     }];
 
