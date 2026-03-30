@@ -851,7 +851,7 @@ function downloadPDF() {
       margin:0,
       filename:'signature-sc-fiche-'+title+'.pdf',
       image:{type:'jpeg',quality:0.95},
-      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false,scrollY:-document.documentElement.scrollTop},
+      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false,scrollY:-el('fiche-page').getBoundingClientRect().top},
       jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
       pagebreak:{avoid:'.fc-page'}
     };
