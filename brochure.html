@@ -856,10 +856,7 @@ function downloadPDF() {
       pagebreak:{avoid:'.fc-page'}
     };
     const clone=el('fiche-page').cloneNode(true);
-    clone.style.position='fixed';
-    clone.style.top='0';
-    clone.style.left='0';
-    clone.style.zIndex='-9999';
+    clone.style.cssText='position:absolute;top:0;left:-10000px;display:block;';
     document.body.appendChild(clone);
     html2pdf().set(opt).from(clone).save().then(()=>document.body.removeChild(clone));
   } else {
