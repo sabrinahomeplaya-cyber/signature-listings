@@ -105,6 +105,19 @@
     #ownPhotosArea { border: 2px dashed rgba(34,50,86,0.15); border-radius: 10px; padding: 20px; text-align: center; font-size: 0.83rem; color: rgba(34,50,86,0.5); cursor: pointer; transition: border-color 0.2s; margin-bottom: 12px; }
     #ownPhotosArea:hover { border-color: var(--teal); }
     #ownPhotosList { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+    /* Upload drop zone */
+    #photo-drop-zone { border: 2px dashed rgba(34,50,86,0.2); border-radius: 10px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; background: rgba(34,50,86,0.02); }
+    #photo-drop-zone:hover, #photo-drop-zone.drag-active { border-color: var(--teal); background: rgba(97,189,204,0.06); }
+    #photo-drop-zone svg { opacity: 0.35; margin-bottom: 8px; }
+    #upload-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .upload-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: #eee; }
+    .upload-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .upload-thumb .thumb-name { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.55); color: white; font-size: 9px; padding: 2px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .upload-thumb .thumb-remove { position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; font-size: 9px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .upload-thumb .thumb-ok { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #22c55e; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+    #btn-upload-github { width: 100%; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 11px 16px; font-size: 0.83rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; margin-bottom: 12px; }
+    #btn-upload-github:hover { background: #1a2845; }
+    #btn-upload-github:disabled { opacity: 0.5; cursor: not-allowed; }
     .own-photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; cursor: grab; border: 2px solid rgba(34,50,86,0.08); }
     .own-photo-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
     .own-photo-item .remove-btn { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
@@ -359,7 +372,7 @@
 
         <!-- Photos perso -->
         <div id="panelPhotoOwn" style="display:none">
-          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Entrez le chemin GitHub de vos photos, puis cliquez <strong>Lire le dossier</strong> pour charger automatiquement la liste.</div>
+          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Entrez le chemin GitHub de vos photos, puis glissez-déposez vos photos pour les compresser et les uploader directement.</div>
           <div class="path-builder">
             <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:12px">
               <div class="field-group" style="flex:1">
@@ -372,6 +385,22 @@
               </button>
             </div>
             <div id="folder-status" style="display:none;font-size:0.75rem;margin-bottom:8px;padding:8px 12px;border-radius:6px;"></div>
+            <!-- Zone drag & drop upload -->
+            <div id="photo-drop-zone" onclick="document.getElementById('photo-file-input').click()">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div style="font-size:0.82rem;color:rgba(34,50,86,0.6)">Glissez vos photos ici ou <span style="color:var(--teal);font-weight:600">cliquez pour sélectionner</span></div>
+              <div style="font-size:0.72rem;color:rgba(34,50,86,0.4);margin-top:4px">Compression automatique 80% · max 1920px</div>
+              <input type="file" id="photo-file-input" multiple accept="image/*" style="display:none">
+            </div>
+            <!-- Aperçu + bouton upload -->
+            <div id="upload-preview-section" style="display:none">
+              <div id="upload-preview-grid"></div>
+              <button id="btn-upload-github" onclick="uploadPhotosToGitHub()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                Compresser et uploader sur GitHub
+              </button>
+              <div id="upload-status" style="font-size:0.75rem;color:rgba(34,50,86,0.6);text-align:center;min-height:18px"></div>
+            </div>
             <div class="field-group">
               <label class="field-label">Noms des fichiers (un par ligne)</label>
               <textarea id="e-photo-files" class="field-textarea" rows="5" placeholder="4.jpeg&#10;5.jpeg&#10;6.jpeg&#10;7.jpeg"></textarea>
@@ -413,6 +442,8 @@ const SQM_TO_SQFT = 10.7639;
 
 // ── Init ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  initUploadZone();
+
   // Collab slug/lang preview
   const slugInput = document.getElementById('listing-slug');
   const langSelect = document.getElementById('listing-lang');
@@ -456,6 +487,110 @@ function setMode(mode) {
   document.getElementById('modeCollabBtn').classList.toggle('active', mode === 'collab');
   document.getElementById('modeTranslateBtn').classList.toggle('active', mode === 'translate');
   document.getElementById('btn-label').textContent = mode === 'translate' ? 'Traduire le listing' : 'Générer le listing';
+}
+
+// ── Photo compression & upload ────────────────────────────────────
+let pendingUploadFiles = []; // { file, name }
+
+function compressImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const MAX = 1920;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]); // base64 only
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', 0.80);
+    };
+    img.src = url;
+  });
+}
+
+function initUploadZone() {
+  const zone = document.getElementById('photo-drop-zone');
+  const input = document.getElementById('photo-file-input');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-active'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-active'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-active'); addFilesToUpload(Array.from(e.dataTransfer.files)); });
+  input.addEventListener('change', () => { addFilesToUpload(Array.from(input.files)); input.value = ''; });
+}
+
+function addFilesToUpload(files) {
+  const valid = files.filter(f => f.type.startsWith('image/'));
+  if (!valid.length) return;
+  valid.forEach(f => {
+    const name = f.name.replace(/\.[^.]+$/, '.jpg');
+    pendingUploadFiles.push({ file: f, name });
+  });
+  renderUploadPreview();
+}
+
+function renderUploadPreview() {
+  const grid = document.getElementById('upload-preview-grid');
+  const section = document.getElementById('upload-preview-section');
+  grid.innerHTML = '';
+  if (!pendingUploadFiles.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  pendingUploadFiles.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'upload-thumb';
+    const previewUrl = URL.createObjectURL(item.file);
+    div.innerHTML = `<img src="${previewUrl}"><div class="thumb-name">${item.name}</div>${item.done ? '<div class="thumb-ok">✓</div>' : `<button class="thumb-remove" onclick="removeUploadFile(${idx})">✕</button>`}`;
+    grid.appendChild(div);
+  });
+  document.getElementById('upload-status').textContent = pendingUploadFiles.length + ' photo(s) prête(s)';
+}
+
+function removeUploadFile(idx) {
+  pendingUploadFiles.splice(idx, 1);
+  renderUploadPreview();
+}
+
+async function uploadPhotosToGitHub() {
+  const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/, '/').replace(/^\//, '');
+  if (!path || path === '/') { alert('Entrez d\'abord le chemin GitHub (ex: for-sale/villa/photos/)'); return; }
+  if (!pendingUploadFiles.length) return;
+  const btn = document.getElementById('btn-upload-github');
+  const status = document.getElementById('upload-status');
+  btn.disabled = true;
+  const uploadedNames = [];
+  for (let i = 0; i < pendingUploadFiles.length; i++) {
+    const item = pendingUploadFiles[i];
+    status.textContent = `Compression et upload ${i + 1}/${pendingUploadFiles.length} : ${item.name}…`;
+    try {
+      const base64 = await compressImage(item.file);
+      const res = await fetch('/api/github-publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: path + item.name, content: base64, isBase64: true, message: 'Upload photo: ' + item.name })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur GitHub');
+      item.done = true;
+      uploadedNames.push(item.name);
+    } catch (err) {
+      status.textContent = 'Erreur sur ' + item.name + ' : ' + err.message;
+      btn.disabled = false;
+      return;
+    }
+  }
+  // Auto-fill textarea
+  const textarea = document.getElementById('e-photo-files');
+  const existing = textarea.value.trim();
+  textarea.value = (existing ? existing + '\n' : '') + uploadedNames.join('\n');
+  updatePathPreview();
+  renderUploadPreview();
+  status.textContent = '✓ ' + uploadedNames.length + ' photo(s) uploadée(s) et compressées sur GitHub.';
+  pendingUploadFiles = pendingUploadFiles.filter(f => !f.done);
+  btn.disabled = false;
 }
 
 // ── Photos mode ───────────────────────────────────────────────────

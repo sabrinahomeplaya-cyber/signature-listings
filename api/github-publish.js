@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const token = process.env.GITHUB_TOKEN;
   if (!token) return res.status(500).json({ error: 'GitHub token not configured' });
 
-  const { path, content, message } = req.body;
+  const { path, content, message, isBase64 } = req.body;
 
   if (!path || !content || !message) {
     return res.status(400).json({ error: 'Missing path, content or message' });
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     // Create or update the file
     const body = {
       message,
-      content: Buffer.from(content).toString('base64'),
+      content: isBase64 ? content : Buffer.from(content).toString('base64'),
       branch: BRANCH
     };
     if (sha) body.sha = sha;
