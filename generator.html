@@ -1211,6 +1211,7 @@ function openInNewTab() {
   window.open(URL.createObjectURL(new Blob([generatedCode],{type:'text/html;charset=utf-8'})),'_blank');
 }
 
+
 function showStatus(type, text) {
   const bar=document.getElementById('status-bar');
   bar.className='status-bar '+type;

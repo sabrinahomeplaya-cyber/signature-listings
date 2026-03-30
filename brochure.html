@@ -146,6 +146,70 @@
 
     .copy-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;font-size:0.82rem;font-weight:500;padding:10px 22px;border-radius:100px;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;z-index:9999;white-space:nowrap;}
     .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ── MODE TOGGLE ── */
+    .mode-toggle{display:flex;background:rgba(34,50,86,0.06);border-radius:12px;padding:4px;margin-bottom:28px;}
+    .mode-btn{flex:1;border:none;border-radius:9px;padding:11px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;background:transparent;color:rgba(34,50,86,0.45);font-family:'Inter',sans-serif;transition:all 0.15s;line-height:1.3;text-align:center;}
+    .mode-btn.active{background:white;color:var(--navy);box-shadow:0 1px 4px rgba(34,50,86,0.12);}
+    .mode-btn span{display:block;font-size:0.66rem;font-weight:400;opacity:0.7;margin-top:1px;}
+
+    /* ── FICHE CLIENT PAGE ── */
+    .fc-page{width:794px;height:1123px;background:white;box-shadow:0 4px 32px rgba(0,0,0,0.18);border-radius:2px;overflow:hidden;display:flex;flex-direction:column;}
+    .fc-hdr{background:#223256;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .fc-logo{display:flex;align-items:flex-start;gap:2px;}
+    .fc-logo-s{font-family:'Allura',cursive;font-size:1.6rem;color:white;line-height:1;}
+    .fc-logo-sc{font-size:0.48rem;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-top:3px;}
+    .fc-hdr-right{text-align:right;}
+    .fc-hdr-tag{font-size:0.52rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#61BDCC;}
+    .fc-hdr-loc{font-size:0.65rem;color:rgba(255,255,255,0.65);margin-top:2px;}
+    .fc-title-area{padding:8px 22px 4px;flex-shrink:0;}
+    .fc-prop-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#223256;line-height:1;}
+    .fc-prop-sub{font-size:0.65rem;color:rgba(34,50,86,0.5);font-style:italic;margin-top:2px;}
+    .fc-hero{width:100%;height:186px;object-fit:cover;display:block;flex-shrink:0;background:#dde4ee;}
+    .fc-hero-ph{width:100%;height:186px;background:linear-gradient(135deg,#e8edf4,#d0d8e8);display:flex;align-items:center;justify-content:center;color:rgba(34,50,86,0.25);font-size:0.75rem;flex-shrink:0;}
+    .fc-thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 22px;flex-shrink:0;}
+    .fc-thumb{height:56px;width:100%;object-fit:cover;border-radius:3px;display:block;background:#dde4ee;}
+    .fc-thumb-ph{height:56px;background:linear-gradient(135deg,#e8edf4,#d0d8e8);border-radius:3px;}
+    .fc-price-row{display:flex;align-items:center;justify-content:space-between;padding:7px 22px;background:#f0f4f8;flex-shrink:0;}
+    .fc-price-left{display:flex;align-items:baseline;gap:8px;}
+    .fc-price-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#223256;}
+    .fc-price-curr{font-size:0.62rem;color:rgba(34,50,86,0.45);}
+    .fc-price-old{font-size:0.72rem;text-decoration:line-through;color:rgba(34,50,86,0.35);}
+    .fc-price-loc{font-size:0.67rem;color:rgba(34,50,86,0.6);font-style:italic;}
+    .fc-details{padding:7px 22px;flex-shrink:0;}
+    .fc-details-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(34,50,86,0.08);border-radius:6px;overflow:hidden;}
+    .fc-detail-cell{background:white;padding:7px 10px;}
+    .fc-detail-label{font-size:0.5rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(34,50,86,0.38);margin-bottom:2px;}
+    .fc-detail-value{font-size:0.77rem;font-weight:600;color:#223256;}
+    .fc-body{display:grid;grid-template-columns:1fr 2fr;flex:1;min-height:0;padding:7px 22px 6px;gap:0;}
+    .fc-body-left{padding-right:14px;border-right:1px solid rgba(34,50,86,0.07);overflow:hidden;}
+    .fc-body-right{padding-left:14px;}
+    .fc-section-title{font-size:0.52rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#61BDCC;margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+    .fc-section-title::after{content:'';flex:1;height:1px;background:rgba(97,189,204,0.3);}
+    .fc-hl-list{display:flex;flex-direction:column;gap:3px;}
+    .fc-hl-item{display:flex;align-items:flex-start;gap:5px;font-size:0.62rem;color:rgba(34,50,86,0.82);line-height:1.45;}
+    .fc-hl-dot{width:4px;height:4px;border-radius:50%;background:#61BDCC;flex-shrink:0;margin-top:4px;}
+    .fc-agent-wrap{margin:4px 22px 6px;flex-shrink:0;}
+    .fc-agent-card{background:#223256;border-radius:7px;overflow:hidden;display:flex;height:90px;}
+    .fc-agent-photo{width:66px;flex-shrink:0;object-fit:cover;object-position:center top;height:100%;display:block;}
+    .fc-agent-right{flex:1;padding:10px 16px;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+    .fc-agent-logo{height:18px;width:auto;object-fit:contain;object-position:left;margin-bottom:4px;filter:brightness(0) invert(1);}
+    .fc-agent-name{font-family:'Cormorant Garamond',serif;font-size:0.92rem;font-weight:600;color:white;line-height:1;}
+    .fc-agent-role{font-size:0.51rem;color:#61BDCC;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;margin-bottom:5px;}
+    .fc-agent-contacts{display:flex;gap:14px;}
+    .fc-agent-contact{font-size:0.58rem;color:rgba(255,255,255,0.7);}
+    .fc-footer{background:#223256;padding:9px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .fc-footer-link{font-size:0.58rem;color:#61BDCC;text-decoration:underline;word-break:break-all;}
+    .fc-footer-brand{font-size:0.52rem;color:rgba(255,255,255,0.35);}
+
+    /* Miniatures panel section */
+    .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+    .mini-thumb{position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;background:#dde4ee;}
+    .mini-thumb img{width:100%;height:100%;object-fit:cover;}
+    .mini-thumb .badge{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:var(--teal);display:none;align-items:center;justify-content:center;font-size:9px;color:white;font-weight:700;}
+    .mini-thumb .badge-num{font-size:8px;}
+    .mini-thumb.selected{border-color:var(--teal);}
+    .mini-thumb.selected .badge{display:flex;}
   </style>
 </head>
 <body>
@@ -154,8 +218,16 @@
 <div id="screen-setup">
   <div class="setup-card">
     <div class="setup-logo"><span class="setup-logo-script">Signature</span><span class="setup-logo-sc">SC</span></div>
-    <h1 class="setup-title">Générer une brochure<br>professionnelle</h1>
-    <p class="setup-sub">Collez le lien d'un listing publié — la brochure se génère en quelques secondes.</p>
+    <div class="mode-toggle">
+      <button id="mode-btn-brochure" class="mode-btn active" onclick="switchSetupMode('brochure')">
+        📋 Brochure PDF<span>2 pages · galerie photos</span>
+      </button>
+      <button id="mode-btn-fiche" class="mode-btn" onclick="switchSetupMode('fiche')">
+        🖨️ Fiche Client<span>1 page · visite · notes</span>
+      </button>
+    </div>
+    <h1 class="setup-title" id="setup-main-title">Générer une brochure<br>professionnelle</h1>
+    <p class="setup-sub" id="setup-sub-text">Collez le lien d'un listing publié — la brochure se génère en quelques secondes.</p>
     <div style="margin-bottom:16px">
       <label class="field-label" for="s-url">Lien du listing publié</label>
       <input id="s-url" class="field-input" type="url" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/fr/" />
@@ -170,7 +242,7 @@
     </div>
     <button class="btn-primary" id="btn-load" onclick="loadListing()">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      Générer la brochure
+      <span id="btn-load-label">Générer la brochure</span>
     </button>
     <div id="setup-status" class="status-msg">
       <div class="spinner" id="status-spinner"></div>
@@ -186,9 +258,9 @@
       <button class="btn-back-white" onclick="backToSetup()">← Nouveau</button>
       <span class="editor-title" id="editor-title">Brochure</span>
     </div>
-    <button class="btn-pdf" onclick="downloadPDF()">
+    <button class="btn-pdf" id="btn-download" onclick="downloadPDF()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Télécharger le PDF
+      <span id="btn-download-label">Télécharger le PDF</span>
     </button>
   </div>
 
@@ -210,10 +282,22 @@
         <div class="panel-grid2">
           <div class="panel-field"><label class="panel-label" id="lbl-beds">Chambres</label><input id="p-beds" class="panel-input" type="text"/></div>
           <div class="panel-field"><label class="panel-label" id="lbl-baths">Salles de bain</label><input id="p-baths" class="panel-input" type="text"/></div>
-          <div class="panel-field"><label class="panel-label">Garage</label><input id="p-garage" class="panel-input" type="text"/></div>
+          <div id="panel-garage-row" class="panel-field"><label class="panel-label">Garage</label><input id="p-garage" class="panel-input" type="text"/></div>
           <div class="panel-field"><label class="panel-label">Année</label><input id="p-year" class="panel-input" type="text"/></div>
           <div class="panel-field"><label class="panel-label" id="lbl-constr">Construction</label><input id="p-construction" class="panel-input" type="text"/></div>
           <div class="panel-field"><label class="panel-label" id="lbl-lot">Terrain</label><input id="p-lot" class="panel-input" type="text"/></div>
+        </div>
+      </div>
+      <!-- Fiche Client specific fields -->
+      <div id="panel-fiche-fields" class="panel-section" style="display:none">
+        <div class="panel-section-title">💰 HOA · Taxes · Prix barré</div>
+        <div class="panel-grid2">
+          <div class="panel-field"><label class="panel-label">HOA</label><input id="p-hoa" class="panel-input" type="text" placeholder="$1,250 MXN/mois"/></div>
+          <div class="panel-field"><label class="panel-label">Predial</label><input id="p-predial" class="panel-input" type="text" placeholder="$11,000 MXN/an"/></div>
+        </div>
+        <div class="panel-grid2">
+          <div class="panel-field"><label class="panel-label" id="lbl-ppa">Prix / m²</label><input id="p-ppa" class="panel-input" type="text" placeholder="Auto-calculé"/></div>
+          <div class="panel-field"><label class="panel-label">Prix barré</label><input id="p-price-old" class="panel-input" type="text" placeholder="$950,000"/></div>
         </div>
       </div>
       <div class="panel-section">
@@ -229,11 +313,18 @@
         <div class="photo-mode-note">Cliquez pour sélectionner.</div>
         <div id="cover-grid" class="photo-grid"></div>
       </div>
-      <div class="panel-section">
+      <div id="panel-gallery-section" class="panel-section">
         <div class="panel-section-title">🖼 Galerie page 2 — max 8</div>
         <div class="photo-mode-note">Cliquez pour sélectionner. Max 8.</div>
         <div id="gallery-grid" class="photo-grid"></div>
         <div class="photo-count" id="gallery-count">0 / 8 photos sélectionnées</div>
+      </div>
+      <!-- Fiche Client — Miniatures -->
+      <div id="panel-miniatures-section" class="panel-section" style="display:none">
+        <div class="panel-section-title">🖼 Miniatures — max 5</div>
+        <div class="photo-mode-note">Cliquez pour sélectionner les 5 miniatures à afficher.</div>
+        <div id="miniatures-grid" class="mini-grid"></div>
+        <div class="photo-count" id="miniatures-count">0 / 5 sélectionnées</div>
       </div>
       <button class="btn-apply-panel" onclick="applyAndRender()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -335,6 +426,89 @@
         </div>
 
       </div>
+
+      <!-- ══════════════════════════════════════════
+           FICHE CLIENT PAGE (A4 portrait)
+           ══════════════════════════════════════ -->
+      <div class="a4-page fc-page" id="fiche-page" style="display:none">
+
+        <!-- Header -->
+        <div class="fc-hdr">
+          <div class="fc-logo">
+            <div class="fc-logo-s">Signature</div>
+            <div class="fc-logo-sc">sc</div>
+          </div>
+          <div class="fc-hdr-right">
+            <div class="fc-hdr-tag">Luxury Real Estate</div>
+            <div class="fc-hdr-loc" id="fc-location"></div>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="fc-title-area">
+          <div class="fc-prop-title" id="fc-title"></div>
+          <div class="fc-prop-sub" id="fc-subtitle"></div>
+        </div>
+
+        <!-- Hero photo -->
+        <img id="fc-hero-img" class="fc-hero" src="" alt="" style="display:none"/>
+        <div id="fc-hero-ph" class="fc-hero-ph">Sélectionnez une photo principale</div>
+
+        <!-- Thumbnails row -->
+        <div class="fc-thumbs" id="fc-thumbs-row"></div>
+
+        <!-- Price row -->
+        <div class="fc-price-row">
+          <div class="fc-price-left">
+            <div class="fc-price-val" id="fc-price"></div>
+            <div class="fc-price-curr" id="fc-price-curr"></div>
+            <div class="fc-price-old" id="fc-price-old" style="display:none"></div>
+          </div>
+          <div class="fc-price-loc" id="fc-location2"></div>
+        </div>
+
+        <!-- Details grid 4×2 : BEDS CONSTR YEAR HOA / BATHS LOT PPA PREDIAL -->
+        <div class="fc-details">
+          <div class="fc-details-grid" id="fc-details-grid"></div>
+        </div>
+
+        <!-- Body : 1/3 Highlights | 2/3 Notes -->
+        <div class="fc-body">
+          <div class="fc-body-left">
+            <div class="fc-section-title" id="fc-hl-label">HIGHLIGHTS&nbsp;</div>
+            <div class="fc-hl-list" id="fc-hl-list"></div>
+          </div>
+          <div class="fc-body-right">
+            <div class="fc-section-title" id="fc-notes-label">NOTES&nbsp;</div>
+          </div>
+        </div>
+
+        <!-- Agent card -->
+        <div class="fc-agent-wrap">
+          <div class="fc-agent-card">
+            <img class="fc-agent-photo" src="https://listing.signature-sc.com/agent.jpg" alt="Sabrina" onerror="this.style.display='none'"/>
+            <div class="fc-agent-right">
+              <img class="fc-agent-logo" src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" onerror="this.style.display='none'"/>
+              <div class="fc-agent-name">Sabrina Crémona</div>
+              <div class="fc-agent-role" id="fc-agent-role">Real Estate Advisor</div>
+              <div class="fc-agent-contacts">
+                <div class="fc-agent-contact">+52 984 309 8369</div>
+                <div class="fc-agent-contact">Sales@signature-sc.com</div>
+                <div class="fc-agent-contact">www.signature-sc.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="fc-footer">
+          <a id="fc-footer-link" href="#" class="fc-footer-link"></a>
+          <div class="fc-footer-brand">Signature ˢᶜ Real Estate · Riviera Maya</div>
+        </div>
+
+      </div>
+
+    </div>
     </div>
   </div>
 </div>
@@ -343,16 +517,20 @@
 
 <script>
 let allPhotos = [], coverPhotoUrl = '', galleryPhotos = [], currentLang = 'fr';
+let currentMode = 'brochure', miniaturePhotos = [];
 const el = id => document.getElementById(id);
 
 const L = {
   fr:{beds:'Chambres',baths:'Salles de bain',constr:'Construction',lot:'Terrain',year:'Année',
+      hoa:'HOA',predial:'Predial',ppa:'Prix / m²',
       desc:'DESCRIPTION',hl:'POINTS FORTS',notes:'NOTES',gallery:'Galerie photos',contact:'CONTACT',
       role:'Fondatrice & CEO · Conseillère Immobilière'},
-  en:{beds:'Bedrooms',baths:'Bathrooms',constr:'Living area',lot:'Lot size',year:'Year built',
+  en:{beds:'Bedrooms',baths:'Bathrooms',constr:'Construction',lot:'Lot Size',year:'Year Built',
+      hoa:'HOA',predial:'Predial',ppa:'Price / sq ft',
       desc:'DESCRIPTION',hl:'HIGHLIGHTS',notes:'NOTES',gallery:'Photo gallery',contact:'CONTACT',
       role:'Founder & CEO · Real Estate Advisor'},
-  es:{beds:'Recámaras',baths:'Baños',constr:'Construcción',lot:'Terreno',year:'Año',
+  es:{beds:'Habitaciones',baths:'Baños',constr:'Construcción',lot:'Terreno',year:'Año',
+      hoa:'HOA',predial:'Predial',ppa:'Precio / m²',
       desc:'DESCRIPCIÓN',hl:'PUNTOS DESTACADOS',notes:'NOTAS',gallery:'Galería de fotos',contact:'CONTACTO',
       role:'Fundadora & CEO · Asesora Inmobiliaria'}
 };
@@ -370,7 +548,7 @@ async function loadListing() {
 Réponds UNIQUEMENT avec un JSON valide sans backticks.
 Pour "description" : résumé élégant en ${langLabel}, 5 lignes max, sans tirets comme ponctuation.
 Inclure TOUTES les URLs d'images dans le tableau "images".
-JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","description":"","highlights":[""],"images":[""],"publicUrl":"${url}"}`;
+JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"","highlights":[""],"images":[""],"publicUrl":"${url}"}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:sys,
         messages:[{role:'user',content:'URL du listing: '+url}]})});
@@ -404,12 +582,14 @@ JSON: {"title":"","subtitle":"","price":"","currency":"USD","location":"","beds"
 
     coverPhotoUrl=allPhotos[0]||'';
     galleryPhotos=[...allPhotos.slice(1,9)];
+    miniaturePhotos=[...allPhotos.slice(1,6)];
     fillPanel(d);
     buildPhotoGrids();
+    switchEditorMode(currentMode);
     applyAndRender();
     el('screen-setup').style.display='none';
     const se=el('screen-editor'); se.style.display='flex'; se.style.flexDirection='column';
-    el('editor-title').textContent=d.title||'Brochure';
+    el('editor-title').textContent=(currentMode==='fiche'?'Fiche Client — ':'')+( d.title||'Listing');
   } catch(err){ showStatus('error',err.message); }
   el('btn-load').disabled=false;
 }
@@ -424,8 +604,13 @@ function fillPanel(d) {
   el('p-beds').value=d.beds||''; el('p-baths').value=d.baths||'';
   el('p-garage').value=d.garage||''; el('p-year').value=d.year||'';
   el('p-construction').value=d.construction||''; el('p-lot').value=d.lot||'';
+  // Fiche Client fields
+  el('p-hoa').value=d.hoa||''; el('p-predial').value=d.predial||'';
+  el('p-ppa').value=''; // auto-calculated on render
+  el('p-price-old').value=d.priceOld||'';
   el('lbl-beds').textContent=lb.beds; el('lbl-baths').textContent=lb.baths;
   el('lbl-constr').textContent=lb.constr; el('lbl-lot').textContent=lb.lot;
+  el('lbl-ppa').textContent=lb.ppa;
 }
 
 function buildPhotoGrids() {
@@ -464,9 +649,44 @@ function buildPhotoGrids() {
     gg.appendChild(div);
   });
   el('gallery-count').textContent=galleryPhotos.length+' / 8 photos sélectionnées';
+  // Miniatures grid (Fiche Client)
+  const mg=el('miniatures-grid'); mg.innerHTML='';
+  allPhotos.forEach(url=>{
+    const idx=miniaturePhotos.indexOf(url);
+    const div=document.createElement('div');
+    div.className='mini-thumb'+(idx>=0?' selected':'');
+    const img=document.createElement('img'); img.src=url; img.loading='lazy';
+    const ck=document.createElement('div'); ck.className='badge';
+    const num=document.createElement('span'); num.className='badge-num'; num.textContent=idx>=0?(idx+1):'✓';
+    ck.appendChild(num); div.appendChild(img); div.appendChild(ck);
+    div.addEventListener('click',()=>{
+      const i=miniaturePhotos.indexOf(url);
+      if(i>=0){
+        miniaturePhotos.splice(i,1); div.classList.remove('selected');
+      } else {
+        if(miniaturePhotos.length>=5) return;
+        miniaturePhotos.push(url); div.classList.add('selected');
+      }
+      // Rebuild numbers on all thumbs
+      el('miniatures-count').textContent=miniaturePhotos.length+' / 5 sélectionnées';
+      document.querySelectorAll('#miniatures-grid .mini-thumb').forEach(t=>{
+        const u=t.querySelector('img').src;
+        const ii=miniaturePhotos.indexOf(u);
+        t.classList.toggle('selected',ii>=0);
+        t.querySelector('.badge-num').textContent=ii>=0?(ii+1):'✓';
+      });
+    });
+    mg.appendChild(div);
+  });
+  el('miniatures-count').textContent=miniaturePhotos.length+' / 5 sélectionnées';
 }
 
 function applyAndRender() {
+  applyBrochureRender();
+  applyFicheRender();
+}
+
+function applyBrochureRender() {
   const lb=L[currentLang]||L.fr;
   el('r-title').textContent=el('p-title').value;
   el('r-subtitle').textContent=el('p-subtitle').value;
@@ -517,18 +737,129 @@ function applyAndRender() {
   }
 }
 
+function applyFicheRender() {
+  const lb=L[currentLang]||L.fr;
+  const lang=currentLang;
+  el('fc-location').textContent=el('p-location').value;
+  el('fc-location2').textContent=el('p-location').value;
+  el('fc-title').textContent=el('p-title').value;
+  el('fc-subtitle').textContent=el('p-subtitle').value;
+  el('fc-agent-role').textContent=lb.role;
+  el('fc-hl-label').textContent=lb.hl+' ';
+  el('fc-notes-label').textContent=lb.notes+' ';
+  // Hero
+  if(coverPhotoUrl){
+    el('fc-hero-img').src=coverPhotoUrl; el('fc-hero-img').style.display='block';
+    el('fc-hero-ph').style.display='none';
+  } else {
+    el('fc-hero-img').style.display='none'; el('fc-hero-ph').style.display='flex';
+  }
+  // Thumbnails
+  const tr=el('fc-thumbs-row'); tr.innerHTML='';
+  for(let i=0;i<5;i++){
+    if(miniaturePhotos[i]){
+      const img=document.createElement('img');
+      img.src=miniaturePhotos[i]; img.className='fc-thumb'; img.alt='';
+      tr.appendChild(img);
+    } else {
+      const ph=document.createElement('div'); ph.className='fc-thumb-ph'; tr.appendChild(ph);
+    }
+  }
+  // Price
+  const price=el('p-price').value, currency=el('p-currency').value, priceOld=el('p-price-old').value;
+  el('fc-price').textContent=price;
+  el('fc-price-curr').textContent=price?' '+currency:'';
+  if(priceOld){ el('fc-price-old').textContent=priceOld+' '+currency; el('fc-price-old').style.display=''; }
+  else { el('fc-price-old').style.display='none'; }
+  // Price per area
+  const constr=el('p-construction').value;
+  let ppa=el('p-ppa').value.trim();
+  if(!ppa && price && constr){
+    const priceNum=parseFloat(price.replace(/[^0-9.]/g,''));
+    const sqftMatch=constr.match(/([\d,\.]+)\s*sq\s*ft/i);
+    const sqmMatch=constr.match(/([\d,\.]+)\s*m[²2]/i);
+    let area=null;
+    if(lang==='en'){ if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,'')); else if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,''))*10.764; }
+    else { if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,'')); else if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,''))/10.764; }
+    if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
+  }
+  // Details grid: row1 = BEDS CONSTR YEAR HOA / row2 = BATHS LOT PPA PREDIAL
+  const dg=el('fc-details-grid'); dg.innerHTML='';
+  [
+    {l:lb.beds,   v:el('p-beds').value},
+    {l:lb.constr, v:constr},
+    {l:lb.year,   v:el('p-year').value},
+    {l:lb.hoa,    v:el('p-hoa').value},
+    {l:lb.baths,  v:el('p-baths').value},
+    {l:lb.lot,    v:el('p-lot').value},
+    {l:lb.ppa,    v:ppa},
+    {l:lb.predial,v:el('p-predial').value}
+  ].forEach(({l,v})=>{
+    const c=document.createElement('div'); c.className='fc-detail-cell';
+    c.innerHTML=`<div class="fc-detail-label">${l}</div><div class="fc-detail-value">${v||''}</div>`;
+    dg.appendChild(c);
+  });
+  // Highlights
+  const hl=el('fc-hl-list'); hl.innerHTML='';
+  el('p-hl').value.trim().split('\n').map(s=>s.trim()).filter(Boolean).forEach(h=>{
+    const i=document.createElement('div'); i.className='fc-hl-item';
+    i.innerHTML=`<div class="fc-hl-dot"></div><span>${h}</span>`; hl.appendChild(i);
+  });
+  // Footer link
+  const url=el('p-url').value;
+  el('fc-footer-link').href=url; el('fc-footer-link').textContent=url;
+}
+
+function switchSetupMode(mode) {
+  currentMode=mode;
+  const isFiche=mode==='fiche';
+  el('mode-btn-brochure').classList.toggle('active',!isFiche);
+  el('mode-btn-fiche').classList.toggle('active',isFiche);
+  el('setup-main-title').innerHTML=isFiche?'Générer une fiche<br>client':'Générer une brochure<br>professionnelle';
+  el('setup-sub-text').textContent=isFiche?'Collez le lien d\'un listing — la fiche client imprimable se génère en quelques secondes.':'Collez le lien d\'un listing publié — la brochure se génère en quelques secondes.';
+  el('btn-load-label').textContent=isFiche?'Générer la fiche':'Générer la brochure';
+}
+
+function switchEditorMode(mode) {
+  currentMode=mode;
+  const isFiche=mode==='fiche';
+  // Panel sections
+  el('panel-garage-row').style.display=isFiche?'none':'';
+  el('panel-fiche-fields').style.display=isFiche?'':'none';
+  el('panel-gallery-section').style.display=isFiche?'none':'';
+  el('panel-miniatures-section').style.display=isFiche?'':'none';
+  // Pages
+  el('page1').style.display=isFiche?'none':'';
+  el('page2').style.display=isFiche?'none':'';
+  el('fiche-page').style.display=isFiche?'':'none';
+  // Download button label
+  el('btn-download-label').textContent=isFiche?'Télécharger la fiche':'Télécharger le PDF';
+}
+
 function downloadPDF() {
   applyAndRender();
-  const title=(el('p-title').value||'brochure').toLowerCase().replace(/[^a-z0-9]/g,'-');
-  const opt = {
-    margin:0,
-    filename:'signature-sc-'+title+'.pdf',
-    image:{type:'jpeg',quality:0.95},
-    html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false},
-    jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
-    pagebreak:{mode:'css',before:'#page2'}
-  };
-  html2pdf().set(opt).from(el('pdf-content')).save();
+  const title=(el('p-title').value||'listing').toLowerCase().replace(/[^a-z0-9]/g,'-');
+  if(currentMode==='fiche'){
+    const opt={
+      margin:0,
+      filename:'signature-sc-fiche-'+title+'.pdf',
+      image:{type:'jpeg',quality:0.95},
+      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false},
+      jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
+      pagebreak:{avoid:'.fc-page'}
+    };
+    html2pdf().set(opt).from(el('fiche-page')).save();
+  } else {
+    const opt={
+      margin:0,
+      filename:'signature-sc-brochure-'+title+'.pdf',
+      image:{type:'jpeg',quality:0.95},
+      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false},
+      jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
+      pagebreak:{mode:'css',before:'#page2'}
+    };
+    html2pdf().set(opt).from(el('pdf-content')).save();
+  }
 }
 
 function backToSetup(){
