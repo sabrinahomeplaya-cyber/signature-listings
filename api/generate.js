@@ -84,6 +84,18 @@ export default async function handler(req, res) {
             if (isValidPhoto(m[1])) imageUrls.add(m[1]);
           }
 
+          // ── 6. Images dans les arrays JS inline (listing.images, data.images, etc.) ──
+          const scriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/gi;
+          let sm;
+          while ((sm = scriptRegex.exec(html)) !== null) {
+            const scriptContent = sm[1];
+            const urlInJsRegex = /"(https?:\/\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/gi;
+            let um;
+            while ((um = urlInJsRegex.exec(scriptContent)) !== null) {
+              if (isValidPhoto(um[1])) imageUrls.add(um[1]);
+            }
+          }
+
           const uniqueImages = [...imageUrls];
 
           // ── Nettoyer le HTML en texte ──
