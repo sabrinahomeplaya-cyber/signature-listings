@@ -855,7 +855,13 @@ function downloadPDF() {
       jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
       pagebreak:{avoid:'.fc-page'}
     };
-    html2pdf().set(opt).from(el('fiche-page')).save();
+    const clone=el('fiche-page').cloneNode(true);
+    clone.style.position='fixed';
+    clone.style.top='0';
+    clone.style.left='0';
+    clone.style.zIndex='-9999';
+    document.body.appendChild(clone);
+    html2pdf().set(opt).from(clone).save().then(()=>document.body.removeChild(clone));
   } else {
     const opt={
       margin:0,
