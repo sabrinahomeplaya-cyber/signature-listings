@@ -160,7 +160,7 @@
         </button>
         <button class="mode-btn" id="modeTranslateBtn" onclick="setMode('translate')">
           🌐 Traduire mon listing
-          <span>FR → EN ou ES</span>
+          <span>EN / ES / FR</span>
         </button>
       </div>
 
@@ -196,11 +196,11 @@
       <!-- Panel traduction -->
       <div id="panelTranslate" style="display:none">
         <div class="info-box">
-          Collez le lien d'un de vos listings <strong>déjà publié en français</strong>. Claude traduit et convertit les surfaces automatiquement <strong>(m² → sq ft pour l'anglais)</strong>.
+          Collez le lien d'un de vos listings <strong>déjà publié</strong>. Claude traduit et convertit les surfaces automatiquement <strong>(m² ↔ sq ft)</strong>.
         </div>
         <div style="margin-bottom:24px">
-          <label class="input-label" for="translate-url">Lien de votre listing en français</label>
-          <input id="translate-url" type="url" class="url-input" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/fr/" autocomplete="off" spellcheck="false" />
+          <label class="input-label" for="translate-url">Lien de votre listing</label>
+          <input id="translate-url" type="url" class="url-input" placeholder="https://listing.signature-sc.com/for-sale/quinta-luna-penthouse/en/" autocomplete="off" spellcheck="false" />
         </div>
         <div class="opt-grid">
           <div>
@@ -213,12 +213,13 @@
             <select id="translate-lang" class="small-input" style="cursor:pointer">
               <option value="en">English</option>
               <option value="es">Español</option>
+              <option value="fr">Français</option>
             </select>
           </div>
         </div>
         <hr class="divider" style="margin-top:0">
         <div class="step-list">
-          <div class="step-item"><span class="step-num">1</span><span>Collez le lien de votre listing FR déjà publié.</span></div>
+          <div class="step-item"><span class="step-num">1</span><span>Collez le lien de votre listing déjà publié (FR, EN ou ES).</span></div>
           <div class="step-item"><span class="step-num">2</span><span>Choisissez la langue cible. Surfaces converties automatiquement.</span></div>
           <div class="step-item"><span class="step-num">3</span><span>Modifiez si nécessaire, puis cliquez <strong>Publier</strong>.</span></div>
         </div>
@@ -1089,7 +1090,7 @@ RÈGLES DE FORMATAGE CRITIQUES :
 
 Réponds UNIQUEMENT avec un JSON valide, sans backticks.
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit fidèlement, 4 paragraphes, ton Luxe Discret","highlights":["traduit fidèlement"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing FR à traduire: '+url}]})});
+    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
     showStatus('loading','Construction du listing traduit…');
