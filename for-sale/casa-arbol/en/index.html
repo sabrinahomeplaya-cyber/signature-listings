@@ -276,7 +276,7 @@ The meticulously landscaped grounds feature a spectacular backyard oasis complet
       const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-thumb','1');
       btn.className='shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white';
       btn.onclick=()=>setMain(idx);
-      const img=document.createElement('img'); img.src=url; img.className='h-20 w-28 sm:h-24 sm:w-36 object-cover';
+      const img=document.createElement('img'); img.src=url; img.loading='lazy'; img.className='h-20 w-28 sm:h-24 sm:w-36 object-cover';
       btn.appendChild(img); strip.appendChild(btn);
     });
     if(photos.length) setMain(0);
