@@ -533,14 +533,14 @@ const el = id => document.getElementById(id);
 
 const L = {
   fr:{beds:'Chambres',baths:'Salles de bain',constr:'Construction',lot:'Terrain',year:'Année',
-      hoa:'Frais mensuels',predial:'Taxe annuelle',ppa:'Prix / m²',
+      hoa:'Frais mensuels',predial:'Taxe annuelle',ppa:'Prix / m² (Prix / sq ft)',
       desc:'DESCRIPTION',hl:'POINTS FORTS',notes:'NOTES',gallery:'Galerie photos',contact:'CONTACT',
       role:'Fondatrice & CEO · Conseillère Immobilière'},
-  en:{beds:'Bedrooms',baths:'Bathrooms',constr:'Construction',lot:'Lot Size',year:'Year Built',
+  en:{beds:'Bedrooms',baths:'Bathrooms',constr:'Construction',lot:'Lot size',year:'Year built',
       hoa:'Monthly HOA',predial:'Annual Property Tax',ppa:'Price / sq ft',
       desc:'DESCRIPTION',hl:'HIGHLIGHTS',notes:'NOTES',gallery:'Photo gallery',contact:'CONTACT',
       role:'Founder & CEO · Real Estate Advisor'},
-  es:{beds:'Habitaciones',baths:'Baños',constr:'Construcción',lot:'Terreno',year:'Año',
+  es:{beds:'Recámaras',baths:'Baños',constr:'Construcción',lot:'Terreno',year:'Año',
       hoa:'Mantenimiento mensual',predial:'Predial anual',ppa:'Precio / m²',
       desc:'DESCRIPCIÓN',hl:'PUNTOS DESTACADOS',notes:'NOTAS',gallery:'Galería de fotos',contact:'CONTACTO',
       role:'Fundadora & CEO · Asesora Inmobiliaria'}
@@ -747,11 +747,34 @@ function applyBrochureRender() {
     el('r-cover-img').style.display='none'; el('r-cover-placeholder').style.display='flex';
   }
   el('r-link').href=el('p-url').value; el('r-link').textContent=el('p-url').value;
+  // Price per area
+  const lang=currentLang||'fr';
+  const constrB=el('p-construction').value;
+  let ppa=el('p-ppa').value.trim();
+  if(!ppa && el('p-price').value && constrB){
+    const priceNum=parseFloat(el('p-price').value.replace(/[^0-9.]/g,''));
+    const sqftM=constrB.match(/([\d,\.]+)\s*sq\s*ft/i);
+    const sqmM=constrB.match(/([\d,\.]+)\s*m[²2]/i);
+    if(lang==='en'){
+      let area=null;
+      if(sqftM) area=parseFloat(sqftM[1].replace(/,/g,'')); else if(sqmM) area=parseFloat(sqmM[1].replace(/,/g,''))*10.764;
+      if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
+    } else if(lang==='fr'){
+      let sqm=null,sqft=null;
+      if(sqmM){ sqm=parseFloat(sqmM[1].replace(/,/g,'')); sqft=sqm*10.764; }
+      else if(sqftM){ sqft=parseFloat(sqftM[1].replace(/,/g,'')); sqm=sqft/10.764; }
+      if(sqm) ppa='$'+Math.round(priceNum/sqm).toLocaleString('en-US')+' · ($'+Math.round(priceNum/sqft).toLocaleString('en-US')+')';
+    } else {
+      let area=null;
+      if(sqmM) area=parseFloat(sqmM[1].replace(/,/g,'')); else if(sqftM) area=parseFloat(sqftM[1].replace(/,/g,''))/10.764;
+      if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
+    }
+  }
   // Details
   const dg=el('r-details-grid'); dg.innerHTML='';
   [{l:lb.beds,v:el('p-beds').value},{l:lb.baths,v:el('p-baths').value},
-   {l:'Garage',v:el('p-garage').value},{l:lb.year,v:el('p-year').value},
-   {l:lb.constr,v:el('p-construction').value},{l:lb.lot,v:el('p-lot').value}
+   {l:lb.year,v:el('p-year').value},{l:lb.constr,v:el('p-construction').value},
+   {l:lb.lot,v:el('p-lot').value},{l:lb.ppa,v:ppa}
   ].forEach(({l,v})=>{
     if(!v) return;
     const c=document.createElement('div'); c.className='p1-detail-cell';
@@ -818,21 +841,31 @@ function applyFicheRender() {
     const priceNum=parseFloat(price.replace(/[^0-9.]/g,''));
     const sqftMatch=constr.match(/([\d,\.]+)\s*sq\s*ft/i);
     const sqmMatch=constr.match(/([\d,\.]+)\s*m[²2]/i);
-    let area=null;
-    if(lang==='en'){ if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,'')); else if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,''))*10.764; }
-    else { if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,'')); else if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,''))/10.764; }
-    if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
+    if(lang==='en'){
+      let area=null;
+      if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,'')); else if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,''))*10.764;
+      if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
+    } else if(lang==='fr'){
+      let sqm=null,sqft=null;
+      if(sqmMatch){ sqm=parseFloat(sqmMatch[1].replace(/,/g,'')); sqft=sqm*10.764; }
+      else if(sqftMatch){ sqft=parseFloat(sqftMatch[1].replace(/,/g,'')); sqm=sqft/10.764; }
+      if(sqm) ppa='$'+Math.round(priceNum/sqm).toLocaleString('en-US')+' · ($'+Math.round(priceNum/sqft).toLocaleString('en-US')+')';
+    } else {
+      let area=null;
+      if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,'')); else if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,''))/10.764;
+      if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
+    }
   }
   // Details grid: row1 = BEDS CONSTR YEAR HOA / row2 = BATHS LOT PPA PREDIAL
   const dg=el('fc-details-grid'); dg.innerHTML='';
   [
     {l:lb.beds,   v:el('p-beds').value},
-    {l:lb.constr, v:constr},
-    {l:lb.year,   v:el('p-year').value},
-    {l:lb.hoa,    v:el('p-hoa').value},
     {l:lb.baths,  v:el('p-baths').value},
+    {l:lb.year,   v:el('p-year').value},
+    {l:lb.constr, v:constr},
     {l:lb.lot,    v:el('p-lot').value},
     {l:lb.ppa,    v:ppa},
+    {l:lb.hoa,    v:el('p-hoa').value},
     {l:lb.predial,v:el('p-predial').value}
   ].forEach(({l,v})=>{
     const c=document.createElement('div'); c.className='fc-detail-cell';

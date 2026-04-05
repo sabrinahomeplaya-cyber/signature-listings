@@ -732,7 +732,7 @@ function buildTemplate(data) {
   const lang = data.lang || 'fr';
 
   const L = {
-    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m²', hoa:'Frais mensuels', predial:'Taxe annuelle', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
+    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m² (Prix / sq ft)', hoa:'Frais mensuels', predial:'Taxe annuelle', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
     en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', year:'Year built', construction:'Construction', lot:'Lot size', pricePerArea:'Price / sq ft', hoa:'Monthly HOA', predial:'Annual Property Tax', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
     es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', year:'Año', construction:'Construcción', lot:'Terreno', pricePerArea:'Precio / m²', hoa:'Mantenimiento mensual', predial:'Predial anual', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
   }[lang] || {};
@@ -747,16 +747,25 @@ function buildTemplate(data) {
     if (!priceNum) return '';
     const sqftMatch = data.construction.match(/([\d,\.]+)\s*sq\s*ft/i);
     const sqmMatch  = data.construction.match(/([\d,\.]+)\s*m[²2]/i);
-    let area = null;
     if (lang === 'en') {
+      let area = null;
       if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,''));
       else if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,'')) * 10.764;
+      if (!area) return '';
+      return '$' + Math.round(priceNum / area).toLocaleString('en-US');
+    } else if (lang === 'fr') {
+      let sqm = null, sqft = null;
+      if (sqmMatch) { sqm = parseFloat(sqmMatch[1].replace(/,/g,'')); sqft = sqm * 10.764; }
+      else if (sqftMatch) { sqft = parseFloat(sqftMatch[1].replace(/,/g,'')); sqm = sqft / 10.764; }
+      if (!sqm) return '';
+      return '$' + Math.round(priceNum / sqm).toLocaleString('en-US') + ' · ($' + Math.round(priceNum / sqft).toLocaleString('en-US') + ')';
     } else {
-      if (sqmMatch)  area = parseFloat(sqmMatch[1].replace(/,/g,''));
+      let area = null;
+      if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,''));
       else if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,'')) / 10.764;
+      if (!area) return '';
+      return '$' + Math.round(priceNum / area).toLocaleString('en-US');
     }
-    if (!area) return '';
-    return '$' + Math.round(priceNum / area).toLocaleString('en-US');
   })();
 
   return `<!doctype html>
