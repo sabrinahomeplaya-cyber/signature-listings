@@ -724,6 +724,8 @@ function applyAndRender() {
   applyFicheRender();
 }
 
+const fmtArea = v => (v||'').replace(/(\([\d,\. ]+sq\s*ft\))/gi, '<span class="text-sm font-normal">$1</span>');
+
 function applyBrochureRender() {
   const lb=L[currentLang]||L.fr;
   el('r-title').textContent=el('p-title').value;
@@ -763,7 +765,7 @@ function applyBrochureRender() {
       let sqm=null,sqft=null;
       if(sqmM){ sqm=parseFloat(sqmM[1].replace(/,/g,'')); sqft=sqm*10.764; }
       else if(sqftM){ sqft=parseFloat(sqftM[1].replace(/,/g,'')); sqm=sqft/10.764; }
-      if(sqm) ppa='$'+Math.round(priceNum/sqm).toLocaleString('en-US')+' · ($'+Math.round(priceNum/sqft).toLocaleString('en-US')+')';
+      if(sqm) ppa='$'+Math.round(priceNum/sqm).toLocaleString('en-US')+' <span class="text-sm font-normal">($'+Math.round(priceNum/sqft).toLocaleString('en-US')+')</span>';
     } else {
       let area=null;
       if(sqmM) area=parseFloat(sqmM[1].replace(/,/g,'')); else if(sqftM) area=parseFloat(sqftM[1].replace(/,/g,''))/10.764;
@@ -773,8 +775,8 @@ function applyBrochureRender() {
   // Details
   const dg=el('r-details-grid'); dg.innerHTML='';
   [{l:lb.beds,v:el('p-beds').value},{l:lb.baths,v:el('p-baths').value},
-   {l:lb.year,v:el('p-year').value},{l:lb.constr,v:el('p-construction').value},
-   {l:lb.lot,v:el('p-lot').value},{l:lb.ppa,v:ppa}
+   {l:lb.year,v:el('p-year').value},{l:lb.constr,v:fmtArea(el('p-construction').value)},
+   {l:lb.lot,v:fmtArea(el('p-lot').value)},{l:lb.ppa,v:ppa}
   ].forEach(({l,v})=>{
     if(!v) return;
     const c=document.createElement('div'); c.className='p1-detail-cell';
@@ -849,7 +851,7 @@ function applyFicheRender() {
       let sqm=null,sqft=null;
       if(sqmMatch){ sqm=parseFloat(sqmMatch[1].replace(/,/g,'')); sqft=sqm*10.764; }
       else if(sqftMatch){ sqft=parseFloat(sqftMatch[1].replace(/,/g,'')); sqm=sqft/10.764; }
-      if(sqm) ppa='$'+Math.round(priceNum/sqm).toLocaleString('en-US')+' · ($'+Math.round(priceNum/sqft).toLocaleString('en-US')+')';
+      if(sqm) ppa='$'+Math.round(priceNum/sqm).toLocaleString('en-US')+' <span class="text-sm font-normal">($'+Math.round(priceNum/sqft).toLocaleString('en-US')+')</span>';
     } else {
       let area=null;
       if(sqmMatch) area=parseFloat(sqmMatch[1].replace(/,/g,'')); else if(sqftMatch) area=parseFloat(sqftMatch[1].replace(/,/g,''))/10.764;
@@ -862,8 +864,8 @@ function applyFicheRender() {
     {l:lb.beds,   v:el('p-beds').value},
     {l:lb.baths,  v:el('p-baths').value},
     {l:lb.year,   v:el('p-year').value},
-    {l:lb.constr, v:constr},
-    {l:lb.lot,    v:el('p-lot').value},
+    {l:lb.constr, v:fmtArea(constr)},
+    {l:lb.lot,    v:fmtArea(el('p-lot').value)},
     {l:lb.ppa,    v:ppa},
     {l:lb.hoa,    v:el('p-hoa').value},
     {l:lb.predial,v:el('p-predial').value}

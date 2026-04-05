@@ -740,6 +740,7 @@ function buildTemplate(data) {
   const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
   const esc = s => (s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
   const escHtml = s => (s||'').replace(/"/g,'&quot;');
+  const fmtArea = v => (v||'').replace(/(\([\d,\. ]+sq\s*ft\))/gi, '<span class="text-sm font-normal">$1</span>');
 
   const pricePerArea = (() => {
     if (!data.price || !data.construction) return '';
@@ -758,7 +759,7 @@ function buildTemplate(data) {
       if (sqmMatch) { sqm = parseFloat(sqmMatch[1].replace(/,/g,'')); sqft = sqm * 10.764; }
       else if (sqftMatch) { sqft = parseFloat(sqftMatch[1].replace(/,/g,'')); sqm = sqft / 10.764; }
       if (!sqm) return '';
-      return '$' + Math.round(priceNum / sqm).toLocaleString('en-US') + ' · ($' + Math.round(priceNum / sqft).toLocaleString('en-US') + ')';
+      return '$' + Math.round(priceNum / sqm).toLocaleString('en-US') + ' <span class="text-sm font-normal">($' + Math.round(priceNum / sqft).toLocaleString('en-US') + ')</span>';
     } else {
       let area = null;
       if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,''));
@@ -852,8 +853,8 @@ function buildTemplate(data) {
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.beds}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.beds||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.baths}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.baths||''}</div></div>
             <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.year}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.year||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.construction||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.lot||''}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${fmtArea(data.construction)}</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${fmtArea(data.lot)}</div></div>
             ${pricePerArea?`<div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.pricePerArea}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${pricePerArea}</div></div>`:''}
           </div>
           ${(data.hoa||data.predial)?`<div class="grid sm:grid-cols-2 gap-4 text-sm mt-4">
