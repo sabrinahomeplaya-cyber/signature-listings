@@ -919,7 +919,7 @@ function printFiche(){
   win.document.write('<link rel="preconnect" href="https://fonts.googleapis.com">');
   win.document.write('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>');
   win.document.write('<link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">');
-  win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}@media print{@page{size:A4 portrait;margin:0;}body{display:flex;justify-content:center;align-items:center;min-height:100vh;}.fc-page{width:210mm!important;height:297mm!important;overflow:hidden!important;page-break-after:avoid;}}</style>');
+  win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 portrait;margin:0;}body{background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}@media print{body{display:flex;justify-content:center;align-items:center;min-height:100vh;}.fc-page{width:210mm!important;height:297mm!important;overflow:hidden!important;page-break-after:avoid;}}</style>');
   // Copy all stylesheets
   document.querySelectorAll('style').forEach(s=>win.document.write('<style>'+s.innerHTML+'</style>'));
   win.document.write('</head><body>');
