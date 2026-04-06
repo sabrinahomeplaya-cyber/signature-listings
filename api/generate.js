@@ -100,7 +100,11 @@ export default async function handler(req, res) {
 
           // ── 7. Highlights depuis l'objet JS inline (listing.signature-sc.com) ──
           let inlineHighlights = [];
-          const hlScriptMatch = html.match(/const listing\s*=\s*\{[\s\S]*?highlights\s*:\s*\[([\s\S]*?)\]/);
+          // Pattern A: const listing = { ... highlights: [...] }
+          const hlPatternA = html.match(/const listing\s*=\s*\{[\s\S]*?highlights\s*:\s*\[([\s\S]*?)\]/);
+          // Pattern B: const highlights = [...]
+          const hlPatternB = html.match(/const highlights\s*=\s*\[([\s\S]*?)\];/);
+          const hlScriptMatch = hlPatternA || hlPatternB;
           if (hlScriptMatch) {
             const hlRaw = hlScriptMatch[1];
             const hlItems = hlRaw.match(/"([^"]+)"/g);
