@@ -858,15 +858,15 @@ function applyFicheRender() {
       if(area) ppa='$'+Math.round(priceNum/area).toLocaleString('en-US');
     }
   }
-  // Details grid: row1 = BEDS CONSTR YEAR HOA / row2 = BATHS LOT PPA PREDIAL
+  // Details grid: row1 = BEDS BATHS YEAR PPA / row2 = CONSTR LOT HOA PREDIAL
   const dg=el('fc-details-grid'); dg.innerHTML='';
   [
     {l:lb.beds,   v:el('p-beds').value},
     {l:lb.baths,  v:el('p-baths').value},
     {l:lb.year,   v:el('p-year').value},
+    {l:lb.ppa,    v:ppa},
     {l:lb.constr, v:fmtArea(constr)},
     {l:lb.lot,    v:fmtArea(el('p-lot').value)},
-    {l:lb.ppa,    v:ppa},
     {l:lb.hoa,    v:el('p-hoa').value},
     {l:lb.predial,v:el('p-predial').value}
   ].forEach(({l,v})=>{
