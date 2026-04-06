@@ -302,8 +302,8 @@
           <div class="panel-field"><label class="panel-label" id="lbl-baths">Salles de bain</label><input id="p-baths" class="panel-input" type="text"/></div>
           <div id="panel-garage-row" class="panel-field"><label class="panel-label">Garage</label><input id="p-garage" class="panel-input" type="text"/></div>
           <div class="panel-field"><label class="panel-label">Année</label><input id="p-year" class="panel-input" type="text"/></div>
-          <div class="panel-field"><label class="panel-label" id="lbl-constr">Construction</label><input id="p-construction" class="panel-input" type="text"/></div>
-          <div class="panel-field"><label class="panel-label" id="lbl-lot">Terrain</label><input id="p-lot" class="panel-input" type="text"/></div>
+          <div class="panel-field"><label class="panel-label" id="lbl-constr">Construction</label><input id="p-construction" class="panel-input" type="text"/><input id="p-constr-label" type="hidden"/></div>
+          <div class="panel-field"><label class="panel-label" id="lbl-lot">Terrain</label><input id="p-lot" class="panel-input" type="text"/><input id="p-lot-label" type="hidden"/></div>
         </div>
       </div>
       <!-- Fiche Client specific fields -->
@@ -568,7 +568,8 @@ RÈGLES DE FORMATAGE CRITIQUES :
 
 Inclure TOUTES les URLs d'images dans le tableau "images".
 Réponds UNIQUEMENT avec un JSON valide sans backticks.
-JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"copie fidèle des paragraphes du listing source sans aucune reformulation","highlights":["copie fidèle des points forts"],"images":[""],"publicUrl":"${url}"}`
+JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","constrLabel":"","lot":"","lotLabel":"","hoa":"","predial":"","description":"copie fidèle des paragraphes du listing source sans aucune reformulation","highlights":["copie fidèle des points forts"],"images":[""],"publicUrl":"${url}"}
+Note: constrLabel = le label exact du champ surface principale (ex: "Construction", "Living area", "Surface habitable"), lotLabel = le label exact du 2e champ surface (ex: "Terrain", "Balcony", "Terrace", "Balcon").`
       : `Tu es le rédacteur en chef immobilier de l'agence "Signature ˢᶜ", spécialisée dans l'immobilier de prestige sur la Riviera Maya. Ta mission est de transformer des données de propriétés en descriptions immobilières de très haut niveau.
 
 RÈGLE ABSOLUE DE TON : "Luxe Discret"
@@ -586,7 +587,8 @@ STRUCTURE DESCRIPTION : 4 paragraphes narratifs (L\'Atmosphère, La Résidence, 
 
 Inclure TOUTES les URLs d'images dans le tableau "images".
 Réponds UNIQUEMENT avec un JSON valide sans backticks.
-JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"4 paragraphes Luxe Discret en ${langLabel}","highlights":["..."],"images":[""],"publicUrl":"${url}"}`;
+JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","constrLabel":"","lot":"","lotLabel":"","hoa":"","predial":"","description":"4 paragraphes Luxe Discret en ${langLabel}","highlights":["..."],"images":[""],"publicUrl":"${url}"}
+Note: constrLabel = le label exact du champ surface principale (ex: "Construction", "Living area", "Surface habitable"), lotLabel = le label exact du 2e champ surface (ex: "Terrain", "Balcony", "Terrace", "Balcon").`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:sys,
         messages:[{role:'user',content:'URL du listing: '+url}]})});
@@ -642,6 +644,7 @@ function fillPanel(d) {
   el('p-beds').value=d.beds||''; el('p-baths').value=d.baths||'';
   el('p-garage').value=d.garage||''; el('p-year').value=d.year||'';
   el('p-construction').value=d.construction||''; el('p-lot').value=d.lot||'';
+  el('p-constr-label').value=d.constrLabel||lb.constr; el('p-lot-label').value=d.lotLabel||lb.lot;
   // Fiche Client fields
   el('p-hoa').value=d.hoa||''; el('p-predial').value=d.predial||'';
   el('p-ppa').value=''; // auto-calculated on render
@@ -859,16 +862,18 @@ function applyFicheRender() {
     }
   }
   // Details grid: row1 = BEDS BATHS YEAR PPA / row2 = CONSTR LOT HOA PREDIAL
+  const constrLabel = el('p-constr-label').value || lb.constr;
+  const lotLabel = el('p-lot-label').value || lb.lot;
   const dg=el('fc-details-grid'); dg.innerHTML='';
   [
-    {l:lb.beds,   v:el('p-beds').value},
-    {l:lb.baths,  v:el('p-baths').value},
-    {l:lb.year,   v:el('p-year').value},
-    {l:lb.ppa,    v:ppa},
-    {l:lb.constr, v:fmtArea(constr)},
-    {l:lb.lot,    v:fmtArea(el('p-lot').value)},
-    {l:lb.hoa,    v:el('p-hoa').value},
-    {l:lb.predial,v:el('p-predial').value}
+    {l:lb.beds,    v:el('p-beds').value},
+    {l:lb.baths,   v:el('p-baths').value},
+    {l:lb.year,    v:el('p-year').value},
+    {l:lb.ppa,     v:ppa},
+    {l:constrLabel,v:fmtArea(constr)},
+    {l:lotLabel,   v:fmtArea(el('p-lot').value)},
+    {l:lb.hoa,     v:el('p-hoa').value},
+    {l:lb.predial, v:el('p-predial').value}
   ].forEach(({l,v})=>{
     const c=document.createElement('div'); c.className='fc-detail-cell';
     c.innerHTML=`<div class="fc-detail-label">${l}</div><div class="fc-detail-value">${v||''}</div>`;
