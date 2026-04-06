@@ -169,12 +169,12 @@
     .fc-prop-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:600;color:#223256;line-height:1;}
     .fc-prop-sub{font-size:0.63rem;color:rgba(34,50,86,0.5);font-style:italic;margin-top:2px;}
     /* Hero photo — occupe ~50% de la page avec les miniatures */
-    .fc-hero{width:100%;height:390px;object-fit:cover;display:block;flex-shrink:0;background:#dde4ee;}
-    .fc-hero-ph{width:100%;height:390px;background:linear-gradient(135deg,#e8edf4,#d0d8e8);display:flex;align-items:center;justify-content:center;color:rgba(34,50,86,0.25);font-size:0.75rem;flex-shrink:0;}
+    .fc-hero{width:100%;height:365px;object-fit:cover;display:block;flex-shrink:0;background:#dde4ee;}
+    .fc-hero-ph{width:100%;height:365px;background:linear-gradient(135deg,#e8edf4,#d0d8e8);display:flex;align-items:center;justify-content:center;color:rgba(34,50,86,0.25);font-size:0.75rem;flex-shrink:0;}
     /* Thumbnails */
     .fc-thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px 0;flex-shrink:0;}
-    .fc-thumb{height:76px;width:100%;object-fit:cover;border-radius:0;display:block;background:#dde4ee;}
-    .fc-thumb-ph{height:76px;background:linear-gradient(135deg,#e8edf4,#d0d8e8);}
+    .fc-thumb{height:70px;width:100%;object-fit:cover;border-radius:0;display:block;background:#dde4ee;}
+    .fc-thumb-ph{height:70px;background:linear-gradient(135deg,#e8edf4,#d0d8e8);}
     /* Price row */
     .fc-price-row{display:flex;align-items:center;justify-content:space-between;padding:7px 22px;background:#f0f4f8;flex-shrink:0;}
     .fc-price-left{display:flex;align-items:baseline;gap:10px;}
@@ -937,7 +937,7 @@ function downloadPDF() {
       margin:0,
       filename:'signature-sc-fiche-'+title+'.pdf',
       image:{type:'jpeg',quality:0.95},
-      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false},
+      html2canvas:{scale:2,useCORS:true,allowTaint:true,logging:false,height:1123,width:794,scrollX:0,scrollY:0},
       jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'},
       pagebreak:{avoid:'.fc-page'}
     };
