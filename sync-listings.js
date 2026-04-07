@@ -71,6 +71,9 @@ function getAuth() {
   });
 }
 
+// Shared Drive params — required for all Drive API calls when files live in a Shared Drive
+const SD = { supportsAllDrives: true, includeItemsFromAllDrives: true };
+
 // ─── DRIVE HELPERS ─────────────────────────────────────────────────────────────
 async function resolveFolderPath(drive, folderNames, rootId = 'root') {
   let parentId = rootId;
@@ -79,6 +82,7 @@ async function resolveFolderPath(drive, folderNames, rootId = 'root') {
       q: `'${parentId}' in parents and name = '${name.replace(/'/g,"\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
       fields: 'files(id, name)',
       pageSize: 10,
+      ...SD,
     });
     const folder = res.data.files?.[0];
     if (!folder) throw new Error(`Folder not found: "${name}" (parent: ${parentId})`);
@@ -96,6 +100,7 @@ async function listFilesInFolder(drive, folderId) {
       fields: 'nextPageToken, files(id, name, mimeType, webViewLink, createdTime)',
       pageSize: 100,
       pageToken: pageToken || undefined,
+      ...SD,
     });
     files.push(...(res.data.files || []));
     pageToken = res.data.nextPageToken;
@@ -108,19 +113,19 @@ async function readFileContent(drive, file) {
 
   // Google Docs → export as plain text
   if (mimeType === 'application/vnd.google-apps.document') {
-    const res = await drive.files.export({ fileId: id, mimeType: 'text/plain' }, { responseType: 'text' });
+    const res = await drive.files.export({ fileId: id, mimeType: 'text/plain', ...SD }, { responseType: 'text' });
     return res.data;
   }
 
   // Google Sheets → export as CSV
   if (mimeType === 'application/vnd.google-apps.spreadsheet') {
-    const res = await drive.files.export({ fileId: id, mimeType: 'text/csv' }, { responseType: 'text' });
+    const res = await drive.files.export({ fileId: id, mimeType: 'text/csv', ...SD }, { responseType: 'text' });
     return res.data;
   }
 
   // PDF → download binary then extract text
   if (mimeType === 'application/pdf') {
-    const res = await drive.files.get({ fileId: id, alt: 'media' }, { responseType: 'arraybuffer' });
+    const res = await drive.files.get({ fileId: id, alt: 'media', ...SD }, { responseType: 'arraybuffer' });
     const buffer = Buffer.from(res.data);
     try {
       const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
@@ -134,7 +139,7 @@ async function readFileContent(drive, file) {
 
   // Plain text / markdown / other text types
   if (mimeType.startsWith('text/') || mimeType === 'application/json') {
-    const res = await drive.files.get({ fileId: id, alt: 'media' }, { responseType: 'text' });
+    const res = await drive.files.get({ fileId: id, alt: 'media', ...SD }, { responseType: 'text' });
     return res.data;
   }
 
@@ -276,8 +281,19 @@ async function main() {
   const drive = google.drive({ version: 'v3', auth });
   const sheets = google.sheets({ version: 'v4', auth });
 
+  // 1a. Debug: list immediate children of root folder
+  console.log(`🔍 Listing subfolders inside root ID ${DRIVE_ROOT_FOLDER_ID}…`);
+  const debugRes = await drive.files.list({
+    q: `'${DRIVE_ROOT_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+    fields: 'files(id, name)',
+    pageSize: 50,
+    ...SD,
+  });
+  (debugRes.data.files || []).forEach(f => console.log(`   📁 "${f.name}" (${f.id})`));
+  if (!debugRes.data.files?.length) console.log('   (no subfolders found — check sharing permissions)');
+
   // 1. Resolve folder
-  console.log(`📂 Resolving folder: ${DRIVE_FOLDER_PATH.join(' > ')}…`);
+  console.log(`\n📂 Resolving folder: ${DRIVE_FOLDER_PATH.join(' > ')}…`);
   const folderId = await resolveFolderPath(drive, DRIVE_FOLDER_PATH, DRIVE_ROOT_FOLDER_ID);
   console.log(`   Folder ID: ${folderId}`);
 
