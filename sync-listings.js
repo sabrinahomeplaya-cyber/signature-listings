@@ -25,7 +25,8 @@ const CREDENTIALS_PATH   = path.join(__dirname, 'credentials.json');
 const SHEET_ID           = '1tHk8rZ4dZb9NsVxVQrVTdxKFwNy6BUeGf-rsPUZ_BmM';
 const SHEET_NAME         = 'For Sale';
 const DATA_START_ROW     = 5;   // 1-based, rows 1-4 are headers
-const DRIVE_FOLDER_PATH  = ['02 Properties', '1. Puerto Aventuras', 'For Sale'];
+const DRIVE_FOLDER_PATH    = ['1. Puerto Aventuras', 'For Sale'];
+const DRIVE_ROOT_FOLDER_ID = '1sQpqCmvJD6vR3T5LUTWiCoCW2oFQyxYm';
 
 // Column order in the sheet (A=0, B=1, …)
 // Columns that are script-managed:
@@ -71,8 +72,8 @@ function getAuth() {
 }
 
 // ─── DRIVE HELPERS ─────────────────────────────────────────────────────────────
-async function resolveFolderPath(drive, folderNames) {
-  let parentId = 'root';
+async function resolveFolderPath(drive, folderNames, rootId = 'root') {
+  let parentId = rootId;
   for (const name of folderNames) {
     const res = await drive.files.list({
       q: `'${parentId}' in parents and name = '${name.replace(/'/g,"\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
@@ -277,7 +278,7 @@ async function main() {
 
   // 1. Resolve folder
   console.log(`📂 Resolving folder: ${DRIVE_FOLDER_PATH.join(' > ')}…`);
-  const folderId = await resolveFolderPath(drive, DRIVE_FOLDER_PATH);
+  const folderId = await resolveFolderPath(drive, DRIVE_FOLDER_PATH, DRIVE_ROOT_FOLDER_ID);
   console.log(`   Folder ID: ${folderId}`);
 
   // 2. List files
