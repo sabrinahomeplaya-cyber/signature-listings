@@ -306,11 +306,12 @@ async function main() {
     return;
   }
 
-  // Separate subfolders from direct files — skip system/misc folders
-  const SKIP_NAMES = ['I. PROJECTS', 'Mike Broker', 'index.html', 'Link Websites', 'Info - Data'];
+  // Property folders always contain a price pattern like "$629,000" or "$.850,000"
+  // Utility folders (I. PROJECTS, Link Websites, etc.) do not — filter them out
   const FOLDER_MIME = 'application/vnd.google-apps.folder';
+  const isPropertyFolder = (name) => /\$[\d,\.]+/.test(name);
 
-  const propertyFolders = items.filter(i => i.mimeType === FOLDER_MIME && !SKIP_NAMES.includes(i.name));
+  const propertyFolders = items.filter(i => i.mimeType === FOLDER_MIME && isPropertyFolder(i.name));
   const looseFiles      = items.filter(i => i.mimeType !== FOLDER_MIME);
 
   console.log(`   ${propertyFolders.length} property folder(s), ${looseFiles.length} loose file(s)\n`);
