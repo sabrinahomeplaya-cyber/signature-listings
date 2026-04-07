@@ -297,14 +297,23 @@ async function main() {
   const folderId = await resolveFolderPath(drive, DRIVE_FOLDER_PATH, DRIVE_ROOT_FOLDER_ID);
   console.log(`   Folder ID: ${folderId}`);
 
-  // 2. List files
-  const files = await listFilesInFolder(drive, folderId);
-  console.log(`   Found ${files.length} file(s)\n`);
+  // 2. List items in "1. For Sale" (mix of property subfolders and loose files)
+  const items = await listFilesInFolder(drive, folderId);
+  console.log(`   Found ${items.length} item(s)\n`);
 
-  if (files.length === 0) {
-    console.log('No files to process. Exiting.');
+  if (items.length === 0) {
+    console.log('No items to process. Exiting.');
     return;
   }
+
+  // Separate subfolders from direct files — skip system/misc folders
+  const SKIP_NAMES = ['I. PROJECTS', 'Mike Broker', 'index.html'];
+  const FOLDER_MIME = 'application/vnd.google-apps.folder';
+
+  const propertyFolders = items.filter(i => i.mimeType === FOLDER_MIME && !SKIP_NAMES.includes(i.name));
+  const looseFiles      = items.filter(i => i.mimeType !== FOLDER_MIME);
+
+  console.log(`   ${propertyFolders.length} property folder(s), ${looseFiles.length} loose file(s)\n`);
 
   // 3. Read existing sheet rows (to detect updates vs appends)
   console.log('📊 Reading existing sheet data…');
@@ -317,40 +326,69 @@ async function main() {
   });
   console.log(`   ${existingRows.length} existing row(s) in sheet\n`);
 
-  // 4. Process each file
+  // 4. Build work list: { driveEntry (folder or file), contentFile (file to read), label }
+  const workList = [];
+
+  // Property subfolders: find first readable doc inside each
+  for (const folder of propertyFolders) {
+    const children = await listFilesInFolder(drive, folder.id);
+    const readable = children.find(c =>
+      c.mimeType !== FOLDER_MIME &&
+      (c.mimeType === 'application/vnd.google-apps.document' ||
+       c.mimeType === 'application/vnd.google-apps.spreadsheet' ||
+       c.mimeType === 'application/pdf' ||
+       c.mimeType.startsWith('text/'))
+    );
+    if (readable) {
+      workList.push({ driveEntry: folder, contentFile: readable });
+    } else {
+      console.warn(`📁 ${folder.name}\n   ⚠ No readable document inside — skipping\n`);
+    }
+  }
+
+  // Loose files (not in a subfolder): use the file itself as driveEntry
+  for (const file of looseFiles) {
+    workList.push({ driveEntry: file, contentFile: file });
+  }
+
+  // 5. Process each work item
   const updates = [];
   const appends = [];
   let skipped = 0;
 
-  for (const file of files) {
-    process.stdout.write(`📄 ${file.name} (${file.mimeType})\n`);
+  for (const { driveEntry, contentFile } of workList) {
+    process.stdout.write(`📁 ${driveEntry.name}\n   📄 ${contentFile.name} (${contentFile.mimeType})\n`);
 
     let content;
     try {
-      content = await readFileContent(drive, file);
+      content = await readFileContent(drive, contentFile);
     } catch (err) {
-      console.warn(`   ⚠ Could not read file: ${err.message} — skipping\n`);
+      console.warn(`   ⚠ Could not read: ${err.message} — skipping\n`);
       skipped++;
       continue;
     }
 
     if (!content) {
-      console.warn(`   ⚠ Unsupported MIME type "${file.mimeType}" — skipping\n`);
+      console.warn(`   ⚠ Unsupported MIME type "${contentFile.mimeType}" — skipping\n`);
       skipped++;
       continue;
     }
 
+    // Combine folder name + doc content so Claude has full context
+    const contextText = `Folder name: ${driveEntry.name}\nFile name: ${contentFile.name}\n\n${content}`;
+
     let extracted;
     try {
-      extracted = await extractWithClaude(content, file.name);
+      extracted = await extractWithClaude(contextText, driveEntry.name);
     } catch (err) {
       console.warn(`   ⚠ Claude extraction failed: ${err.message} — skipping\n`);
       skipped++;
       continue;
     }
 
-    const row = buildRow(extracted, file);
-    const driveLink = file.webViewLink;
+    // Use the property FOLDER's link as the unique key (stable across doc edits)
+    const row = buildRow(extracted, driveEntry);
+    const driveLink = driveEntry.webViewLink;
 
     if (driveLinkToRow.has(driveLink)) {
       const sheetRowIndex = driveLinkToRow.get(driveLink);
