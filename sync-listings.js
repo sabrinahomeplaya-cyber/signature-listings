@@ -25,7 +25,7 @@ const CREDENTIALS_PATH   = path.join(__dirname, 'credentials.json');
 const SHEET_ID           = '1tHk8rZ4dZb9NsVxVQrVTdxKFwNy6BUeGf-rsPUZ_BmM';
 const SHEET_NAME         = 'For Sale';
 const DATA_START_ROW     = 5;   // 1-based, rows 1-4 are headers
-const DRIVE_FOLDER_PATH    = ['1. Puerto Aventuras', 'For Sale'];
+const DRIVE_FOLDER_PATH    = ['1. Puerto Aventuras', '1. For Sale'];
 const DRIVE_ROOT_FOLDER_ID = '1sQpqCmvJD6vR3T5LUTWiCoCW2oFQyxYm';
 
 // Column order in the sheet (A=0, B=1, …)
