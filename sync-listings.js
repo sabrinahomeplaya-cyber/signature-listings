@@ -307,7 +307,7 @@ async function main() {
   }
 
   // Separate subfolders from direct files — skip system/misc folders
-  const SKIP_NAMES = ['I. PROJECTS', 'Mike Broker', 'index.html'];
+  const SKIP_NAMES = ['I. PROJECTS', 'Mike Broker', 'index.html', 'Link Websites', 'Info - Data'];
   const FOLDER_MIME = 'application/vnd.google-apps.folder';
 
   const propertyFolders = items.filter(i => i.mimeType === FOLDER_MIME && !SKIP_NAMES.includes(i.name));
@@ -329,9 +329,9 @@ async function main() {
   // 4. Build work list: { driveEntry (folder or file), contentFile (file to read), label }
   const workList = [];
 
-  // Property subfolders: find first readable doc inside each
-  for (const folder of propertyFolders) {
-    const children = await listFilesInFolder(drive, folder.id);
+  // Property subfolders: find first readable doc, searching recursively up to 2 levels deep
+  async function findReadableDoc(folderId) {
+    const children = await listFilesInFolder(drive, folderId);
     const readable = children.find(c =>
       c.mimeType !== FOLDER_MIME &&
       (c.mimeType === 'application/vnd.google-apps.document' ||
@@ -339,10 +339,22 @@ async function main() {
        c.mimeType === 'application/pdf' ||
        c.mimeType.startsWith('text/'))
     );
+    if (readable) return readable;
+    // Go one level deeper into subfolders
+    const subFolders = children.filter(c => c.mimeType === FOLDER_MIME);
+    for (const sub of subFolders) {
+      const found = await findReadableDoc(sub.id);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  for (const folder of propertyFolders) {
+    const readable = await findReadableDoc(folder.id);
     if (readable) {
       workList.push({ driveEntry: folder, contentFile: readable });
     } else {
-      console.warn(`📁 ${folder.name}\n   ⚠ No readable document inside — skipping\n`);
+      console.warn(`📁 ${folder.name}\n   ⚠ No readable document found (checked subfolders too) — skipping\n`);
     }
   }
 
