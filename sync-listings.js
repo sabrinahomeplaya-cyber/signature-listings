@@ -28,6 +28,21 @@ const DATA_START_ROW     = 5;   // 1-based, rows 1-4 are headers
 const DRIVE_FOLDER_PATH    = ['1. Puerto Aventuras', '1. For Sale'];
 const DRIVE_ROOT_FOLDER_ID = '1sQpqCmvJD6vR3T5LUTWiCoCW2oFQyxYm';
 
+// Area derived from the Drive folder name → sheet dropdown value
+const AREA_FROM_FOLDER = 'PA'; // "1. Puerto Aventuras" → "PA"
+
+// Normalize Claude's property_type to valid sheet dropdown values
+const PROPERTY_TYPE_MAP = {
+  penthouse:  'Condo',
+  villa:      'House',
+  house:      'House',
+  condo:      'Condo',
+  apartment:  'Condo',
+  hotel:      'Hotel',
+  land:       'Land',
+  commercial: 'Commercial',
+};
+
 // Column order in the sheet (A=0, B=1, …)
 // Columns that are script-managed:
 const COL = {
@@ -221,8 +236,9 @@ async function readSheetRows(sheets) {
 function buildRow(extracted, driveFile) {
   const d = extracted;
   const row = new Array(TOTAL_MANAGED_COLS).fill('');
-  row[COL.AREA]           = d.area           ?? '';
-  row[COL.PROPERTY_TYPE]  = d.property_type  ?? '';
+  row[COL.AREA]           = AREA_FROM_FOLDER;
+  const rawType = (d.property_type || '').toLowerCase().trim();
+  row[COL.PROPERTY_TYPE]  = PROPERTY_TYPE_MAP[rawType] ?? d.property_type ?? '';
   row[COL.BR]             = d.br             ?? '';
   row[COL.BA]             = d.ba             ?? '';
   row[COL.PRICE_USD]      = d.price_usd      ?? '';
