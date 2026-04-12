@@ -365,8 +365,15 @@ Fields to extract:
 - property_type: e.g. "House", "Condo", "Villa", "Penthouse", "Land" (string)
 - br: number of bedrooms — INTEGER only, no text (number or null)
 - ba: number of bathrooms — use 0.5 increments: 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, etc. A "half bath" or "toilet" counts as 0.5 (number or null)
+- built: year of construction, 4-digit integer (number or null)
 - price_usd: price in USD, digits only, no $ or commas (number or null)
 - price_mxn: price in MXN, digits only, no $ or commas (number or null)
+- m2: construction/living area in m² — digits only, no units (number or null)
+- lot_m2: lot/land/balcony/terrace area in m² — digits only, no units (number or null)
+- sqft: construction/living area in sq ft — digits only, no units (number or null)
+- lot_sqft: lot/land/balcony/terrace area in sq ft — digits only, no units (number or null)
+- hoa: monthly HOA/maintenance fee in USD, digits only (number or null)
+- predial_mxn: annual property tax (predial) in MXN, digits only (number or null)
 - ground_floor: is this a ground floor unit? (true/false/null)
 - penthouse: is this a penthouse? (true/false/null)
 - rooftop: does it have a rooftop terrace? (true/false/null)
@@ -377,8 +384,10 @@ Fields to extract:
 
 Return exactly this JSON with no extra keys:
 {
-  "property_type": null, "br": null, "ba": null,
+  "property_type": null, "br": null, "ba": null, "built": null,
   "price_usd": null, "price_mxn": null,
+  "m2": null, "lot_m2": null, "sqft": null, "lot_sqft": null,
+  "hoa": null, "predial_mxn": null,
   "ground_floor": null, "penthouse": null, "rooftop": null, "unfurnished": null,
   "details": null, "listings_link": null, "signature_link": null
 }`;
@@ -451,32 +460,35 @@ function buildRow(extracted, driveFile, opts = {}) {
   row[COL.AREA]          = AREA_FROM_FOLDER;
   const rawType = (d.property_type || '').toLowerCase().trim();
   row[COL.PROPERTY_TYPE] = PROPERTY_TYPE_MAP[rawType] ?? d.property_type ?? '';
-  row[COL.BR]            = parseNum(L.beds)  ?? d.br ?? '';
-  row[COL.BA]            = parseNum(L.baths) ?? d.ba ?? '';
-  row[COL.BUILT]         = L.year_built || '';
+  row[COL.BR]    = parseNum(L.beds)  ?? d.br    ?? '';
+  row[COL.BA]    = parseNum(L.baths) ?? d.ba    ?? '';
+  row[COL.BUILT] = L.year_built      || d.built || '';
 
   // ── Prices ─────────────────────────────────────────────────────────────────
   const price_usd = d.price_usd ?? parseNum(L.price) ?? null;
   row[COL.PRICE_USD] = price_usd ?? '';
   row[COL.PRICE_MXN] = d.price_mxn ?? '';
 
-  // ── Areas — construction ───────────────────────────────────────────────────
+  // ── Areas — construction (listing page first, Claude PDF extraction as fallback) ──
   const constrRaw  = L.construction || '';
   const sqftMatch  = constrRaw.match(/([\d,]+)\s*sq[\s\-]?ft/i);
   const m2Match    = constrRaw.match(/([\d,]+)\s*m[²2]/i);
-  const sqft       = sqftMatch ? parseFloat(sqftMatch[1].replace(/,/g,'')) : null;
-  const m2direct   = m2Match   ? parseFloat(m2Match[1].replace(/,/g,''))   : null;
-  const m2         = m2direct  ?? (sqft ? Math.round(sqft * 0.0929) : null);
+  const sqftListing   = sqftMatch ? parseFloat(sqftMatch[1].replace(/,/g,'')) : null;
+  const m2Listing     = m2Match   ? parseFloat(m2Match[1].replace(/,/g,''))   : null;
+  // Use listing page values first; fall back to Claude-extracted values from PDF
+  const sqft       = sqftListing ?? d.sqft   ?? (m2Listing   ? Math.round(m2Listing   / 0.0929) : d.m2   ? Math.round(d.m2   / 0.0929) : null);
+  const m2         = m2Listing   ?? d.m2     ?? (sqftListing  ? Math.round(sqftListing  * 0.0929) : d.sqft ? Math.round(d.sqft * 0.0929) : null);
   row[COL.M2]    = m2   ?? '';
   row[COL.SQ_FT] = sqft ?? '';
 
   // ── Areas — lot / balcony ──────────────────────────────────────────────────
-  const lotRaw      = L.lot || '';
-  const lotSqftM    = lotRaw.match(/([\d,]+)\s*sq[\s\-]?ft/i);
-  const lotM2M      = lotRaw.match(/([\d,]+)\s*m[²2]/i);
-  const lot_sqft    = lotSqftM ? parseFloat(lotSqftM[1].replace(/,/g,'')) : null;
-  const lot_m2direct= lotM2M   ? parseFloat(lotM2M[1].replace(/,/g,''))   : null;
-  const lot_m2      = lot_m2direct ?? (lot_sqft ? Math.round(lot_sqft * 0.0929) : null);
+  const lotRaw       = L.lot || '';
+  const lotSqftM     = lotRaw.match(/([\d,]+)\s*sq[\s\-]?ft/i);
+  const lotM2M       = lotRaw.match(/([\d,]+)\s*m[²2]/i);
+  const lotSqftListing  = lotSqftM ? parseFloat(lotSqftM[1].replace(/,/g,'')) : null;
+  const lotM2Listing    = lotM2M   ? parseFloat(lotM2M[1].replace(/,/g,''))   : null;
+  const lot_sqft     = lotSqftListing ?? d.lot_sqft ?? (lotM2Listing    ? Math.round(lotM2Listing    / 0.0929) : d.lot_m2 ? Math.round(d.lot_m2 / 0.0929) : null);
+  const lot_m2       = lotM2Listing   ?? d.lot_m2   ?? (lotSqftListing   ? Math.round(lotSqftListing   * 0.0929) : d.lot_sqft ? Math.round(d.lot_sqft * 0.0929) : null);
   row[COL.LOT_M2]   = lot_m2   ?? '';
   row[COL.LOT_SQFT] = lot_sqft ?? '';
 
@@ -493,9 +505,9 @@ function buildRow(extracted, driveFile, opts = {}) {
   row[COL.PRICE_PER_SQFT] = price_per_sqft ?? '';
   row[COL.PRICE_PER_M2]   = price_per_m2   ?? '';
 
-  // ── Financials ─────────────────────────────────────────────────────────────
-  row[COL.HOA]         = parseNum(L.hoa)     ?? '';
-  row[COL.PREDIAL_MXN] = parseNum(L.predial) ?? '';
+  // ── Financials (listing page first, Claude PDF extraction as fallback) ────
+  row[COL.HOA]         = parseNum(L.hoa)     ?? d.hoa         ?? '';
+  row[COL.PREDIAL_MXN] = parseNum(L.predial) ?? d.predial_mxn ?? '';
 
   // ── Features ───────────────────────────────────────────────────────────────
   row[COL.GROUND_FLOOR] = bool(d.ground_floor);
