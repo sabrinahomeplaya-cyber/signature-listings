@@ -334,6 +334,18 @@ function parseNum(str) {
   return isNaN(n) ? null : n;
 }
 
+// Fix bathroom count: Claude sometimes returns 5.1 instead of 5.5 for "5 baths + 1 half bath".
+// Rule: any decimal part between 0.01 and 0.49 is a misencoded half-bath → round up to .5
+//       otherwise round to nearest 0.5 (e.g. 2.75 → 3.0, 2.0 → 2.0)
+function fixBa(n) {
+  if (n == null || n === '') return n;
+  const num = parseFloat(n);
+  if (isNaN(num)) return n;
+  const decimal = num % 1;
+  if (decimal > 0.01 && decimal < 0.49) return Math.floor(num) + 0.5;
+  return Math.round(num * 2) / 2;
+}
+
 // ─── CLAUDE EXTRACTION ─────────────────────────────────────────────────────────
 // Load Anthropic API key from env var or local key file
 // Handles UTF-16LE (PowerShell default on Windows) and UTF-8 with/without BOM
@@ -458,7 +470,7 @@ function buildRow(extracted, driveFile, opts = {}) {
   const rawType = (d.property_type || '').toLowerCase().trim();
   row[COL.PROPERTY_TYPE] = PROPERTY_TYPE_MAP[rawType] ?? d.property_type ?? '';
   row[COL.BR]    = parseNum(L.beds)  ?? d.br    ?? '';
-  row[COL.BA]    = parseNum(L.baths) ?? d.ba    ?? '';
+  row[COL.BA]    = fixBa(parseNum(L.baths) ?? d.ba) ?? '';
   row[COL.BUILT] = L.year_built      || d.built || '';
 
   // ── Prices ─────────────────────────────────────────────────────────────────
