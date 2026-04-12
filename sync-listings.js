@@ -176,8 +176,8 @@ async function readFileContent(drive, file) {
       const data = await pdfParse(buffer);
       return data.text;
     } catch {
-      console.warn(`  ⚠ Could not parse PDF "${name}" — using raw buffer length as placeholder`);
-      return `[PDF — ${buffer.length} bytes — could not extract text]`;
+      console.warn(`  ⚠ Could not parse PDF "${name}" — will fall back to folder name`);
+      return null;
     }
   }
 
@@ -514,6 +514,24 @@ function buildRow(extracted, driveFile, opts = {}) {
   row[COL.OWNER_NAME]  = opts.ownerName  || '';
   row[COL.BROKER_NAME] = opts.brokerName || '';
 
+  // If this row is a fallback (PDF unreadable), preserve any existing data for blank cells
+  if (opts.preserveExisting && exR.length > 0) {
+    const PRESERVED_COLS = [
+      COL.PROPERTY_TYPE, COL.BR, COL.BA, COL.BUILT,
+      COL.PRICE_USD, COL.PRICE_MXN, COL.PRICE_PER_M2,
+      COL.M2, COL.LOT_M2, COL.TOTAL_M2,
+      COL.PRICE_PER_SQFT, COL.SQ_FT, COL.LOT_SQFT, COL.TOTAL_SQFT,
+      COL.HOA, COL.PREDIAL_MXN,
+      COL.GROUND_FLOOR, COL.PENTHOUSE, COL.ROOFTOP, COL.UNFURNISHED,
+      COL.DETAILS, COL.LISTINGS_LINK, COL.SIGNATURE_LINK,
+    ];
+    for (const col of PRESERVED_COLS) {
+      if ((row[col] === '' || row[col] == null) && exR[col]) {
+        row[col] = exR[col];
+      }
+    }
+  }
+
   return row;
 }
 
@@ -710,20 +728,43 @@ async function main() {
       }
 
       if (!content) {
-        console.warn(`   ⚠ Unsupported MIME type "${contentFile.mimeType}" — skipping\n`);
-        skipped++;
-        continue;
-      }
-
-      const contextText = `Folder name: ${driveEntry.name}\nFile name: ${contentFile.name}\n\n${content}`;
-      try {
-        extracted = await extractWithClaude(contextText, driveEntry.name);
-      } catch (err) {
-        console.warn(`   ⚠ Claude extraction failed: ${err.message} — skipping\n`);
-        skipped++;
-        continue;
-      }
-    }
+        // PDF unreadable or unsupported MIME — fall back to folder name parsing + preserve existing
+        console.log(`   📝 Could not read content — falling back to folder name`);
+        const parsed = parseFromFolderName(driveEntry.name);
+        extracted = {
+          property_type:  parsed.property_type,
+          br:             parsed.br,
+          ba:             null,
+          built:          null,
+          price_usd:      parsed.price_usd,
+          price_mxn:      null,
+          m2:             null,
+          lot_m2:         null,
+          sqft:           null,
+          lot_sqft:       null,
+          hoa:            null,
+          predial_mxn:    null,
+          ground_floor:   false,
+          penthouse:      parsed.penthouse || false,
+          rooftop:        false,
+          unfurnished:    false,
+          details:        parsed.property_name || '',
+          listings_link:  null,
+          signature_link: null,
+          _preserveExisting: true,   // flag: keep existing sheet data for blank fields
+        };
+        // Skip Claude — jump to row building
+      } else {
+        const contextText = `Folder name: ${driveEntry.name}\nFile name: ${contentFile.name}\n\n${content}`;
+        try {
+          extracted = await extractWithClaude(contextText, driveEntry.name);
+        } catch (err) {
+          console.warn(`   ⚠ Claude extraction failed: ${err.message} — skipping\n`);
+          skipped++;
+          continue;
+        }
+      } // closes else (content exists)
+    } // closes else (contentFile exists)
 
     // Resolve signature_link: Claude extraction first, then local folder match as fallback
     if (!extracted.signature_link) {
@@ -752,8 +793,9 @@ async function main() {
 
     const row = buildRow(extracted, driveEntry, {
       listing, isNew, ownerName, brokerName,
-      existingStatus: existing?.existingStatus || '',
-      existingRow:    existing?.existingRow    || [],
+      existingStatus:   existing?.existingStatus || '',
+      existingRow:      existing?.existingRow    || [],
+      preserveExisting: extracted._preserveExisting || false,
     });
 
     if (!isNew) {
