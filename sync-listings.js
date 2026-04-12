@@ -17,8 +17,10 @@ import Anthropic from '@anthropic-ai/sdk';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const _require   = createRequire(import.meta.url);
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────────
 const CREDENTIALS_PATH   = path.join(__dirname, 'credentials.json');
@@ -172,11 +174,12 @@ async function readFileContent(drive, file) {
     const res = await drive.files.get({ fileId: id, alt: 'media', ...SD }, { responseType: 'arraybuffer' });
     const buffer = Buffer.from(res.data);
     try {
-      const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
-      const data = await pdfParse(buffer);
-      return data.text;
-    } catch {
-      console.warn(`  ⚠ Could not parse PDF "${name}" — will fall back to folder name`);
+      const { PDFParse } = await import('pdf-parse');
+      const parser = new PDFParse({ data: buffer });
+      const result = await parser.getText();
+      return result.text || null;
+    } catch (e) {
+      console.warn(`  ⚠ Could not parse PDF "${name}": ${e.message}`);
       return null;
     }
   }
