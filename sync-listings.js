@@ -414,7 +414,7 @@ async function extractWithClaude(fileContent, fileName) {
 
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001', // cheaper model — extraction task doesn't need Sonnet
-    max_tokens: 1024,
+    max_tokens: 2048,
     messages: [{
       role: 'user',
       content: `File name: ${sanitizeForApi(fileName)}\n\nDocument content:\n${truncated}`,
@@ -428,13 +428,17 @@ async function extractWithClaude(fileContent, fileName) {
     // Return empty extraction instead of throwing — unreadable docs shouldn't crash the row
     console.warn(`   ⚠ Claude returned no JSON — using empty extraction`);
     return {
-      property_type: null, br: null, ba: null,
+      property_type: null, br: null, ba: null, built: null,
       price_usd: null, price_mxn: null,
+      m2: null, lot_m2: null, sqft: null, lot_sqft: null,
+      hoa: null, predial_mxn: null,
       ground_floor: null, penthouse: null, rooftop: null, unfurnished: null,
       details: null, listings_link: null, signature_link: null,
     };
   }
-  return JSON.parse(jsonMatch[0]);
+  const parsed = JSON.parse(jsonMatch[0]);
+  console.log(`   🤖 Claude: br=${parsed.br} ba=${parsed.ba} m2=${parsed.m2} lot_m2=${parsed.lot_m2} price=${parsed.price_usd}`);
+  return parsed;
 }
 
 // ─── SHEETS HELPERS ────────────────────────────────────────────────────────────
