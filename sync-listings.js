@@ -17,10 +17,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const _require   = createRequire(import.meta.url);
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────────
 const CREDENTIALS_PATH   = path.join(__dirname, 'credentials.json');
@@ -364,7 +361,7 @@ const EXTRACTION_PROMPT = `You are a real estate data extraction assistant. From
 Fields to extract:
 - property_type: e.g. "House", "Condo", "Villa", "Penthouse", "Land" (string)
 - br: number of bedrooms — INTEGER only, no text (number or null)
-- ba: number of bathrooms — use 0.5 increments: 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, etc. A "half bath" or "toilet" counts as 0.5 (number or null)
+- ba: number of bathrooms — ONLY use multiples of 0.5: 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, etc. NEVER output 5.1, 4.1, 3.1 etc. A "half bath", "powder room" or "toilet" counts as +0.5. Round to nearest 0.5. Examples: "5 baths + 1 half bath" → 5.5, "5 bathrooms + service bath" → 5.5 (number or null)
 - built: year of construction, 4-digit integer (number or null)
 - price_usd: price in USD, digits only, no $ or commas (number or null)
 - price_mxn: price in MXN, digits only, no $ or commas (number or null)
