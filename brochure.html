@@ -273,7 +273,7 @@
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="btn-pdf" id="btn-print" onclick="printFiche()" style="display:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Imprimer la fiche
+        <span id="btn-print-label">Imprimer la fiche</span>
       </button>
       <button class="btn-pdf" id="btn-download" onclick="downloadPDF()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -914,21 +914,30 @@ function switchEditorMode(mode) {
   el('fiche-page').style.display=isFiche?'':'none';
   // Download button label
   el('btn-download-label').textContent=isFiche?'Télécharger la fiche':'Télécharger le PDF';
-  el('btn-print').style.display=isFiche?'':'none';
+  el('btn-print-label').textContent=isFiche?'Imprimer la fiche':'Imprimer la brochure';
+  el('btn-print').style.display='';
 }
 
 function printFiche(){
-  const fiche=el('fiche-page');
+  const isFiche=currentMode==='fiche';
   const win=window.open('','_blank','width=900,height=1200');
-  win.document.write('<html><head><title>Fiche Client</title>');
+  win.document.write('<html><head><title>'+(isFiche?'Fiche Client':'Brochure')+'</title>');
   win.document.write('<link rel="preconnect" href="https://fonts.googleapis.com">');
   win.document.write('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>');
   win.document.write('<link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">');
-  win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 portrait;margin:0;}body{background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}@media print{body{display:flex;justify-content:center;align-items:center;min-height:100vh;}.fc-page{width:210mm!important;height:297mm!important;overflow:hidden!important;page-break-after:avoid;}}</style>');
-  // Copy all stylesheets
+  if(isFiche){
+    win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 portrait;margin:0;}body{background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}@media print{body{display:flex;justify-content:center;align-items:center;min-height:100vh;}.fc-page{width:210mm!important;height:297mm!important;overflow:hidden!important;page-break-after:avoid;}}</style>');
+  } else {
+    win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 landscape;margin:0;}body{background:#e5e7eb;}.brochure-page{page-break-after:always;display:flex;justify-content:center;align-items:center;width:297mm;height:210mm;overflow:hidden;}@media print{body{background:white;}.brochure-page{page-break-after:always;width:297mm!important;height:210mm!important;overflow:hidden!important;}}</style>');
+  }
   document.querySelectorAll('style').forEach(s=>win.document.write('<style>'+s.innerHTML+'</style>'));
   win.document.write('</head><body>');
-  win.document.write(fiche.outerHTML);
+  if(isFiche){
+    win.document.write(el('fiche-page').outerHTML);
+  } else {
+    win.document.write('<div class="brochure-page">'+el('page1').outerHTML+'</div>');
+    win.document.write('<div class="brochure-page">'+el('page2').outerHTML+'</div>');
+  }
   win.document.write('<script>document.fonts.ready.then(function(){window.print();});window.onafterprint=function(){window.close();};<\/script>');
   win.document.write('</body></html>');
   win.document.close();
