@@ -928,7 +928,7 @@ function printFiche(){
   if(isFiche){
     win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 portrait;margin:0;}body{background:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}@media print{body{display:flex;justify-content:center;align-items:center;min-height:100vh;}.fc-page{width:210mm!important;height:297mm!important;overflow:hidden!important;page-break-after:avoid;}}</style>');
   } else {
-    win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 landscape;margin:0;}body{background:#e5e7eb;}.brochure-page{page-break-after:always;display:flex;justify-content:center;align-items:center;width:297mm;height:210mm;overflow:hidden;}@media print{body{background:white;}.brochure-page{page-break-after:always;width:297mm!important;height:210mm!important;overflow:hidden!important;}}</style>');
+    win.document.write('<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}@page{size:A4 portrait;margin:0;}body{background:#e5e7eb;}.brochure-page{page-break-after:always;display:flex;justify-content:center;align-items:center;width:210mm;height:297mm;overflow:hidden;}@media print{body{background:white;}.brochure-page{page-break-after:always;width:210mm!important;height:297mm!important;overflow:hidden!important;}}</style>');
   }
   document.querySelectorAll('style').forEach(s=>win.document.write('<style>'+s.innerHTML+'</style>'));
   win.document.write('</head><body>');
