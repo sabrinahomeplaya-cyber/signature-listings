@@ -210,11 +210,12 @@ function parseFromFolderName(folderName) {
 
   // Property type
   let property_type = null;
-  if (/^house/i.test(folderName))                    property_type = 'House';
-  else if (/\bvilla\b/i.test(folderName))            property_type = 'House';
-  else if (/\bpenthouse\b/i.test(folderName))        property_type = 'Condo';
-  else if (/\b(condo|apartment|studio)\b/i.test(folderName)) property_type = 'Condo';
-  else if (/\bland\b/i.test(folderName))             property_type = 'Land';
+  if (/^house/i.test(folderName))                                   property_type = 'House';
+  else if (/\bvilla\b/i.test(folderName))                          property_type = 'House';
+  else if (/\bpenthouse\b/i.test(folderName))                      property_type = 'Condo';
+  else if (/\btownhouse\b/i.test(folderName))                      property_type = 'Condo';
+  else if (/\b(condo|apartment|studio)\b/i.test(folderName))       property_type = 'Condo';
+  else if (/\bland\b/i.test(folderName))                           property_type = 'Land';
 
   // Property name — between last price token and person name before _SXXX
   // Try: after "USD - " or after "$ - "
@@ -290,17 +291,25 @@ async function fetchSignatureListing(url) {
     const divCells = [...html.matchAll(
       /<div[^>]*\btext-xs\b[^>]*>([^<]+)<\/div>\s*<div[^>]*\btext-xl\b[^>]*>([^<]*)<\/div>/g
     )];
+    const allLabels = [];
     for (const [, label, value] of divCells) {
       const l = label.trim().toLowerCase();
       const v = value.replace(/<[^>]+>/g, '').trim();
+      allLabels.push(l);
       if (!v) continue;
       if (l.includes('bedroom'))                                                result.beds          = result.beds          || v;
       if (l.includes('bathroom'))                                               result.baths         = result.baths         || v;
       if (l.includes('construction') || l.includes('living area'))             result.construction  = result.construction  || v;
-      if (l.includes('lot') || l.includes('balcony') || l.includes('terrace')) result.lot           = result.lot           || v;
+      if (l.includes('lot') || l.includes('balcony') || l.includes('terrace') || l.includes('terrasse') || l.includes('balcon') || l.includes('terrain')) result.lot = result.lot || v;
       if (l.includes('year') || l.includes('built') || l.includes('année'))    result.year_built    = result.year_built    || v;
       if (l.includes('price') && (l.includes('sq') || l.includes('m²') || l.includes('m2'))) result.price_per_sqft = result.price_per_sqft || v;
     }
+    // Infer property type from detail grid labels
+    const hasLot      = allLabels.some(l => l.includes('lot') || l.includes('land') || l.includes('terrain'));
+    const hasBalcony  = allLabels.some(l => l.includes('balcony') || l.includes('balcon') || l.includes('terrasse') || l.includes('terrace'));
+    if      (hasLot && !hasBalcony) result.property_type = 'House';
+    else if (hasBalcony && !hasLot) result.property_type = 'Condo';
+    else if (hasLot  &&  hasBalcony) result.property_type = 'House';
 
     // ── 2. Financial row: <span ...>Label</span><span ...>Value</span>
     // Used for: Monthly HOA, Annual Property Tax (Predial)
@@ -471,8 +480,8 @@ function buildRow(extracted, driveFile, opts = {}) {
 
   // ── Identity ───────────────────────────────────────────────────────────────
   row[COL.AREA]          = AREA_FROM_FOLDER;
-  const rawType = (d.property_type || '').toLowerCase().trim();
-  row[COL.PROPERTY_TYPE] = PROPERTY_TYPE_MAP[rawType] ?? d.property_type ?? '';
+  const rawType = (L.property_type || d.property_type || '').toLowerCase().trim();
+  row[COL.PROPERTY_TYPE] = PROPERTY_TYPE_MAP[rawType] ?? (L.property_type || d.property_type) ?? '';
   row[COL.BR]    = parseNum(L.beds)  ?? d.br    ?? '';
   row[COL.BA]    = fixBa(parseNum(L.baths) ?? d.ba) ?? '';
   row[COL.BUILT] = L.year_built      || d.built || '';
