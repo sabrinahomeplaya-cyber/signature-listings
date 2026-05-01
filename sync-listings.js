@@ -312,7 +312,7 @@ async function fetchSignatureListing(url) {
     for (const [, label, value] of divCells) {
       const l = label.trim().toLowerCase();
       const v = value.replace(/<[^>]+>/g, '').trim();
-      allLabels.push(l);
+      if (v) allLabels.push(l); // only track labels with an actual value
       if (!v) continue;
       if (l.includes('bedroom'))                                                result.beds          = result.beds          || v;
       if (l.includes('bathroom'))                                               result.baths         = result.baths         || v;
@@ -684,9 +684,16 @@ async function main() {
   const existingRows = await readSheetRows(sheets);
   // Build a map: driveLink → { sheetRowIndex, existingStatus, existingRow }
   const driveLinkToRow = new Map();
+  const sigLinkToRow   = new Map();
   existingRows.forEach((row, i) => {
     const driveLink = row[COL.DRIVE_LINK] || '';
     if (driveLink) driveLinkToRow.set(driveLink, {
+      sheetRowIndex:  DATA_START_ROW + i,
+      existingStatus: (row[COL.STATUS] || '').trim(),
+      existingRow:    row,
+    });
+    const sigLink = (row[COL.SIGNATURE_LINK] || '').trim();
+    if (sigLink) sigLinkToRow.set(sigLink, {
       sheetRowIndex:  DATA_START_ROW + i,
       existingStatus: (row[COL.STATUS] || '').trim(),
       existingRow:    row,
@@ -870,13 +877,68 @@ async function main() {
     }
   }
 
-  // 5. Write to sheet
+  // 6. Second pass: GitHub listings not yet captured by Drive scan
+  const handledSigLinks = new Set([
+    ...appends.map(r => r[COL.SIGNATURE_LINK]).filter(Boolean),
+    ...updates.map(({row}) => row[COL.SIGNATURE_LINK]).filter(Boolean),
+    ...existingRows.map(r => (r[COL.SIGNATURE_LINK] || '').trim()).filter(Boolean),
+  ]);
+
+  const githubOnly = Object.entries(localListingMap)
+    .filter(([, url]) => !handledSigLinks.has(url));
+
+  if (githubOnly.length > 0) {
+    console.log(`\n📦 ${githubOnly.length} GitHub listing(s) not yet in sheet — scanning…\n`);
+    for (const [slug, url] of githubOnly) {
+      process.stdout.write(`📁 ${slug} (GitHub-only)\n`);
+
+      const existingGH = sigLinkToRow.get(url);
+      if (existingGH && ['Verified', 'Off Market'].includes(existingGH.existingStatus)) {
+        console.log(`   🔒 Status "${existingGH.existingStatus}" — skipping\n`);
+        continue;
+      }
+
+      const listing = await fetchSignatureListing(url);
+      if (!listing) { console.log(`   ⚠ Could not fetch listing page — skipping\n`); continue; }
+      console.log(`   ✓ Listing: beds=${listing.beds}, baths=${listing.baths}, constr=${listing.construction}, type=${listing.property_type || '?'}`);
+
+      const extracted = {
+        property_type: listing.property_type || null,
+        br: null, ba: null, built: null,
+        price_usd: parseNum(listing.price), price_mxn: null,
+        m2: null, lot_m2: null, sqft: null, lot_sqft: null,
+        hoa: null, predial_mxn: null,
+        ground_floor: null, penthouse: null, rooftop: null, unfurnished: null,
+        details: null, listings_link: null, signature_link: url,
+      };
+
+      const fakeDrive = { webViewLink: '', createdTime: '' };
+      const isNewGH   = !existingGH;
+      const row = buildRow(extracted, fakeDrive, {
+        listing, isNew: isNewGH,
+        existingStatus: existingGH?.existingStatus || '',
+        existingRow:    existingGH?.existingRow    || [],
+      });
+
+      if (!isNewGH) {
+        updates.push({ sheetRowIndex: existingGH.sheetRowIndex, row });
+        console.log(`   ✏  Queued for update → row ${existingGH.sheetRowIndex}\n`);
+      } else {
+        appends.push(row);
+        console.log(`   ➕ Queued for append\n`);
+      }
+    }
+  } else {
+    console.log('\n✓ All GitHub listings already in sheet.\n');
+  }
+
+  // 7. Write to sheet
   if (updates.length > 0 || appends.length > 0) {
     console.log('💾 Writing to Google Sheets…');
     await writeRows(sheets, updates, appends);
   }
 
-  // 6. Summary
+  // 8. Summary
   console.log('─'.repeat(50));
   console.log(`✅ Done.`);
   console.log(`   ${appends.length}  added`);
