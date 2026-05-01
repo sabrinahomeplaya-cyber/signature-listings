@@ -233,6 +233,23 @@ function parseFromFolderName(folderName) {
   return { property_type, br, price_usd, property_name, penthouse };
 }
 
+// ─── LISTING OVERRIDES ─────────────────────────────────────────────────────────
+// Load optional listing-overrides.json: { "keyword": "https://listing.signature-sc.com/..." }
+// Use when Drive folder name has no words in common with the GitHub listing slug.
+function loadListingOverrides() {
+  const p = path.join(__dirname, 'listing-overrides.json');
+  if (!fs.existsSync(p)) return {};
+  return JSON.parse(fs.readFileSync(p, 'utf8'));
+}
+
+function matchOverride(folderName, overrides) {
+  const lower = folderName.toLowerCase();
+  for (const [keyword, url] of Object.entries(overrides)) {
+    if (lower.includes(keyword.toLowerCase())) return url;
+  }
+  return null;
+}
+
 // ─── LOCAL LISTING MAP ─────────────────────────────────────────────────────────
 // Build a slug→URL map from the local for-sale/ directory
 function buildLocalListingMap() {
@@ -606,6 +623,9 @@ async function main() {
   // Build local listing map once at startup
   const localListingMap = buildLocalListingMap();
   console.log(`🗂  Local listings found: ${Object.keys(localListingMap).length} (${Object.keys(localListingMap).join(', ')})\n`);
+  const listingOverrides = loadListingOverrides();
+  if (Object.keys(listingOverrides).length > 0)
+    console.log(`📌 Listing overrides: ${Object.keys(listingOverrides).join(', ')}\n`);
 
   console.log('🔑 Authenticating with Google…');
   const auth  = getAuth();
@@ -803,14 +823,20 @@ async function main() {
       } // closes else (content exists)
     } // closes else (contentFile exists)
 
-    // Resolve signature_link: Claude extraction first, then local folder match as fallback
+    // Resolve signature_link: Claude extraction → override file → local folder match
     if (!extracted.signature_link) {
-      const localUrl = matchLocalListing(driveEntry.name, localListingMap);
-      if (localUrl) {
-        extracted.signature_link = localUrl;
-        console.log(`   🗂  Matched local listing: ${localUrl}`);
+      const overrideUrl = matchOverride(driveEntry.name, listingOverrides);
+      if (overrideUrl) {
+        extracted.signature_link = overrideUrl;
+        console.log(`   📌 Override match: ${overrideUrl}`);
       } else {
-        console.log(`   ℹ  No local listing match`);
+        const localUrl = matchLocalListing(driveEntry.name, localListingMap);
+        if (localUrl) {
+          extracted.signature_link = localUrl;
+          console.log(`   🗂  Matched local listing: ${localUrl}`);
+        } else {
+          console.log(`   ℹ  No local listing match`);
+        }
       }
     }
 
