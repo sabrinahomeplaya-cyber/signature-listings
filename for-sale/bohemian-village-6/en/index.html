@@ -22,109 +22,146 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
-    html { scroll-padding-top: 120px; }
+    @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 80px !important; z-index: 30; } }
+    html { scroll-padding-top: 80px; }
+    #strip::-webkit-scrollbar { display: none; }
+    #strip { scrollbar-width: none; -ms-overflow-style: none; }
   </style>
 </head>
-<body class="bg-white text-[#223256]">
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-      <img src="/logo-site.png" alt="Signature ˢᶜ" class="h-20 sm:h-28 w-auto object-contain" />
+<body class="bg-[#f7f7f5] text-[#223256]">
+
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-black/5">
+    <div class="max-w-6xl mx-auto px-4 py-2 sm:py-3 flex items-center justify-between">
+      <img src="/logo-site.png" alt="Signature ˢᶜ" class="h-10 sm:h-20 w-auto object-contain" />
       <nav class="flex items-center gap-4">
-        <a id="langFr" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/fr/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
-        <a id="langEn" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/en/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
-        <a id="langEs" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/es/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
+        <a id="langFr" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/fr/" class="text-sm sm:text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
+        <a id="langEn" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/en/" class="text-sm sm:text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
+        <a id="langEs" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/es/" class="text-sm sm:text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
       </nav>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
-      <div class="relative">
-        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo" />
-        <button id="prevMain" type="button" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button id="nextMain" type="button" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
-        <div class="flex items-center gap-3">
-          <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
-          <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-          <button id="stripRight" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8250;</button>
+  <main class="max-w-6xl mx-auto pb-6 lg:pb-10">
+
+    <!-- Gallery -->
+    <section class="sm:pt-6 sm:px-4">
+      <div class="bg-white sm:rounded-3xl overflow-hidden sm:ring-1 sm:ring-black/5 sm:shadow-sm">
+        <div class="relative overflow-hidden">
+          <img id="mainImg" class="w-full h-[62vw] min-h-[220px] max-h-[500px] sm:max-h-none sm:h-[420px] lg:h-[560px] object-cover select-none cursor-pointer" alt="Photo" draggable="false" />
+          <div id="imgCounter" class="absolute bottom-3 right-3 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+          <button id="prevMain" type="button" class="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button id="nextMain" type="button" class="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="hidden sm:block px-4 sm:px-6 py-4 border-t border-black/5">
+          <div class="flex items-center gap-3">
+            <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
+            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+            <button id="stripRight" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8250;</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="mt-8 grid lg:grid-cols-12 gap-8">
-      <section class="lg:col-span-8">
-        <div class="grid sm:grid-cols-12 gap-4 items-start">
-          <div class="sm:col-span-8">
-            <div class="text-xs tracking-widest text-[#223256]/70">Puerto Aventuras</div>
-            <h1 class="text-2xl sm:text-3xl font-semibold mt-2">Bohemian Village,  Casa 6</h1>
-            <p class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1">Contemporary villa overlooking greens</p>
-          </div>
-          <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
-            <div class="text-xs tracking-widest text-[#223256]/70">PRICE</div>
-            <div class="text-3xl font-semibold mt-2">$400,000 USD</div>
-            
+    <div class="px-3 sm:px-4 mt-4 sm:mt-8 grid lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
+      <section class="lg:col-span-8 space-y-4 sm:space-y-6">
+
+        <!-- Title + Price -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 ring-1 ring-black/5 shadow-sm">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <div class="text-[10px] sm:text-xs tracking-widest text-[#223256]/50 uppercase">Puerto Aventuras</div>
+              <h1 class="text-lg sm:text-3xl font-semibold mt-1 leading-snug">Bohemian Village,  Casa 6</h1>
+              <p class="text-sm sm:text-xl font-light text-[#223256]/60 mt-0.5 sm:mt-1">Contemporary villa overlooking greens</p>
+            </div>
+            <div class="shrink-0 text-right pt-0.5">
+              <div class="text-[10px] sm:text-xs tracking-widest text-[#223256]/50 uppercase">Price</div>
+              <div class="text-lg sm:text-3xl font-semibold mt-1">$400,000</div>
+              <div class="text-[10px] sm:text-xs text-[#223256]/50 mt-0.5">USD</div>
+            </div>
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DETAILS</div>
+        <!-- Details -->
+        <div class="rounded-2xl sm:rounded-3xl bg-white ring-1 ring-black/5 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-8">
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-xs tracking-widest text-[#223256]/80 uppercase">Details</div>
           </div>
-          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Bedrooms</div><div class="text-xl font-semibold mt-2 text-[#223256]">3</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Bathrooms</div><div class="text-xl font-semibold mt-2 text-[#223256]">3.5</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Year built</div><div class="text-xl font-semibold mt-2 text-[#223256]">2021</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div class="text-xl font-semibold mt-2 text-[#223256]">1,668 sq ft</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Lot size</div><div class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Price / sq ft</div><div class="text-xl font-semibold mt-2 text-[#223256]">$240</div></div>
+          <div class="grid grid-cols-3 gap-2 sm:gap-4">
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Bedrooms</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">3</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Bathrooms</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">3.5</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Year built</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">2021</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Construction</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">1,668 sq ft</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Lot size</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]"></div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Price / sq ft</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">$240</div></div>
           </div>
-          <div class="grid sm:grid-cols-2 gap-4 text-sm mt-4">
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">Monthly HOA</span><span class="font-semibold text-[#223256]">$5,000 MXN</span></div>
-            
+          <div class="grid sm:grid-cols-2 gap-2 sm:gap-4 text-sm mt-2 sm:mt-4">
+            <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">Monthly HOA</span><span class="font-semibold text-[#223256] text-sm">$5,000 MXN</span></div>
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+        <!-- Description -->
+        <div class="rounded-2xl sm:rounded-3xl ring-1 ring-black/5 p-4 sm:p-6 bg-[#f4ea98]/18">
           <div class="flex items-center gap-3">
-            <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#223256]"></div>
+            <div class="text-xs tracking-widest text-[#223256]/80 uppercase">Description</div>
           </div>
-          <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">Nestled along the serene Bahía Chemuyil street within the exclusive Bohemian Village, this contemporary townhouse captures the essence of refined Caribbean living. The fairway stretches endlessly beyond your windows, creating a verdant backdrop that shifts with the golden light throughout the day. Here, the gentle rhythm of golf carts and distant ocean breezes establishes a tranquil sanctuary where time moves at your chosen pace.
+          <div class="mt-4 sm:mt-8 text-[14px] sm:text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">Nestled along the serene Bahía Chemuyil street within the exclusive Bohemian Village, this contemporary townhouse captures the essence of refined Caribbean living. The fairway stretches endlessly beyond your windows, creating a verdant backdrop that shifts with the golden light throughout the day. Here, the gentle rhythm of golf carts and distant ocean breezes establishes a tranquil sanctuary where time moves at your chosen pace.
 
 The residence unfolds across two thoughtfully designed levels, where natural light cascades through every room and cross ventilation carries the Caribbean air throughout. The main floor embraces an open concept living and dining area that flows seamlessly onto a private terrace, where the pool beckons and tropical gardens frame intimate moments. The equipped kitchen and independent laundry room provide modern convenience, while a powder room accommodates guests with understated elegance.
 
 Upstairs, three bedrooms and three full bathrooms create private retreats for family and friends. The master suite offers a sanctuary complete with ensuite bathroom and walk in closet, while secondary bedrooms provide comfortable havens overlooking the lush surroundings. The outdoor living extends to accommodate three vehicles and a golf cart, with both covered and open parking areas that blend functionality with the tropical aesthetic.
 
 Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure embrace, where the lap pool with swimming lane, expansive green spaces, and palapa gathering areas create community connections. This turnkey opportunity, delivered unfurnished for personal expression, represents both a permanent residence and investment potential in one of the Riviera Maya's most coveted enclaves, where the marina lifestyle meets championship golf.</div>
-          <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
-            <div class="text-xs tracking-widest text-[#223256]/70">HIGHLIGHTS</div>
-            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+          <div class="mt-4 sm:mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-3 sm:p-4">
+            <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Highlights</div>
+            <ul id="highlights" class="mt-3 text-sm grid grid-cols-2 gap-2"></ul>
           </div>
         </div>
 
-        <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCATION</div>
+        <!-- Location -->
+        <div class="rounded-2xl sm:rounded-3xl bg-white border border-gray-100 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-6">
+            <div class="h-5 sm:h-6 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-xs tracking-widest text-[#223256] font-semibold uppercase">Location</div>
           </div>
-          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
+          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-56 sm:h-80 w-full relative group">
             <iframe src="https://maps.google.com/maps?ll=20.507151,-87.220807&z=16&t=m&hl=en&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
             <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
           </div>
-          <div class="mt-4 text-xs text-[#223256]/60 text-center">*Exact location provided upon visit.</div>
+          <div class="mt-3 text-xs text-[#223256]/60 text-center">*Exact location provided upon visit.</div>
         </div>
+
+        <!-- Agent card inline — mobile only -->
+        <div class="lg:hidden rounded-2xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
+          <div class="p-5">
+            <div class="flex items-center gap-4 mb-5">
+              <div class="shrink-0 h-16 w-12 rounded-xl overflow-hidden shadow-lg">
+                <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
+              </div>
+              <div>
+                <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-8 w-auto object-contain mb-1" />
+                <div class="text-sm font-bold text-white">Sabrina Crémona</div>
+                <div class="text-xs font-light text-white/60">Real Estate Advisor</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <a id="waBtnM" href="#" target="_blank" rel="noopener" class="flex justify-center items-center rounded-full py-3 bg-[#61BDCC] text-[#223256] font-bold text-xs hover:opacity-90 transition">WhatsApp</a>
+              <a id="mailBtnM" href="#" target="_blank" rel="noopener" class="flex justify-center items-center rounded-full py-3 bg-white text-[#223256] font-bold text-xs hover:bg-neutral-100 transition">Email</a>
+              <a id="visitBtnM" href="#" target="_blank" rel="noopener" class="flex justify-center items-center rounded-full py-3 bg-white/10 text-white font-semibold text-xs ring-1 ring-white/20 hover:bg-white/20 transition">Visit</a>
+            </div>
+          </div>
+        </div>
+
       </section>
 
-      <aside class="lg:col-span-4 mb-8 lg:mb-0">
+      <!-- Agent card sidebar — desktop only -->
+      <aside class="hidden lg:block lg:col-span-4 mb-8">
         <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
           <div class="p-8">
             <div class="flex items-center gap-4 mb-8">
@@ -169,7 +206,7 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
       <div class="relative w-full max-w-6xl">
         <button id="closeBtn" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Close</button>
         <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-          <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
+          <img id="modalImg" class="w-full max-h-[82vh] object-contain select-none" alt="" draggable="false" />
         </div>
         <div class="mt-4 flex items-center justify-between">
           <button id="prevBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Previous</button>
@@ -264,15 +301,19 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
     const state = {index:0};
     const mainImg = el('mainImg');
     const strip = el('strip');
+    const updateCounter = () => {
+      const c = el('imgCounter');
+      if(c && photos.length) c.textContent = (state.index+1)+' \/ '+photos.length;
+    };
     const hilite = () => document.querySelectorAll('[data-thumb]').forEach((n,i) => {
       i===state.index ? n.classList.add('ring-2','ring-[#61BDCC]') : n.classList.remove('ring-2','ring-[#61BDCC]');
     });
     const setMain = idx => {
       if(!photos.length||!mainImg) return;
       state.index=(idx+photos.length)%photos.length;
-      mainImg.src=photos[state.index]; hilite();
+      mainImg.src=photos[state.index]; updateCounter(); hilite();
     };
-    photos.forEach((url,idx) => {
+    if(strip) photos.forEach((url,idx) => {
       const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-thumb','1');
       btn.className='shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white';
       btn.onclick=()=>setMain(idx);
@@ -280,25 +321,48 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
       btn.appendChild(img); strip.appendChild(btn);
     });
     if(photos.length) setMain(0);
-    el('stripLeft').onclick=()=>strip.scrollBy({left:-320,behavior:'smooth'});
-    el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
+    if(el('stripLeft')) el('stripLeft').onclick=()=>strip.scrollBy({left:-320,behavior:'smooth'});
+    if(el('stripRight')) el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
     el('prevMain').onclick=()=>setMain(state.index-1);
     el('nextMain').onclick=()=>setMain(state.index+1);
+
+    // Touch swipe on main image
+    let tsX=0, tsY=0;
+    mainImg.addEventListener('touchstart',e=>{tsX=e.changedTouches[0].clientX;tsY=e.changedTouches[0].clientY;},{passive:true});
+    mainImg.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-tsX, dy=e.changedTouches[0].clientY-tsY;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx<0?setMain(state.index+1):setMain(state.index-1);}
+    },{passive:true});
+
+    // Modal
     const openModal=()=>{ if(!photos.length) return; el('modal').classList.remove('hidden'); renderModal(); };
     const closeModal=()=>el('modal').classList.add('hidden');
-    const renderModal=()=>{ el('modalImg').src=photos[state.index]||''; el('counter').textContent=photos.length?(state.index+1)+' / '+photos.length:''; };
+    const renderModal=()=>{ el('modalImg').src=photos[state.index]||''; el('counter').textContent=photos.length?(state.index+1)+' \/ '+photos.length:''; };
     const prev=()=>{ setMain(state.index-1); renderModal(); };
     const next=()=>{ setMain(state.index+1); renderModal(); };
     mainImg.onclick=openModal;
     el('closeBtn').onclick=closeModal; el('prevBtn').onclick=prev; el('nextBtn').onclick=next;
+
+    // Touch swipe on modal
+    let mtX=0;
+    el('modalImg').addEventListener('touchstart',e=>{mtX=e.changedTouches[0].clientX;},{passive:true});
+    el('modalImg').addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-mtX;
+      if(Math.abs(dx)>40){dx<0?next():prev();}
+    },{passive:true});
+
     document.addEventListener('keydown',e=>{ if(el('modal').classList.contains('hidden')) return; if(e.key==='Escape') closeModal(); if(e.key==='ArrowLeft') prev(); if(e.key==='ArrowRight') next(); });
+
     const wa1="Hello Sabrina, I would like information about this property:"; const wa2="Hello Sabrina, I would like to schedule a visit.";
     const liveUrl=listing.publicUrl;
-    el('waBtn').href='https://wa.me/529842696189?text='+encodeURIComponent(wa1+'\n\n'+listing.title+'\n'+listing.price+' '+listing.currency+'\n'+liveUrl);
-    el('visitBtn').href='https://wa.me/529842696189?text='+encodeURIComponent(wa2+'\n\n'+listing.title+'\n'+listing.price+' '+listing.currency+'\n'+liveUrl);
+    const waHref='https://wa.me/529842696189?text='+encodeURIComponent(wa1+'\n\n'+listing.title+'\n'+listing.price+' '+listing.currency+'\n'+liveUrl);
+    const visitHref='https://wa.me/529842696189?text='+encodeURIComponent(wa2+'\n\n'+listing.title+'\n'+listing.price+' '+listing.currency+'\n'+liveUrl);
     const sub="Property inquiry - "+listing.title;
     const bod="Hello Sabrina,\n\nInquiry about:\nTitle: "+listing.title+"\nPrice: "+listing.price+" "+listing.currency+"\nLink: "+liveUrl+"\n\nThank you,";
-    el('mailBtn').href='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent('Sales@signature-sc.com')+'&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(bod);
+    const mailHref='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent('Sales@signature-sc.com')+'&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(bod);
+    ['waBtn','waBtnM'].forEach(id=>{const e=el(id);if(e)e.href=waHref;});
+    ['mailBtn','mailBtnM'].forEach(id=>{const e=el(id);if(e)e.href=mailHref;});
+    ['visitBtn','visitBtnM'].forEach(id=>{const e=el(id);if(e)e.href=visitHref;});
     el('yearNow').textContent=String(new Date().getFullYear());
     window.addEventListener('load',()=>setTimeout(()=>window.scrollTo({top:0,behavior:'instant'}),10));
   </script>
