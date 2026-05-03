@@ -119,7 +119,7 @@ Upstairs, three bedrooms and three full bathrooms create private retreats for fa
 Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure embrace, where the lap pool with swimming lane, expansive green spaces, and palapa gathering areas create community connections. This turnkey opportunity, delivered unfurnished for personal expression, represents both a permanent residence and investment potential in one of the Riviera Maya's most coveted enclaves, where the marina lifestyle meets championship golf.</div>
           <div class="mt-4 sm:mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-3 sm:p-4">
             <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Highlights</div>
-            <ul id="highlights" class="mt-3 text-sm grid grid-cols-2 gap-2"></ul>
+            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
           </div>
         </div>
 
@@ -137,31 +137,9 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
           <div class="mt-3 text-xs text-[#223256]/60 text-center">*Exact location provided upon visit.</div>
         </div>
 
-        <!-- Agent card inline — mobile only -->
-        <div class="lg:hidden rounded-2xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
-          <div class="p-5">
-            <div class="flex items-center gap-4 mb-5">
-              <div class="shrink-0 h-16 w-12 rounded-xl overflow-hidden shadow-lg">
-                <img src="https://listing.signature-sc.com/agent.jpg" alt="Agent" class="h-full w-full object-cover" />
-              </div>
-              <div>
-                <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" class="h-8 w-auto object-contain mb-1" />
-                <div class="text-sm font-bold text-white">Sabrina Crémona</div>
-                <div class="text-xs font-light text-white/60">Real Estate Advisor</div>
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-              <a id="waBtnM" href="#" target="_blank" rel="noopener" class="flex justify-center items-center rounded-full py-3 bg-[#61BDCC] text-[#223256] font-bold text-xs hover:opacity-90 transition">WhatsApp</a>
-              <a id="mailBtnM" href="#" target="_blank" rel="noopener" class="flex justify-center items-center rounded-full py-3 bg-white text-[#223256] font-bold text-xs hover:bg-neutral-100 transition">Email</a>
-              <a id="visitBtnM" href="#" target="_blank" rel="noopener" class="flex justify-center items-center rounded-full py-3 bg-white/10 text-white font-semibold text-xs ring-1 ring-white/20 hover:bg-white/20 transition">Visit</a>
-            </div>
-          </div>
-        </div>
-
       </section>
 
-      <!-- Agent card sidebar — desktop only -->
-      <aside class="hidden lg:block lg:col-span-4 mb-8">
+      <aside class="lg:col-span-4 mb-8 lg:mb-0">
         <div id="agentCard" class="relative rounded-3xl bg-[#223256] text-white ring-1 ring-black/5 shadow-xl overflow-hidden">
           <div class="p-8">
             <div class="flex items-center gap-4 mb-8">
@@ -360,9 +338,9 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
     const sub="Property inquiry - "+listing.title;
     const bod="Hello Sabrina,\n\nInquiry about:\nTitle: "+listing.title+"\nPrice: "+listing.price+" "+listing.currency+"\nLink: "+liveUrl+"\n\nThank you,";
     const mailHref='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent('Sales@signature-sc.com')+'&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(bod);
-    ['waBtn','waBtnM'].forEach(id=>{const e=el(id);if(e)e.href=waHref;});
-    ['mailBtn','mailBtnM'].forEach(id=>{const e=el(id);if(e)e.href=mailHref;});
-    ['visitBtn','visitBtnM'].forEach(id=>{const e=el(id);if(e)e.href=visitHref;});
+    el('waBtn').href=waHref;
+    el('mailBtn').href=mailHref;
+    el('visitBtn').href=visitHref;
     el('yearNow').textContent=String(new Date().getFullYear());
     window.addEventListener('load',()=>setTimeout(()=>window.scrollTo({top:0,behavior:'instant'}),10));
   </script>
