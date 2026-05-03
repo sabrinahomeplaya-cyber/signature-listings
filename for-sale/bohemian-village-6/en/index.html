@@ -22,52 +22,50 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 80px !important; z-index: 30; } }
-    html { scroll-padding-top: 80px; }
+    @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
+    html { scroll-padding-top: 120px; }
     #strip::-webkit-scrollbar { display: none; }
     #strip { scrollbar-width: none; -ms-overflow-style: none; }
   </style>
 </head>
 <body class="bg-white text-[#223256]">
 
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-black/5">
-    <div class="max-w-6xl mx-auto px-4 py-2 sm:py-3 flex items-center justify-between">
-      <img src="/logo-site.png" alt="Signature ˢᶜ" class="h-10 sm:h-20 w-auto object-contain" />
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <img src="/logo-site.png" alt="Signature ˢᶜ" class="h-20 sm:h-28 w-auto object-contain" />
       <nav class="flex items-center gap-4">
-        <a id="langFr" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/fr/" class="text-sm sm:text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
-        <a id="langEn" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/en/" class="text-sm sm:text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
-        <a id="langEs" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/es/" class="text-sm sm:text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
+        <a id="langFr" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/fr/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">FR</a>
+        <a id="langEn" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/en/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">EN</a>
+        <a id="langEs" href="https://listing.signature-sc.com/for-sale/bohemian-village-6/es/" class="text-base font-semibold text-[#223256] hover:text-[#61BDCC] transition">ES</a>
       </nav>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto pb-6 lg:pb-10">
+  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
 
     <!-- Gallery -->
-    <section class="sm:pt-6 sm:px-4">
-      <div class="bg-white sm:rounded-3xl overflow-hidden sm:ring-1 sm:ring-black/5 sm:shadow-sm">
-        <div class="relative overflow-hidden">
-          <img id="mainImg" class="w-full h-[62vw] min-h-[220px] max-h-[500px] sm:max-h-none sm:h-[420px] lg:h-[560px] object-cover select-none cursor-pointer" alt="Photo" draggable="false" />
-          <div id="imgCounter" class="absolute bottom-3 right-3 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
-          <button id="prevMain" type="button" class="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button id="nextMain" type="button" class="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
-        <div class="hidden sm:block px-4 sm:px-6 py-4 border-t border-black/5">
-          <div class="flex items-center gap-3">
-            <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
-            <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
-            <button id="stripRight" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8250;</button>
-          </div>
+    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+      <div class="relative">
+        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover select-none cursor-pointer" alt="Photo" draggable="false" />
+        <div id="imgCounter" class="absolute bottom-3 right-3 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+        <button id="prevMain" type="button" class="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button id="nextMain" type="button" class="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="hidden sm:block px-4 sm:px-6 py-4 border-t border-black/5">
+        <div class="flex items-center gap-3">
+          <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
+          <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
+          <button id="stripRight" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8250;</button>
         </div>
       </div>
     </section>
 
-    <div class="px-3 sm:px-4 mt-4 sm:mt-8 grid lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
-      <section class="lg:col-span-8 space-y-4 sm:space-y-6">
+    <div class="mt-8 grid lg:grid-cols-12 gap-8">
+      <section class="lg:col-span-8">
 
         <!-- Title + Price -->
         <div class="grid sm:grid-cols-12 gap-4 items-start">
@@ -83,55 +81,55 @@
         </div>
 
         <!-- Details -->
-        <div class="rounded-2xl sm:rounded-3xl bg-white ring-1 ring-black/5 p-4 sm:p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-4 sm:mb-8">
-            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-xs tracking-widest text-[#223256]/80 uppercase">Details</div>
+        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-sm tracking-widest text-[#223256]/80">DETAILS</div>
           </div>
-          <div class="grid grid-cols-3 gap-2 sm:gap-4">
-            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Bedrooms</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">3</div></div>
-            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Bathrooms</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">3.5</div></div>
-            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Year built</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">2021</div></div>
-            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Construction</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">1,668 sq ft</div></div>
-            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Lot size</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]"></div></div>
-            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Price / sq ft</div><div class="text-base sm:text-xl font-semibold mt-1 sm:mt-2 text-[#223256]">$240</div></div>
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Bedrooms</div><div class="text-xl font-semibold mt-2 text-[#223256]">3</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Bathrooms</div><div class="text-xl font-semibold mt-2 text-[#223256]">3.5</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Year built</div><div class="text-xl font-semibold mt-2 text-[#223256]">2021</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div class="text-xl font-semibold mt-2 text-[#223256]">1,668 sq ft</div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Lot size</div><div class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
+            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Price / sq ft</div><div class="text-xl font-semibold mt-2 text-[#223256]">$240</div></div>
           </div>
-          <div class="grid sm:grid-cols-2 gap-2 sm:gap-4 text-sm mt-2 sm:mt-4">
-            <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">Monthly HOA</span><span class="font-semibold text-[#223256] text-sm">$5,000 MXN</span></div>
+          <div class="grid sm:grid-cols-2 gap-4 mt-4">
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-sm">Monthly HOA</span><span class="font-semibold text-[#223256] text-sm">$5,000 MXN</span></div>
           </div>
         </div>
 
         <!-- Description -->
-        <div class="rounded-2xl sm:rounded-3xl ring-1 ring-black/5 p-4 sm:p-6 bg-white shadow-sm">
+        <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-white shadow-sm">
           <div class="flex items-center gap-3">
-            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#223256]"></div>
-            <div class="text-xs tracking-widest text-[#223256]/80 uppercase">Description</div>
+            <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
+            <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
           </div>
-          <div class="mt-4 sm:mt-8 text-[14px] sm:text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">Nestled along the serene Bahía Chemuyil street within the exclusive Bohemian Village, this contemporary townhouse captures the essence of refined Caribbean living. The fairway stretches endlessly beyond your windows, creating a verdant backdrop that shifts with the golden light throughout the day. Here, the gentle rhythm of golf carts and distant ocean breezes establishes a tranquil sanctuary where time moves at your chosen pace.
+          <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">Nestled along the serene Bahía Chemuyil street within the exclusive Bohemian Village, this contemporary townhouse captures the essence of refined Caribbean living. The fairway stretches endlessly beyond your windows, creating a verdant backdrop that shifts with the golden light throughout the day. Here, the gentle rhythm of golf carts and distant ocean breezes establishes a tranquil sanctuary where time moves at your chosen pace.
 
 The residence unfolds across two thoughtfully designed levels, where natural light cascades through every room and cross ventilation carries the Caribbean air throughout. The main floor embraces an open concept living and dining area that flows seamlessly onto a private terrace, where the pool beckons and tropical gardens frame intimate moments. The equipped kitchen and independent laundry room provide modern convenience, while a powder room accommodates guests with understated elegance.
 
 Upstairs, three bedrooms and three full bathrooms create private retreats for family and friends. The master suite offers a sanctuary complete with ensuite bathroom and walk in closet, while secondary bedrooms provide comfortable havens overlooking the lush surroundings. The outdoor living extends to accommodate three vehicles and a golf cart, with both covered and open parking areas that blend functionality with the tropical aesthetic.
 
 Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure embrace, where the lap pool with swimming lane, expansive green spaces, and palapa gathering areas create community connections. This turnkey opportunity, delivered unfurnished for personal expression, represents both a permanent residence and investment potential in one of the Riviera Maya's most coveted enclaves, where the marina lifestyle meets championship golf.</div>
-          <div class="mt-4 sm:mt-5 rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-4">
-            <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Highlights</div>
+          <div class="mt-5 rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-4">
+            <div class="text-xs tracking-widest text-[#223256]/70">HIGHLIGHTS</div>
             <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
           </div>
         </div>
 
         <!-- Location -->
-        <div class="rounded-2xl sm:rounded-3xl bg-white border border-gray-100 p-4 sm:p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-4 sm:mb-6">
-            <div class="h-5 sm:h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-xs tracking-widest text-[#223256] font-semibold uppercase">Location</div>
+        <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCATION</div>
           </div>
-          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-56 sm:h-80 w-full relative group">
+          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
             <iframe src="https://maps.google.com/maps?ll=20.507151,-87.220807&z=16&t=m&hl=en&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
             <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
           </div>
-          <div class="mt-3 text-xs text-[#223256]/60 text-center">*Exact location provided upon visit.</div>
+          <div class="mt-4 text-xs text-[#223256]/60 text-center">*Exact location provided upon visit.</div>
         </div>
 
       </section>
