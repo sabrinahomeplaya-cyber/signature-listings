@@ -26,8 +26,6 @@
     html { scroll-padding-top: 120px; }
     #strip::-webkit-scrollbar { display: none; }
     #strip { scrollbar-width: none; -ms-overflow-style: none; }
-    #stripSection { display: none; }
-    @media (min-width: 640px) { #stripSection { display: block !important; } }
   </style>
 </head>
 <body class="bg-white text-[#223256]">
@@ -61,7 +59,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
-        <div id="stripSection" class="px-4 sm:px-6 py-4 border-t border-black/5">
+        <div id="stripSection" class="px-4 sm:px-6 py-4 border-t border-black/5" style="display:none">
           <div class="flex items-center gap-3">
             <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
             <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
@@ -289,7 +287,7 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
       const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-thumb','1');
       btn.style.cssText='flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,0.07);background:white;padding:0;cursor:pointer;';
       btn.onclick=()=>setMain(idx);
-      const img=document.createElement('img'); img.src=url; img.style.cssText='height:80px;width:112px;object-fit:cover;display:block;';
+      const img=document.createElement('img'); img.src=url; img.style.cssText='height:96px;width:144px;object-fit:cover;display:block;';
       btn.appendChild(img); strip.appendChild(btn);
     });
     if(ss&&photos.length){ss.style.display=window.innerWidth>=640?'block':'none';window.addEventListener('resize',()=>{ss.style.display=window.innerWidth>=640?'block':'none';});}
