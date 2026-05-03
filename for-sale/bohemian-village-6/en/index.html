@@ -271,18 +271,16 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
     const state = {index:0};
     const mainImg = el('mainImg');
     const strip = el('strip');
-    const updateCounter = () => {
-      const c = el('imgCounter');
-      if(c && photos.length) c.textContent = (state.index+1)+' \/ '+photos.length;
-    };
     const hilite = () => document.querySelectorAll('[data-thumb]').forEach((n,i) => {
       i===state.index ? n.classList.add('ring-2','ring-[#61BDCC]') : n.classList.remove('ring-2','ring-[#61BDCC]');
     });
     const setMain = idx => {
       if(!photos.length||!mainImg) return;
       state.index=(idx+photos.length)%photos.length;
-      mainImg.src=photos[state.index]; updateCounter(); hilite();
+      mainImg.src=photos[state.index]; hilite();
     };
+    const imgCounter = el('imgCounter');
+    if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
     if(strip) photos.forEach((url,idx) => {
       const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-thumb','1');
       btn.className='shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white';
