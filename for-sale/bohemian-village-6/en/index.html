@@ -284,13 +284,15 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
       state.index=(idx+photos.length)%photos.length;
       mainImg.src=photos[state.index]; hilite();
     };
+    const ss=el('stripSection');
     photos.forEach((url,idx) => {
       const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-thumb','1');
-      btn.className='shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-black/15 transition bg-white';
+      btn.style.cssText='flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,0.07);background:white;padding:0;cursor:pointer;';
       btn.onclick=()=>setMain(idx);
       const img=document.createElement('img'); img.src=url; img.style.cssText='height:80px;width:112px;object-fit:cover;display:block;';
       btn.appendChild(img); strip.appendChild(btn);
     });
+    if(ss&&photos.length){ss.style.display=window.innerWidth>=640?'block':'none';window.addEventListener('resize',()=>{ss.style.display=window.innerWidth>=640?'block':'none';});}
     if(photos.length) setMain(0);
     if(el('stripLeft')) el('stripLeft').onclick=()=>strip.scrollBy({left:-320,behavior:'smooth'});
     if(el('stripRight')) el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
