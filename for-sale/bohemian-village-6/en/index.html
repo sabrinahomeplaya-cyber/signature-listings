@@ -178,20 +178,23 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
     </div>
   </footer>
 
-  <div id="modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/80"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Close</button>
-        <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-          <img id="modalImg" class="w-full max-h-[82vh] object-contain select-none" alt="" draggable="false" />
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <button id="prevBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Previous</button>
-          <div id="counter" class="text-xs text-white/80"></div>
-          <button id="nextBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Next</button>
-        </div>
-      </div>
+  <!-- Lightbox -->
+  <div id="modal" class="fixed inset-0 z-50 hidden bg-black">
+    <div class="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 pointer-events-none" style="background:linear-gradient(to bottom,rgba(0,0,0,0.55),transparent)">
+      <button id="closeBtn" class="pointer-events-auto rounded-full bg-white/15 backdrop-blur-sm px-4 py-2 text-sm text-white hover:bg-white/25 transition">✕</button>
+      <div id="counter" class="text-white text-sm font-medium opacity-80"></div>
+    </div>
+    <div class="absolute inset-0 flex items-center justify-center" style="padding-bottom:96px">
+      <img id="modalImg" class="w-full h-full object-contain select-none" alt="" draggable="false" />
+    </div>
+    <button id="prevBtn" class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 items-center justify-center w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 transition backdrop-blur-sm">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button id="nextBtn" class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 items-center justify-center w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 transition backdrop-blur-sm">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <div class="absolute bottom-0 left-0 right-0 z-20" style="background:linear-gradient(to top,rgba(0,0,0,0.7),transparent)">
+      <div id="modalStrip" class="flex gap-2 overflow-x-auto px-4 pb-4 pt-8" style="scrollbar-width:none;-ms-overflow-style:none"></div>
     </div>
   </div>
 
@@ -312,16 +315,40 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
       if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx<0?setMain(state.index+1):setMain(state.index-1);}
     },{passive:true});
 
+    // Build modal thumbnail strip
+    const modalStrip = el('modalStrip');
+    photos.forEach((url,idx) => {
+      const btn=document.createElement('button'); btn.type='button'; btn.setAttribute('data-mthumb',idx);
+      btn.className='shrink-0 rounded-lg overflow-hidden opacity-50 hover:opacity-100 transition ring-0';
+      btn.onclick=()=>{ setMain(idx); renderModal(); };
+      const img=document.createElement('img'); img.src=url; img.className='h-14 w-20 object-cover'; img.draggable=false;
+      btn.appendChild(img); modalStrip.appendChild(btn);
+    });
+    const syncModalThumbs = () => {
+      document.querySelectorAll('[data-mthumb]').forEach(n => {
+        const active = parseInt(n.getAttribute('data-mthumb'))===state.index;
+        n.style.opacity = active ? '1' : '0.45';
+        n.style.outline = active ? '2px solid #61BDCC' : 'none';
+        n.style.outlineOffset = '2px';
+        if(active) n.scrollIntoView({inline:'center',behavior:'smooth',block:'nearest'});
+      });
+    };
+
     // Modal
-    const openModal=()=>{ if(!photos.length) return; el('modal').classList.remove('hidden'); renderModal(); };
-    const closeModal=()=>el('modal').classList.add('hidden');
-    const renderModal=()=>{ el('modalImg').src=photos[state.index]||''; el('counter').textContent=photos.length?(state.index+1)+' \/ '+photos.length:''; };
+    const openModal=()=>{ if(!photos.length) return; el('modal').classList.remove('hidden'); document.body.style.overflow='hidden'; renderModal(); };
+    const closeModal=()=>{ el('modal').classList.add('hidden'); document.body.style.overflow=''; };
+    const renderModal=()=>{
+      el('modalImg').src=photos[state.index]||'';
+      el('counter').textContent=photos.length?(state.index+1)+' \/ '+photos.length:'';
+      syncModalThumbs();
+    };
     const prev=()=>{ setMain(state.index-1); renderModal(); };
     const next=()=>{ setMain(state.index+1); renderModal(); };
     mainImg.onclick=openModal;
-    el('closeBtn').onclick=closeModal; el('prevBtn').onclick=prev; el('nextBtn').onclick=next;
+    el('closeBtn').onclick=closeModal;
+    el('prevBtn').onclick=prev; el('nextBtn').onclick=next;
 
-    // Touch swipe on modal
+    // Touch swipe on modal image
     let mtX=0;
     el('modalImg').addEventListener('touchstart',e=>{mtX=e.changedTouches[0].clientX;},{passive:true});
     el('modalImg').addEventListener('touchend',e=>{
