@@ -24,6 +24,8 @@
   <style>
     @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
     html { scroll-padding-top: 120px; }
+    #strip::-webkit-scrollbar { display: none; }
+    #strip { scrollbar-width: none; -ms-overflow-style: none; }
   </style>
 </head>
 <body class="bg-white text-[#223256]">
@@ -40,11 +42,17 @@
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-      <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+  <main class="max-w-6xl mx-auto sm:px-4 sm:pt-8 pb-0">
+      <section class="sm:rounded-3xl sm:overflow-hidden sm:ring-1 sm:ring-black/5 sm:shadow-sm bg-white">
         <div class="relative">
-          <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Main photo" />
-          <button id="prevMain" type="button" aria-label="Previous" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <img id="mainImg" class="w-full h-[62vw] min-h-[220px] sm:h-[420px] lg:h-[560px] object-cover cursor-pointer" alt="Main photo" />
+          <div class="absolute bottom-3 right-3 flex items-center gap-2">
+          <button id="shareBtn" type="button" class="flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <div id="imgCounter" class="text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+        </div>
+        <button id="prevMain" type="button" aria-label="Previous" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
           <button id="nextMain" type="button" aria-label="Next" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
@@ -52,7 +60,7 @@
           </button>
         </div>
 
-        <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+        <div id="stripSection" class="px-4 sm:px-6 py-4 border-t border-black/5">
           <div class="flex items-center gap-3">
             <button id="stripLeft" type="button" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">‹</button>
             <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
@@ -61,44 +69,44 @@
         </div>
       </section>
 
-    <div class="mt-8 grid lg:grid-cols-12 gap-8">
+    <div class="px-4 sm:px-0 mt-4 sm:mt-8 grid lg:grid-cols-12 gap-4 sm:gap-8">
       <section class="lg:col-span-8">
-        <div class="grid sm:grid-cols-12 gap-4 items-start">
-          <div class="sm:col-span-8">
+        <div class="grid grid-cols-12 gap-2 sm:gap-4 items-start">
+          <div class="col-span-8">
             <div class="text-xs tracking-widest text-[#223256]/70">Puerto Aventuras, Mexique</div>
-            <h1 class="text-2xl sm:text-3xl font-semibold mt-2">Quinta Luna</h1>
-            <p class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1">Élégance en bord de mer dans une communauté fermée exclusive</p>
+            <h1 class="text-sm sm:text-3xl font-semibold mt-1">Quinta Luna</h1>
+            <p class="text-[11px] sm:text-xl font-light text-[#223256]/70 mt-0.5">Élégance en bord de mer dans une communauté fermée exclusive</p>
           </div>
-          <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
+          <div class="col-span-4 text-right">
             <div class="text-xs tracking-widest text-[#223256]/70">PRIX</div>
-            <div class="text-3xl font-semibold mt-2">$1,300,000 USD</div>
-            <div class="text-base text-[#223256]/60 line-through mt-1">$1,500,000 USD</div>
+            <div class="text-sm sm:text-3xl font-semibold mt-1">$1,300,000 USD</div>
+            <div class="text-[10px] sm:text-base text-[#223256]/60 line-through mt-0.5">$1,500,000 USD</div>
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
+        <div class="mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl bg-white ring-1 ring-black/5 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-8">
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256]/80">DÉTAILS</div>
           </div>
-          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Chambres</div><div class="text-xl font-semibold mt-2 text-[#223256]">3</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Salles de bain</div><div class="text-xl font-semibold mt-2 text-[#223256]">4</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Année</div><div class="text-xl font-semibold mt-2 text-[#223256]">2012</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div class="text-xl font-semibold mt-2 text-[#223256]">300.05 m² <span class="text-sm font-normal">(3,229 sq ft)</span></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Terrain</div><div class="text-xl font-semibold mt-2 text-[#223256]">206.23 m² <span class="text-sm font-normal">(2,217 sq ft)</span></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Prix / m² (Prix / sq ft)</div><div class="text-xl font-semibold mt-2 text-[#223256]">$4,332 <span class="text-sm font-normal">($403)</span></div></div>
+          <div class="grid grid-cols-3 gap-2 sm:gap-4">
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Chambres</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">3</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Salles de bain</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">4</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Année</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">2012</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Construction</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">300.05 m² <span class="text-sm font-normal">(3,229 sq ft)</span></div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Terrain</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">206.23 m² <span class="text-sm font-normal">(2,217 sq ft)</span></div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Prix / m² (Prix / sq ft)</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">$4,332 <span class="text-sm font-normal">($403)</span></div></div>
           </div>
-          <div class="grid sm:grid-cols-2 gap-4 text-sm mt-4">
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">Frais mensuels</span><span class="font-semibold text-[#223256]">$40,410 MXN</span></div>
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">Taxe annuelle</span><span class="font-semibold text-[#223256]">&nbsp;</span></div>
+          <div class="grid sm:grid-cols-2 gap-2 sm:gap-4 text-sm mt-2 sm:mt-4">
+            <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">Frais mensuels</span><span class="font-semibold text-[#223256] text-xs sm:text-sm">$40,410 MXN</span></div>
+            <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">Taxe annuelle</span><span class="font-semibold text-[#223256] text-xs sm:text-sm">&nbsp;</span></div>
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+        <div class="mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl ring-1 ring-black/5 p-4 sm:p-6 bg-[#f4ea98]/18">
           <div class="flex items-center gap-3">
-            <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#223256]"></div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
           </div>
           <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 text-justify max-w-3xl mx-auto">
             <p>Imaginez-vous réveiller aux sons de la mer et savourer votre café matinal les pieds dans le sable, le tout avant le petit-déjeuner. Bienvenue à Quinta Luna, un appartement exclusif de 3 chambres en bord de mer qui vit comme une villa privée à Puerto Aventuras. Cette spacieuse résidence marie harmonieusement le design espagnol et maya avec une élégance intemporelle.</p>
@@ -107,18 +115,18 @@
             <br>
             <p>Cette propriété exceptionnelle dispose d'un accès direct à la plage, d'une terrasse couverte face à la mer et d'une cour privée fermée. L'espace de vie comprend une cuisine équipée avec bar et agencement ouvert, ainsi qu'une pièce flexible polyvalente pouvant servir de bureau, espace de rangement ou coin télévision confortable. Un bar extérieur, une douche et des toilettes d'invités complètent cet ensemble parfait pour recevoir avec raffinement.</p>
           </div>
-          <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
+          <div class="mt-4 sm:mt-5 rounded-xl sm:rounded-2xl bg-white/80 ring-1 ring-black/5 p-3 sm:p-4">
             <div class="text-xs tracking-widest text-[#223256]/70">POINTS FORTS</div>
-            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+            <ul id="highlights" class="mt-2 sm:mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
           </div>
         </div>
 
-        <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-6">
+        <div class="mt-4 sm:mt-8 rounded-2xl sm:rounded-3xl bg-white border border-gray-100 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-6">
             <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCALISATION</div>
           </div>
-          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
+          <div class="rounded-xl sm:rounded-2xl overflow-hidden ring-1 ring-black/5 h-64 sm:h-80 w-full relative group">
             <iframe src="https://maps.google.com/maps?ll=20.503725,-87.217809&z=16&t=m&hl=fr&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
             <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>

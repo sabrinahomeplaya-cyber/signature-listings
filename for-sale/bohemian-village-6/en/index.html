@@ -52,7 +52,13 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           </button>
           <div id="imgCounter" class="absolute bottom-3 right-3 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
-          <button id="prevMain" type="button" class="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <div class="absolute bottom-3 right-3 flex items-center gap-2">
+          <button id="shareBtn" type="button" class="flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <div id="imgCounter" class="text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+        </div>
+        <button id="prevMain" type="button" class="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
           <button id="nextMain" type="button" class="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
@@ -119,7 +125,7 @@ Upstairs, three bedrooms and three full bathrooms create private retreats for fa
 Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure embrace, where the lap pool with swimming lane, expansive green spaces, and palapa gathering areas create community connections. This turnkey opportunity, delivered unfurnished for personal expression, represents both a permanent residence and investment potential in one of the Riviera Maya's most coveted enclaves, where the marina lifestyle meets championship golf.</div>
           <div class="mt-4 sm:mt-5 rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-3 sm:p-4">
             <div class="text-xs tracking-widest text-[#223256]/70 uppercase">Highlights</div>
-            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+            <ul id="highlights" class="mt-2 sm:mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
           </div>
         </div>
 

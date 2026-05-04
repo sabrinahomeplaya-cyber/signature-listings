@@ -24,6 +24,8 @@
   <style>
     @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
     html { scroll-padding-top: 120px; }
+    #strip::-webkit-scrollbar { display: none; }
+    #strip { scrollbar-width: none; -ms-overflow-style: none; }
   </style>
 </head>
 <body class="bg-white text-[#223256]">
@@ -38,10 +40,16 @@
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+  <main class="max-w-6xl mx-auto sm:px-4 sm:pt-8 pb-0">
+    <section class="sm:rounded-3xl sm:overflow-hidden sm:ring-1 sm:ring-black/5 sm:shadow-sm bg-white">
       <div class="relative">
-        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo" />
+        <img id="mainImg" class="w-full h-[62vw] min-h-[220px] sm:h-[420px] lg:h-[560px] object-cover cursor-pointer select-none" alt="Photo" draggable="false" />
+        <div class="absolute bottom-3 right-3 flex items-center gap-2">
+          <button id="shareBtn" type="button" class="flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <div id="imgCounter" class="text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+        </div>
         <button id="prevMain" type="button" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
@@ -49,7 +57,7 @@
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
-      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+      <div id="stripSection" class="px-4 sm:px-6 py-4 border-t border-black/5">
         <div class="flex items-center gap-3">
           <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
           <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
@@ -58,61 +66,61 @@
       </div>
     </section>
 
-    <div class="mt-8 grid lg:grid-cols-12 gap-8">
+    <div class="px-4 sm:px-0 mt-4 sm:mt-8 grid lg:grid-cols-12 gap-4 sm:gap-8">
       <section class="lg:col-span-8">
-        <div class="grid sm:grid-cols-12 gap-4 items-start">
-          <div class="sm:col-span-8">
+        <div class="grid grid-cols-12 gap-2 sm:gap-4 items-start">
+          <div class="col-span-8">
             <div class="text-xs tracking-widest text-[#223256]/70">Puerto Aventuras, Riviera Maya</div>
-            <h1 class="text-2xl sm:text-3xl font-semibold mt-2">Casa Blanca</h1>
-            <p class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1">A seaside legacy of light and monumental Caribbean perspectives</p>
+            <h1 class="text-sm sm:text-3xl font-semibold mt-1">Casa Blanca</h1>
+            <p class="text-[11px] sm:text-xl font-light text-[#223256]/70 mt-0.5">A seaside legacy of light and monumental Caribbean perspectives</p>
           </div>
-          <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
+          <div class="col-span-4 text-right">
             <div class="text-xs tracking-widest text-[#223256]/70">PRICE</div>
-            <div class="text-3xl font-semibold mt-2">$1,900,000 USD</div>
-            <div class="text-base text-[#223256]/60 line-through mt-1">$2,600,000 USD</div>
+            <div class="text-sm sm:text-3xl font-semibold mt-1">$1,900,000 USD</div>
+            <div class="text-[10px] sm:text-base text-[#223256]/60 line-through mt-0.5">$2,600,000 USD</div>
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DETAILS</div>
+        <div class="mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl bg-white ring-1 ring-black/5 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-8">
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256]/80">DETAILS</div>
           </div>
-          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Bedrooms</div><div class="text-xl font-semibold mt-2 text-[#223256]">5</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Bathrooms</div><div class="text-xl font-semibold mt-2 text-[#223256]">5.5</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Year built</div><div class="text-xl font-semibold mt-2 text-[#223256]"></div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Construction</div><div class="text-xl font-semibold mt-2 text-[#223256]">5,487 sq ft</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Lot size</div><div class="text-xl font-semibold mt-2 text-[#223256]">6,456 sq ft</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">Price / sq ft</div><div class="text-xl font-semibold mt-2 text-[#223256]">$346</div></div>
+          <div class="grid grid-cols-3 gap-2 sm:gap-4">
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Bedrooms</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">5</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Bathrooms</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">5.5</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Year built</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]"></div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Construction</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">5,487 sq ft</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Lot size</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">6,456 sq ft</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">Price / sq ft</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">$346</div></div>
           </div>
           
         </div>
 
-        <div class="mt-6 rounded-3xl ring-1 ring-black/5 p-6 bg-[#f4ea98]/18">
+        <div class="mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl ring-1 ring-black/5 p-4 sm:p-6 bg-[#f4ea98]/18">
           <div class="flex items-center gap-3">
-            <div class="h-8 w-1 rounded-full bg-[#223256]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#223256]"></div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256]/80">DESCRIPTION</div>
           </div>
-          <div class="mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">Perched on a prime Caribbean Sea lot within the secure gates of Puerto Aventuras, Casa Blanca is a masterpiece of airy architecture and coastal fluidity. This expansive 5,487 sq ft villa is designed as an ode to the horizon, where the boundaries between the marble-floored interiors and the turquoise waters of the ocean completely dissolve. The heart of the home features a majestic vaulted atrium and a large sunken lounge, creating a dramatic sense of volume that is rare even in the most exclusive Riviera Maya estates.
+          <div class="mt-4 sm:mt-8 text-[15px] leading-7 text-[#223256]/90 whitespace-pre-line text-justify max-w-3xl mx-auto">Perched on a prime Caribbean Sea lot within the secure gates of Puerto Aventuras, Casa Blanca is a masterpiece of airy architecture and coastal fluidity. This expansive 5,487 sq ft villa is designed as an ode to the horizon, where the boundaries between the marble-floored interiors and the turquoise waters of the ocean completely dissolve. The heart of the home features a majestic vaulted atrium and a large sunken lounge, creating a dramatic sense of volume that is rare even in the most exclusive Riviera Maya estates.
 
 The residence is structured to offer both grand social spaces and intimate retreats. The primary suite serves as a private observatory with direct ocean views, while the guest studio features a sunset-facing terrace, perfect for a creative retreat or quiet contemplation. The living areas flow seamlessly into a spacious kitchen and multiple lounging zones, ensuring that every corner of the house remains connected to the sea breeze and the natural light filtered through strategic skylights.
 
 True versatility is found in the property’s unique layout, which includes a stand-alone casita providing total independence for guests or staff. Outside, the sanctuary continues with a private pool area surrounded by hammocks and lush tropical landscaping, offering a secluded space to enjoy the oceanfront lifestyle. This configuration, combined with the villa’s bright and airy aesthetic, makes Casa Blanca an exceptional canvas for those seeking a prestigious primary residence or a high-performing luxury rental.
 
 In a market where beachfront land is increasingly scarce, Casa Blanca represents a strategic acquisition window. The rare availability of an adjacent vacant lot for $950,000 USD offers a unique opportunity for expansion, future development, or the preservation of absolute privacy. Whether secured as a standalone villa or a combined double-lot estate, this property positions itself as one of the most flexible and prestigious investment opportunities currently available on the Caribbean coast.</div>
-          <div class="mt-5 rounded-2xl bg-white/80 ring-1 ring-black/5 p-4">
+          <div class="mt-4 sm:mt-5 rounded-xl sm:rounded-2xl bg-white/80 ring-1 ring-black/5 p-3 sm:p-4">
             <div class="text-xs tracking-widest text-[#223256]/70">HIGHLIGHTS</div>
-            <ul id="highlights" class="mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
+            <ul id="highlights" class="mt-2 sm:mt-3 text-sm grid sm:grid-cols-2 gap-2"></ul>
           </div>
         </div>
 
-        <div class="mt-8 rounded-3xl bg-white border border-gray-100 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-6">
+        <div class="mt-4 sm:mt-8 rounded-2xl sm:rounded-3xl bg-white border border-gray-100 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-6">
             <div class="h-6 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCATION</div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256] font-semibold uppercase">LOCATION</div>
           </div>
-          <div class="rounded-2xl overflow-hidden ring-1 ring-black/5 h-80 w-full relative group">
+          <div class="rounded-xl sm:rounded-2xl overflow-hidden ring-1 ring-black/5 h-64 sm:h-80 w-full relative group">
             <iframe src="https://maps.google.com/maps?ll=20.498594,-87.222911&z=16&t=m&hl=en&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 ease-in-out"></iframe>
             <div class="absolute inset-0 m-auto w-32 h-32 bg-[#223256]/30 rounded-full pointer-events-none ring-1 ring-[#223256]/20 backdrop-blur-[1px]"></div>
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text-[10px] tracking-widest text-white font-bold bg-[#223256] px-4 py-1.5 rounded-full shadow-md pointer-events-none">PUERTO AVENTURAS</div>
@@ -160,21 +168,16 @@ In a market where beachfront land is increasingly scarce, Casa Blanca represents
     </div>
   </footer>
 
-  <div id="modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/80"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Close</button>
-        <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-          <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <button id="prevBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Previous</button>
-          <div id="counter" class="text-xs text-white/80"></div>
-          <button id="nextBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Next</button>
-        </div>
-      </div>
+  <!-- Modal: vertical scroll gallery -->
+  <div id="modal" class="fixed inset-0 z-50 flex-col bg-white" style="display:none">
+    <div class="sticky top-0 z-10 bg-white border-b border-black/5 px-4 py-3 flex items-center justify-between">
+      <button id="closeBtn" class="flex items-center gap-2 text-[#223256] text-sm font-medium opacity-70 hover:opacity-100 transition">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <div id="counter" class="text-[#223256]/50 text-xs font-medium"></div>
     </div>
+    <div id="modalScroll" class="flex-1 overflow-y-auto" style="display:flex;flex-direction:column;gap:10px;padding:10px 0"></div>
   </div>
 
   <script>
@@ -266,14 +269,62 @@ In a market where beachfront land is increasingly scarce, Casa Blanca represents
     el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
     el('prevMain').onclick=()=>setMain(state.index-1);
     el('nextMain').onclick=()=>setMain(state.index+1);
-    const openModal=()=>{ if(!photos.length) return; el('modal').classList.remove('hidden'); renderModal(); };
-    const closeModal=()=>el('modal').classList.add('hidden');
-    const renderModal=()=>{ el('modalImg').src=photos[state.index]||''; el('counter').textContent=photos.length?(state.index+1)+' / '+photos.length:''; };
-    const prev=()=>{ setMain(state.index-1); renderModal(); };
-    const next=()=>{ setMain(state.index+1); renderModal(); };
-    mainImg.onclick=openModal;
-    el('closeBtn').onclick=closeModal; el('prevBtn').onclick=prev; el('nextBtn').onclick=next;
-    document.addEventListener('keydown',e=>{ if(el('modal').classList.contains('hidden')) return; if(e.key==='Escape') closeModal(); if(e.key==='ArrowLeft') prev(); if(e.key==='ArrowRight') next(); });
+    // Hide strip and nav arrows on real touch devices (phones/tablets, not desktop)
+    if('ontouchstart' in window && screen.width < 1024) {
+      el('stripSection').style.display = 'none';
+      el('prevMain').style.display = 'none';
+      el('nextMain').style.display = 'none';
+    }
+
+    // Touch swipe on main image
+    let tsX=0, tsY=0;
+    mainImg.addEventListener('touchstart',e=>{tsX=e.changedTouches[0].clientX;tsY=e.changedTouches[0].clientY;},{passive:true});
+    mainImg.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-tsX, dy=e.changedTouches[0].clientY-tsY;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx<0?setMain(state.index+1):setMain(state.index-1);}
+    },{passive:true});
+
+    // Build vertical gallery in modal
+    const modalScroll = el('modalScroll');
+    photos.forEach((url,idx) => {
+      const div=document.createElement('div'); div.setAttribute('data-gidx',String(idx));
+      const img=document.createElement('img'); img.src=url; img.className='w-full block'; img.draggable=false; img.style.display='block';
+      div.appendChild(img); modalScroll.appendChild(div);
+    });
+
+    // Update counter as user scrolls modal
+    const ioCounter = new IntersectionObserver(entries => {
+      let best=null, bestR=0;
+      entries.forEach(e=>{ if(e.intersectionRatio>bestR){bestR=e.intersectionRatio;best=e;} });
+      if(best){ const i=parseInt(best.target.getAttribute('data-gidx')); el('counter').textContent=(i+1)+' \/ '+photos.length; state.index=i; }
+    },{threshold:[0.3,0.5,0.8]});
+
+    const openModal = startIdx => {
+      if(!photos.length) return;
+      const m=el('modal'); m.style.display='flex'; document.body.style.overflow='hidden';
+      el('counter').textContent=(startIdx+1)+' \/ '+photos.length;
+      Array.from(modalScroll.children).forEach(c=>ioCounter.observe(c));
+      const target=modalScroll.children[startIdx];
+      if(target) setTimeout(()=>target.scrollIntoView({behavior:'instant',block:'start'}),20);
+    };
+    const closeModal = () => {
+      el('modal').style.display='none'; document.body.style.overflow='';
+      ioCounter.disconnect();
+    };
+
+    mainImg.onclick=()=>openModal(state.index);
+    el('closeBtn').onclick=closeModal;
+
+    const imgCounter = el('imgCounter');
+    if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
+
+    el('shareBtn').onclick=async()=>{
+      const data={title:listing.title,text:listing.price+' '+listing.currency+' — '+listing.title,url:listing.publicUrl};
+      if(navigator.share){try{await navigator.share(data);}catch(e){}}
+      else{navigator.clipboard.writeText(listing.publicUrl).then(()=>{const b=el('shareBtn');const t=b.innerHTML;b.textContent='Copied!';setTimeout(()=>{b.innerHTML=t;},1500);}).catch(()=>{});}
+    };
+
+    document.addEventListener('keydown',e=>{ if(el('modal').style.display==='none'||!el('modal').style.display) return; if(e.key==='Escape') closeModal(); });
     const wa1="Hello Sabrina, I would like information about this property:"; const wa2="Hello Sabrina, I would like to schedule a visit.";
     const liveUrl=listing.publicUrl;
     el('waBtn').href='https://wa.me/529842696189?text='+encodeURIComponent(wa1+'\n\n'+listing.title+'\n'+listing.price+' '+listing.currency+'\n'+liveUrl);
