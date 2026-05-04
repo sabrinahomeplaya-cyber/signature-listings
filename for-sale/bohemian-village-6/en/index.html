@@ -46,22 +46,18 @@
     <!-- Gallery -->
     <section class="sm:pt-6 sm:px-4">
       <div class="bg-white sm:rounded-3xl sm:overflow-hidden sm:ring-1 sm:ring-black/5 sm:shadow-sm">
-        <div class="relative overflow-hidden sm:overflow-visible">
-          <img id="mainImg" class="w-full h-[62vw] min-h-[220px] max-h-[500px] sm:max-h-none sm:h-[420px] lg:h-[560px] object-cover select-none cursor-pointer" alt="Photo" draggable="false" />
-          <button id="shareBtn" type="button" class="absolute top-3 right-3 flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          </button>
-          <div id="imgCounter" class="absolute bottom-3 right-3 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+        <div class="relative">
+          <img id="mainImg" class="w-full h-[62vw] min-h-[220px] sm:h-[420px] lg:h-[560px] object-cover cursor-pointer select-none" alt="Photo" draggable="false" />
           <div class="absolute bottom-3 right-3 flex items-center gap-2">
-          <button id="shareBtn" type="button" class="flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          </button>
-          <div id="imgCounter" class="text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
-        </div>
-        <button id="prevMain" type="button" class="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+            <button id="shareBtn" type="button" class="flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
+            <div id="imgCounter" class="text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+          </div>
+          <button id="prevMain" type="button" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
-          <button id="nextMain" type="button" class="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2" style="background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
+          <button id="nextMain" type="button" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
@@ -296,12 +292,16 @@ Bohemian Village delivers an elevated lifestyle within Puerto Aventuras' secure 
       const img=document.createElement('img'); img.src=url; img.style.cssText='height:96px;width:144px;object-fit:cover;display:block;';
       btn.appendChild(img); strip.appendChild(btn);
     });
-    if(ss&&photos.length){ss.style.display=window.innerWidth>=640?'block':'none';window.addEventListener('resize',()=>{ss.style.display=window.innerWidth>=640?'block':'none';});}
     if(photos.length) setMain(0);
     if(el('stripLeft')) el('stripLeft').onclick=()=>strip.scrollBy({left:-320,behavior:'smooth'});
     if(el('stripRight')) el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
     el('prevMain').onclick=()=>setMain(state.index-1);
     el('nextMain').onclick=()=>setMain(state.index+1);
+    if('ontouchstart' in window && screen.width < 1024) {
+      el('stripSection').style.display = 'none';
+      el('prevMain').style.display = 'none';
+      el('nextMain').style.display = 'none';
+    }
 
     // Touch swipe on main image
     let tsX=0, tsY=0;

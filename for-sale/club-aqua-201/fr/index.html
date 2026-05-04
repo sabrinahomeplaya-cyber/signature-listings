@@ -174,21 +174,16 @@ Vivre au sein de cette adresse de prestige garantit une tranquillité d'esprit a
     </div>
   </footer>
 
-  <div id="modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/80"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
-        <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-          <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <button id="prevBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
-          <div id="counter" class="text-xs text-white/80"></div>
-          <button id="nextBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
-        </div>
-      </div>
+  <!-- Modal: vertical scroll gallery -->
+  <div id="modal" class="fixed inset-0 z-50 flex-col bg-white" style="display:none">
+    <div class="sticky top-0 z-10 bg-white border-b border-black/5 px-4 py-3 flex items-center justify-between">
+      <button id="closeBtn" class="flex items-center gap-2 text-[#223256] text-sm font-medium opacity-70 hover:opacity-100 transition">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Retour
+      </button>
+      <div id="counter" class="text-[#223256]/50 text-xs font-medium"></div>
     </div>
+    <div id="modalScroll" class="flex-1 overflow-y-auto" style="display:flex;flex-direction:column;gap:10px;padding:10px 0"></div>
   </div>
 
   <script>

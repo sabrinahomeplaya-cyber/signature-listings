@@ -188,24 +188,19 @@
       </div>
     </footer>
 
-    <div id="modal" class="fixed inset-0 z-50 hidden">
-      <div class="absolute inset-0 bg-black/80"></div>
-      <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="relative w-full max-w-6xl">
-          <button id="closeBtn" type="button" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Fermer</button>
-          <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-            <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
-          </div>
-          <div class="mt-4 flex items-center justify-between">
-            <button id="prevBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Précédent</button>
-            <div id="counter" class="text-xs text-white/80"></div>
-            <button id="nextBtn" type="button" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">Suivant</button>
-          </div>
-        </div>
-      </div>
+    <!-- Modal: vertical scroll gallery -->
+  <div id="modal" class="fixed inset-0 z-50 flex-col bg-white" style="display:none">
+    <div class="sticky top-0 z-10 bg-white border-b border-black/5 px-4 py-3 flex items-center justify-between">
+      <button id="closeBtn" class="flex items-center gap-2 text-[#223256] text-sm font-medium opacity-70 hover:opacity-100 transition">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Retour
+      </button>
+      <div id="counter" class="text-[#223256]/50 text-xs font-medium"></div>
     </div>
+    <div id="modalScroll" class="flex-1 overflow-y-auto" style="display:flex;flex-direction:column;gap:10px;padding:10px 0"></div>
+  </div>
 
-    <script>
+  <script>
       const photos = [
         "../photos/0.1.jpg", "../photos/0.2.jpg", "../photos/0.3.jpg",
         "../photos/2.jpg", "../photos/3.jpg", "../photos/4.jpg",
@@ -284,27 +279,50 @@
       el("stripRight").addEventListener("click", () => strip.scrollBy({left:320,behavior:"smooth"}));
       el("prevMain").addEventListener("click", () => setMain(state.index - 1));
       el("nextMain").addEventListener("click", () => setMain(state.index + 1));
-
-      // Lightbox
-      const openModal = () => { el("modal").classList.remove("hidden"); renderModal(); };
-      const closeModal = () => el("modal").classList.add("hidden");
-      const renderModal = () => {
-        el("modalImg").src = photos[state.index];
-        el("counter").textContent = (state.index+1) + " / " + photos.length;
-      };
-      const prev = () => { setMain(state.index-1); renderModal(); };
-      const next = () => { setMain(state.index+1); renderModal(); };
-
-      mainImg.addEventListener("click", openModal);
-      el("closeBtn").addEventListener("click", closeModal);
-      el("prevBtn").addEventListener("click", prev);
-      el("nextBtn").addEventListener("click", next);
-      document.addEventListener("keydown", (e) => {
-        if (el("modal").classList.contains("hidden")) return;
-        if (e.key==="Escape") closeModal();
-        if (e.key==="ArrowLeft") prev();
-        if (e.key==="ArrowRight") next();
+      if('ontouchstart' in window && screen.width < 1024) {
+        el('stripSection').style.display = 'none';
+        el('prevMain').style.display = 'none';
+        el('nextMain').style.display = 'none';
+      }
+      let tsX=0, tsY=0;
+      mainImg.addEventListener('touchstart',e=>{tsX=e.changedTouches[0].clientX;tsY=e.changedTouches[0].clientY;},{passive:true});
+      mainImg.addEventListener('touchend',e=>{
+        const dx=e.changedTouches[0].clientX-tsX, dy=e.changedTouches[0].clientY-tsY;
+        if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx<0?setMain(state.index+1):setMain(state.index-1);}
+      },{passive:true});
+      const modalScroll = el('modalScroll');
+      photos.forEach((url,idx) => {
+        const div=document.createElement('div'); div.setAttribute('data-gidx',String(idx));
+        const img=document.createElement('img'); img.src=url; img.className='w-full block'; img.draggable=false; img.style.display='block';
+        div.appendChild(img); modalScroll.appendChild(div);
       });
+      const ioCounter = new IntersectionObserver(entries => {
+        let best=null, bestR=0;
+        entries.forEach(e=>{ if(e.intersectionRatio>bestR){bestR=e.intersectionRatio;best=e;} });
+        if(best){ const i=parseInt(best.target.getAttribute('data-gidx')); el('counter').textContent=(i+1)+' / '+photos.length; state.index=i; }
+      },{threshold:[0.3,0.5,0.8]});
+      const openModal = startIdx => {
+        if(!photos.length) return;
+        const m=el('modal'); m.style.display='flex'; document.body.style.overflow='hidden';
+        el('counter').textContent=(startIdx+1)+' / '+photos.length;
+        Array.from(modalScroll.children).forEach(c=>ioCounter.observe(c));
+        const target=modalScroll.children[startIdx];
+        if(target) setTimeout(()=>target.scrollIntoView({behavior:'instant',block:'start'}),20);
+      };
+      const closeModal = () => {
+        el('modal').style.display='none'; document.body.style.overflow='';
+        ioCounter.disconnect();
+      };
+      mainImg.onclick=()=>openModal(state.index);
+      el('closeBtn').onclick=closeModal;
+      const imgCounter = el('imgCounter');
+      if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
+      el('shareBtn').onclick=async()=>{
+        const url=window.location.href;
+        if(navigator.share){try{await navigator.share({url});}catch(e){}}
+        else{navigator.clipboard.writeText(url).then(()=>{const b=el('shareBtn');const t=b.innerHTML;b.textContent='Copied!';setTimeout(()=>{b.innerHTML=t;},1500);}).catch(()=>{});}
+      };
+      document.addEventListener('keydown',e=>{ if(el('modal').style.display==='none'||!el('modal').style.display) return; if(e.key==='Escape') closeModal(); });
 
       // WhatsApp & Email
       const title = "Casa Leona";
