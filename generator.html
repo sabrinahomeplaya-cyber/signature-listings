@@ -732,9 +732,9 @@ function buildTemplate(data) {
   const lang = data.lang || 'fr';
 
   const L = {
-    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m² (Prix / sq ft)', hoa:'Frais mensuels', predial:'Taxe annuelle', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', close:'Fermer', prev:'Précédent', next:'Suivant', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
-    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', year:'Year built', construction:'Construction', lot:'Lot size', pricePerArea:'Price / sq ft', hoa:'Monthly HOA', predial:'Annual Property Tax', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', close:'Close', prev:'Previous', next:'Next', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
-    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', year:'Año', construction:'Construcción', lot:'Terreno', pricePerArea:'Precio / m²', hoa:'Mantenimiento mensual', predial:'Predial anual', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', close:'Cerrar', prev:'Anterior', next:'Siguiente', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
+    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m² (Prix / sq ft)', hoa:'Frais mensuels', predial:'Taxe annuelle', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', back:'Retour', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
+    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', year:'Year built', construction:'Construction', lot:'Lot size', pricePerArea:'Price / sq ft', hoa:'Monthly HOA', predial:'Annual Property Tax', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', back:'Back', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
+    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', year:'Año', construction:'Construcción', lot:'Terreno', pricePerArea:'Precio / m²', hoa:'Mantenimiento mensual', predial:'Predial anual', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', back:'Volver', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
   }[lang] || {};
 
   const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
@@ -795,6 +795,8 @@ function buildTemplate(data) {
   <style>
     @media (min-width: 1024px) { #agentCard { position: sticky !important; top: 150px !important; z-index: 30; } }
     html { scroll-padding-top: 120px; }
+    #strip::-webkit-scrollbar { display: none; }
+    #strip { scrollbar-width: none; -ms-overflow-style: none; }
   </style>
 </head>
 <body class="bg-white text-[#223256]">
@@ -809,10 +811,16 @@ function buildTemplate(data) {
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pt-8 pb-0">
-    <section class="rounded-3xl overflow-hidden ring-1 ring-black/5 shadow-sm bg-white">
+  <main class="max-w-6xl mx-auto sm:px-4 sm:pt-8 pb-0">
+    <section class="sm:rounded-3xl sm:overflow-hidden sm:ring-1 sm:ring-black/5 sm:shadow-sm bg-white">
       <div class="relative">
-        <img id="mainImg" class="w-full h-[420px] sm:h-[560px] object-cover cursor-pointer" alt="Photo" />
+        <img id="mainImg" class="w-full h-[62vw] min-h-[220px] sm:h-[420px] lg:h-[560px] object-cover cursor-pointer select-none" alt="Photo" draggable="false" />
+        <div class="absolute bottom-3 right-3 flex items-center gap-2">
+          <button id="shareBtn" type="button" class="flex items-center gap-1.5 text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px);border:none;cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <div id="imgCounter" class="text-white text-xs font-medium px-2.5 py-1 rounded-full" style="background:rgba(0,0,0,0.38);backdrop-filter:blur(4px)"></div>
+        </div>
         <button id="prevMain" type="button" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.45))">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
@@ -820,7 +828,7 @@ function buildTemplate(data) {
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
-      <div class="px-4 sm:px-6 py-4 border-t border-black/5">
+      <div id="stripSection" class="px-4 sm:px-6 py-4 border-t border-black/5">
         <div class="flex items-center gap-3">
           <button id="stripLeft" class="shrink-0 rounded-full bg-white ring-1 ring-black/10 px-3 py-2 hover:bg-neutral-50 transition">&#8249;</button>
           <div id="strip" class="flex gap-3 overflow-x-auto scroll-smooth py-1"></div>
@@ -829,37 +837,37 @@ function buildTemplate(data) {
       </div>
     </section>
 
-    <div class="mt-8 grid lg:grid-cols-12 gap-8">
+    <div class="px-4 sm:px-0 mt-4 sm:mt-8 grid lg:grid-cols-12 gap-4 sm:gap-8">
       <section class="lg:col-span-8">
-        <div class="grid sm:grid-cols-12 gap-4 items-start">
-          <div class="sm:col-span-8">
+        <div class="grid grid-cols-12 gap-2 sm:gap-4 items-start">
+          <div class="col-span-8">
             <div class="text-xs tracking-widest text-[#223256]/70">${escHtml(data.location)}</div>
-            <h1 class="text-2xl sm:text-3xl font-semibold mt-2">${escHtml(data.title)}</h1>
-            <p class="text-lg sm:text-xl font-light text-[#223256]/70 mt-1">${escHtml(data.subtitle)}</p>
+            <h1 class="text-sm sm:text-3xl font-semibold mt-1">${escHtml(data.title)}</h1>
+            <p class="text-[11px] sm:text-xl font-light text-[#223256]/70 mt-0.5">${escHtml(data.subtitle)}</p>
           </div>
-          <div class="sm:col-span-4 text-left sm:text-right sm:pt-1">
+          <div class="col-span-4 text-right">
             <div class="text-xs tracking-widest text-[#223256]/70">${L.price}</div>
-            <div class="text-3xl font-semibold mt-2">${data.price||''} ${data.currency||'USD'}</div>
-            ${data.priceOld ? `<div class="text-base text-[#223256]/60 line-through mt-1">${data.priceOld} ${data.currency||'USD'}</div>` : ''}
+            <div class="text-sm sm:text-3xl font-semibold mt-1">${data.price||''} ${data.currency||'USD'}</div>
+            ${data.priceOld ? `<div class="text-[10px] sm:text-base text-[#223256]/60 line-through mt-0.5">${data.priceOld} ${data.currency||'USD'}</div>` : ''}
           </div>
         </div>
 
-        <div class="mt-6 rounded-3xl bg-white ring-1 ring-black/5 p-8 shadow-sm">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="h-8 w-1 rounded-full bg-[#61BDCC]"></div>
-            <div class="text-sm tracking-widest text-[#223256]/80">${L.details}</div>
+        <div class="mt-4 sm:mt-6 rounded-2xl sm:rounded-3xl bg-white ring-1 ring-black/5 p-4 sm:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-4 sm:mb-8">
+            <div class="h-6 sm:h-8 w-1 rounded-full bg-[#61BDCC]"></div>
+            <div class="text-xs sm:text-sm tracking-widest text-[#223256]/80">${L.details}</div>
           </div>
-          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.beds}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.beds||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.baths}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.baths||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.year}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${data.year||''}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.construction}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${fmtArea(data.construction)}</div></div>
-            <div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.lot}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${fmtArea(data.lot)}</div></div>
-            ${pricePerArea?`<div class="rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-5"><div class="text-xs text-[#223256]/70">${L.pricePerArea}</div><div class="text-xl font-semibold mt-2 text-[#223256]">${pricePerArea}</div></div>`:''}
+          <div class="grid grid-cols-3 gap-2 sm:gap-4">
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">${L.beds}</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">${data.beds||''}</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">${L.baths}</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">${data.baths||''}</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">${L.year}</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">${data.year||''}</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">${L.construction}</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">${fmtArea(data.construction)}</div></div>
+            <div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">${L.lot}</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">${fmtArea(data.lot)}</div></div>
+            ${pricePerArea?`<div class="rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5 p-2 sm:p-5"><div class="text-[10px] sm:text-xs text-[#223256]/70">${L.pricePerArea}</div><div class="text-sm sm:text-xl font-semibold mt-1 text-[#223256]">${pricePerArea}</div></div>`:''}
           </div>
-          ${(data.hoa||data.predial)?`<div class="grid sm:grid-cols-2 gap-4 text-sm mt-4">
-            ${data.hoa?`<div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">${L.hoa}</span><span class="font-semibold text-[#223256]">${data.hoa}</span></div>`:''}
-            ${data.predial?`<div class="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70">${L.predial}</span><span class="font-semibold text-[#223256]">${data.predial}</span></div>`:''}
+          ${(data.hoa||data.predial)?`<div class="grid sm:grid-cols-2 gap-2 sm:gap-4 text-sm mt-2 sm:mt-4">
+            ${data.hoa?`<div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">${L.hoa}</span><span class="font-semibold text-[#223256] text-xs sm:text-sm">${data.hoa}</span></div>`:''}
+            ${data.predial?`<div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">${L.predial}</span><span class="font-semibold text-[#223256] text-xs sm:text-sm">${data.predial}</span></div>`:''}
           </div>`:''}
         </div>
 
@@ -928,21 +936,16 @@ function buildTemplate(data) {
     </div>
   </footer>
 
-  <div id="modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/80"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-      <div class="relative w-full max-w-6xl">
-        <button id="closeBtn" class="absolute -top-12 right-0 rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.close}</button>
-        <div class="rounded-3xl overflow-hidden ring-1 ring-white/20 bg-black">
-          <img id="modalImg" class="w-full max-h-[82vh] object-contain" alt="" />
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <button id="prevBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.prev}</button>
-          <div id="counter" class="text-xs text-white/80"></div>
-          <button id="nextBtn" class="rounded-full bg-white/10 ring-1 ring-white/20 px-4 py-2 text-sm text-white hover:bg-white/15 transition">${L.next}</button>
-        </div>
-      </div>
+  <!-- Modal: vertical scroll gallery -->
+  <div id="modal" class="fixed inset-0 z-50 flex-col bg-white" style="display:none">
+    <div class="sticky top-0 z-10 bg-white border-b border-black/5 px-4 py-3 flex items-center justify-between">
+      <button id="closeBtn" class="flex items-center gap-2 text-[#223256] text-sm font-medium opacity-70 hover:opacity-100 transition">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        ${L.back}
+      </button>
+      <div id="counter" class="text-[#223256]/50 text-xs font-medium"></div>
     </div>
+    <div id="modalScroll" class="flex-1 overflow-y-auto" style="display:flex;flex-direction:column;gap:10px;padding:10px 0"></div>
   </div>
 
   <script>
@@ -994,14 +997,50 @@ function buildTemplate(data) {
     el('stripRight').onclick=()=>strip.scrollBy({left:320,behavior:'smooth'});
     el('prevMain').onclick=()=>setMain(state.index-1);
     el('nextMain').onclick=()=>setMain(state.index+1);
-    const openModal=()=>{ if(!photos.length) return; el('modal').classList.remove('hidden'); renderModal(); };
-    const closeModal=()=>el('modal').classList.add('hidden');
-    const renderModal=()=>{ el('modalImg').src=photos[state.index]||''; el('counter').textContent=photos.length?(state.index+1)+' / '+photos.length:''; };
-    const prev=()=>{ setMain(state.index-1); renderModal(); };
-    const next=()=>{ setMain(state.index+1); renderModal(); };
-    mainImg.onclick=openModal;
-    el('closeBtn').onclick=closeModal; el('prevBtn').onclick=prev; el('nextBtn').onclick=next;
-    document.addEventListener('keydown',e=>{ if(el('modal').classList.contains('hidden')) return; if(e.key==='Escape') closeModal(); if(e.key==='ArrowLeft') prev(); if(e.key==='ArrowRight') next(); });
+    if('ontouchstart' in window && screen.width < 1024) {
+      el('stripSection').style.display = 'none';
+      el('prevMain').style.display = 'none';
+      el('nextMain').style.display = 'none';
+    }
+    let tsX=0, tsY=0;
+    mainImg.addEventListener('touchstart',e=>{tsX=e.changedTouches[0].clientX;tsY=e.changedTouches[0].clientY;},{passive:true});
+    mainImg.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-tsX, dy=e.changedTouches[0].clientY-tsY;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx<0?setMain(state.index+1):setMain(state.index-1);}
+    },{passive:true});
+    const modalScroll = el('modalScroll');
+    photos.forEach((url,idx) => {
+      const div=document.createElement('div'); div.setAttribute('data-gidx',String(idx));
+      const img=document.createElement('img'); img.src=url; img.className='w-full block'; img.draggable=false; img.style.display='block';
+      div.appendChild(img); modalScroll.appendChild(div);
+    });
+    const ioCounter = new IntersectionObserver(entries => {
+      let best=null, bestR=0;
+      entries.forEach(e=>{ if(e.intersectionRatio>bestR){bestR=e.intersectionRatio;best=e;} });
+      if(best){ const i=parseInt(best.target.getAttribute('data-gidx')); el('counter').textContent=(i+1)+' \\/ '+photos.length; state.index=i; }
+    },{threshold:[0.3,0.5,0.8]});
+    const openModal = startIdx => {
+      if(!photos.length) return;
+      const m=el('modal'); m.style.display='flex'; document.body.style.overflow='hidden';
+      el('counter').textContent=(startIdx+1)+' \\/ '+photos.length;
+      Array.from(modalScroll.children).forEach(c=>ioCounter.observe(c));
+      const target=modalScroll.children[startIdx];
+      if(target) setTimeout(()=>target.scrollIntoView({behavior:'instant',block:'start'}),20);
+    };
+    const closeModal = () => {
+      el('modal').style.display='none'; document.body.style.overflow='';
+      ioCounter.disconnect();
+    };
+    mainImg.onclick=()=>openModal(state.index);
+    el('closeBtn').onclick=closeModal;
+    const imgCounter = el('imgCounter');
+    if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
+    el('shareBtn').onclick=async()=>{
+      const data={title:listing.title,text:listing.price+' '+listing.currency+' — '+listing.title,url:listing.publicUrl};
+      if(navigator.share){try{await navigator.share(data);}catch(e){}}
+      else{navigator.clipboard.writeText(listing.publicUrl).then(()=>{const b=el('shareBtn');const t=b.innerHTML;b.textContent='Copied!';setTimeout(()=>{b.innerHTML=t;},1500);}).catch(()=>{});}
+    };
+    document.addEventListener('keydown',e=>{ if(el('modal').style.display==='none'||!el('modal').style.display) return; if(e.key==='Escape') closeModal(); });
     const wa1="${esc(L.waIntro)}"; const wa2="${esc(L.waVisit)}";
     const liveUrl=listing.publicUrl;
     el('waBtn').href='https://wa.me/529842696189?text='+encodeURIComponent(wa1+'\\n\\n'+listing.title+'\\n'+listing.price+' '+listing.currency+'\\n'+liveUrl);
