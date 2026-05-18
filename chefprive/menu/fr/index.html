@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chef Privé - Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy: #223256; --teal: #61BDCC; --cream: #faf9f6; --cream-dark: #f2f0eb; --text: #1a1a1a; --muted: #6b7280; }
+    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+    header { background: var(--navy); padding: 2rem 2rem 1.5rem; text-align: center; position: relative; }
+    .subtitle-row { display: flex; align-items: center; justify-content: center; position: relative; margin-top: 0.4rem; padding: 0 1.5rem; }
+    .lang-switcher { display: flex; gap: 0.25rem; position: absolute; right: 1.5rem; }
+    .lang-switcher a { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-decoration: none; padding: 0.3rem 0.5rem; border-radius: 2px; color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    .lang-switcher a:hover { color: rgba(255,255,255,0.8); }
+    .lang-switcher a.active { color: var(--teal); border-bottom: 1px solid var(--teal); }
+    .header-logo { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .header-logo img { height: 80px; }
+    header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.2rem, 2.8vw, 1.6rem); font-weight: 600; color: #fff; letter-spacing: 0.04em; line-height: 1.1; }
+    header h1 em { font-style: italic; color: var(--teal); }
+    header p.subtitle { font-size: 0.75rem; font-weight: 300; color: rgba(255,255,255,0.5); letter-spacing: 0.2em; text-transform: uppercase; }
+    nav.tabs { position: sticky; top: 0; z-index: 100; background: var(--navy); border-top: 1px solid rgba(255,255,255,0.08); display: flex; overflow-x: auto; scrollbar-width: none; }
+    nav.tabs::-webkit-scrollbar { display: none; }
+    nav.tabs button { flex: 1; min-width: 110px; padding: 0.85rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; color: rgba(255,255,255,0.45); font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
+    nav.tabs button:hover { color: rgba(255,255,255,0.8); }
+    nav.tabs button.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .section { display: none; max-width: 820px; margin: 0 auto; padding: 3rem 1.5rem 5rem; opacity: 0; animation: fadeIn 0.35s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .section.active { display: block; }
+    .section-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--cream-dark); }
+    .section-header h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 300; color: var(--navy); letter-spacing: 0.03em; }
+    .section-header .time-badge { display: inline-block; margin-top: 0.5rem; padding: 0.25rem 0.75rem; background: var(--navy); color: #fff; font-size: 0.68rem; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; border-radius: 2px; }
+    .section-header .note { display: block; margin-top: 0.6rem; font-size: 0.8rem; color: var(--muted); font-style: italic; }
+    .dishes { display: flex; flex-direction: column; gap: 0; }
+    .dish { padding: 1.4rem 0; border-bottom: 1px solid var(--cream-dark); }
+    .dish:last-child { border-bottom: none; }
+    .dish-name { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.4rem; padding-left: 0.75rem; border-left: 2px solid var(--teal); }
+    .dish-desc { font-size: 0.88rem; font-weight: 300; color: #4a4a4a; line-height: 1.6; }
+    .buffet-block { background: var(--navy); color: #fff; border-radius: 4px; padding: 1.5rem 1.75rem; margin-bottom: 2.5rem; }
+    .buffet-block h3 { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.8rem; }
+    .buffet-block ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .buffet-block li { font-size: 0.82rem; font-weight: 300; color: rgba(255,255,255,0.8); line-height: 1.6; display: flex; align-items: center; gap: 0.6rem; }
+    .buffet-block li::before { content: ''; display: inline-block; width: 8px; height: 1px; background: var(--teal); flex-shrink: 0; }
+    .botanas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    @media (max-width: 560px) { .botanas-grid { grid-template-columns: 1fr; } }
+    .botana-item { padding: 1.1rem 1rem 1.1rem 0; border-bottom: 1px solid var(--cream-dark); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--navy); line-height: 1.5; }
+    .botanas-grid .botana-item:nth-child(odd) { padding-right: 2rem; border-right: 1px solid var(--cream-dark); }
+    .botanas-grid .botana-item:nth-child(even) { padding-left: 2rem; }
+    .bebidas-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    @media (max-width: 560px) { .bebidas-list { grid-template-columns: 1fr; } }
+    .bebida { padding: 1.1rem 1rem 1.1rem 0; border-bottom: 1px solid var(--cream-dark); }
+    .bebidas-list .bebida:nth-child(odd) { padding-right: 2rem; border-right: 1px solid var(--cream-dark); }
+    .bebidas-list .bebida:nth-child(even) { padding-left: 2rem; }
+    .bebida-name { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.25rem; }
+    .bebida-desc { font-size: 0.82rem; font-weight: 300; color: var(--muted); line-height: 1.5; }
+    footer { background: var(--navy); padding: 2.5rem 2rem; }
+    .footer-inner { max-width: 820px; margin: 0 auto; display: flex; flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .footer-tagline { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem; }
+    .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+    @media (max-width: 480px) { nav.tabs button { min-width: 90px; font-size: 0.62rem; } .section { padding: 2rem 1rem 4rem; } .buffet-block { padding: 1.25rem; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <img src="/logo-contact.png" alt="Signature" />
+  </div>
+  <h1>CHEF <em>PRIVÉ</em></h1>
+  <div class="subtitle-row">
+    <p class="subtitle">Menu</p>
+    <div class="lang-switcher">
+      <a href="/chefprive/menu/">ES</a>
+      <a href="/chefprive/menu/en/">EN</a>
+      <a href="/chefprive/menu/fr/" class="active">FR</a>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" onclick="showTab('dejeuner', this)" role="tab">Petit-Déjeuner</button>
+  <button onclick="showTab('dejeuner2', this)" role="tab">Déjeuner</button>
+  <button onclick="showTab('diner', this)" role="tab">Dîner</button>
+  <button onclick="showTab('tapas', this)" role="tab">Tapas</button>
+  <button onclick="showTab('boissons', this)" role="tab">Boissons</button>
+</nav>
+
+<!-- PETIT-DÉJEUNER -->
+<section id="dejeuner" class="section active">
+  <div class="section-header">
+    <h2>Menu Petit-Déjeuner</h2>
+    <span class="time-badge">7:00 – 11:00 AM</span>
+    <span class="note">Buffet + 2 options de petit-déjeuner par jour</span>
+  </div>
+  <div class="buffet-block">
+    <h3>Buffet Inclus</h3>
+    <ul>
+      <li>Fruits de saison, yaourt, granola et miel</li>
+      <li>Pain grillé, confiture et beurre</li>
+      <li>Jus d'orange, jus vert, café</li>
+      <li>Variété de salsas</li>
+    </ul>
+  </div>
+  <div class="dishes">
+    <div class="dish">
+      <div class="dish-name">Œufs à Votre Goût</div>
+      <div class="dish-desc">Brouillés, sur le plat, omelette ou motuleños. Options : tomate, oignon, piment serrano, jambon de dinde, fromage manchego, champignons, épinards, machaca ou chorizo. Servi avec haricots noirs, avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Chilaquiles</div>
+      <div class="dish-desc">Chips de tortilla en salsa verte ou rouge avec fromage manchego. Option d'ajouter un œuf ou du poulet. Servi avec crème fraîche, avocat, haricots et oignon rouge.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Enfrijoladas</div>
+      <div class="dish-desc">Tortillas de maïs garnies d'œuf, poulet ou fromage, nappées de sauce aux haricots noirs et saupoudrées de fromage panela. Servies avec crème fraîche, avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Enchiladas Suizas</div>
+      <div class="dish-desc">Tortillas de maïs garnies d'œuf ou de poulet, nappées de sauce poblano et gratinées au fromage manchego. Servies avec crème fraîche et avocat.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Enmoladas</div>
+      <div class="dish-desc">Tortilla de maïs garnie d'œuf, poulet ou fromage manchego, nappée de sauce mole. Servies avec laitue, oignon rouge, fromage frais, avocat et crème fraîche.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Entomatadas</div>
+      <div class="dish-desc">Tortilla de maïs garnie d'œuf, poulet ou fromage manchego, nappée de sauce tomate. Servies avec laitue, oignon rouge, fromage frais, avocat et crème fraîche.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Molletes</div>
+      <div class="dish-desc">Pain bolillo grillé avec haricots noirs et fromage manchego gratiné. Servi avec avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Avocado Toast</div>
+      <div class="dish-desc">Pain complet grillé avec mélange d'avocat, tomates cerises et fromage feta émietté. Option d'ajouter un œuf au plat.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Bagel au Saumon Fumé</div>
+      <div class="dish-desc">Bagel grillé avec fromage à la crème, saumon fumé, avocat, roquette, câpres et oignon rouge.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Tacos de Champignons Barbacoa</div>
+      <div class="dish-desc">Mélange de champignons sautés avec oignon vert et ail. Servis avec tortillas de maïs, oignon, coriandre, citron vert et salsas.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Sincronizadas</div>
+      <div class="dish-desc">Tortillas de farine ou de maïs garnies de fromage manchego et jambon de dinde. Servies avec haricots, avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Pancakes</div>
+      <div class="dish-desc">Les traditionnels, servis avec beurre, bacon croustillant et sirop d'érable.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Pancakes Avoine & Banane</div>
+      <div class="dish-desc">Servis avec fruits rouges, banane et miel.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Pain Perdu</div>
+      <div class="dish-desc">Saupoudré de cannelle et sucre. Servi avec fruits rouges et sirop d'érable.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Torrejas</div>
+      <div class="dish-desc">Roulés de fromage à la crème et nutella façon pain perdu, saupoudrés de cannelle et sucre. Servis avec sirop d'érable.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DÉJEUNER -->
+<section id="dejeuner2" class="section">
+  <div class="section-header">
+    <h2>Menu Déjeuner</h2>
+    <span class="time-badge">1:00 – 5:00 PM</span>
+    <span class="note">2 options de déjeuner par jour</span>
+  </div>
+  <div class="dishes">
+    <div class="dish">
+      <div class="dish-name">Ceviche Traditionnel</div>
+      <div class="dish-desc">Poisson frais mariné au citron vert et pico de gallo. Servi avec avocat, salsa habanero et chips de tortilla.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Ceviche Vert</div>
+      <div class="dish-desc">Poisson frais mariné au citron vert et coriandre, avec concombre et avocat. Servi avec salsa habanero et chips de tortilla.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Ceviche Tropical</div>
+      <div class="dish-desc">Poisson frais mariné au citron vert avec jicama, mangue et oignon rouge. Servi avec salsa habanero et chips de tortilla.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Ceviche de Thon</div>
+      <div class="dish-desc">Dés de thon marinés à la sauce soja avec huile de sésame et poireau frit. Servi avec avocat, tostadas, salsa à l'oignon rouge et habanero, et mayo chipotle.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Cocktail de Crevettes</div>
+      <div class="dish-desc">Crevettes en sauce cocktail avec pico de gallo. Servi avec avocat, tostadas et salsa à l'oignon rouge et habanero.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Aguachile Vert de Crevettes</div>
+      <div class="dish-desc">Crevettes en sauce aguachile épicée avec oignon rouge et concombre.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Pescadillas</div>
+      <div class="dish-desc">Tacos de tortilla de maïs frits garnis de poisson sauté. Servis avec laitue, avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Tacos Gobernador</div>
+      <div class="dish-desc">Tortilla de maïs garnie de crevettes, fromage manchego et haricots. Servis avec avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Taquitos Dorés</div>
+      <div class="dish-desc">Roulés de poulet frits servis avec laitue en lanières et rondelles de tomate. Servis avec haricots, avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Gringas</div>
+      <div class="dish-desc">Tortilla de farine garnie de filet de bœuf haché et fromage manchego. Servies avec avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Taquitos de Chilorio</div>
+      <div class="dish-desc">Roulés de tortilla de farine garnis de chilorio et haricots. Servis avec avocat et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Cochinita Pibil</div>
+      <div class="dish-desc">Porc effiloché à l'achiote au four. Servi avec oignon rouge mariné, piment habanero au citron vert, haricots et tortillas ou pain bolillo.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Hamburgers</div>
+      <div class="dish-desc">De bœuf ou de saumon avec pain à hamburger. Servis avec tomate, laitue, avocat et jalapeños. Avec frites ou pommes de terre au four.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Fajitas de Poulet ou Bœuf</div>
+      <div class="dish-desc">Fajitas de poulet ou bœuf à la plancha avec poivrons et oignon. Servies avec salade de cactus, avocat, salsa et tortillas.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Filet de Poisson à la Coriandre</div>
+      <div class="dish-desc">Filets de poisson frais au four nappés de sauce à la coriandre. Servis avec riz jasmin aux pistaches et légumes rôtis.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Ceviche de Lentilles</div>
+      <div class="dish-desc">Lentilles avec dés de jicama, concombre, tomate et oignon rouge en vinaigrette de citron vert. Servi avec avocat et chips de tortilla.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Salade de Quinoa et Cœurs de Palmier</div>
+      <div class="dish-desc">Mesclun avec quinoa, cœurs de palmier, poivron jaune, asperges et avocat. Vinaigrette à l'huile d'olive et moutarde de Dijon. En option : fromage feta.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DÎNER -->
+<section id="diner" class="section">
+  <div class="section-header">
+    <h2>Menu Dîner</h2>
+    <span class="time-badge">7:00 – 9:00 PM</span>
+    <span class="note">2 options de dîner par jour</span>
+  </div>
+  <div class="dishes">
+    <div class="dish">
+      <div class="dish-name">Lasagne</div>
+      <div class="dish-desc">La traditionnelle à la viande avec sauce béchamel et gratinée. Servie avec salade de roquette.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Poulet au Pesto</div>
+      <div class="dish-desc">Filets de poulet nappés de sauce pesto avec tomates cerises au four. Servis avec quinoa sauté aux légumes.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Poisson Pané</div>
+      <div class="dish-desc">Filet de poisson frais pané à la chapelure panko. Servi avec riz crémeux au fromage de chèvre.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Tortas Planchadas</div>
+      <div class="dish-desc">Sandwichs sur pain arabe garnis de viande effilochée, fromage, haricots et mayo épicée. Servis avec avocat et salade de pommes de terre froide.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Brochettes Teriyaki</div>
+      <div class="dish-desc">Brochettes de crevettes, poulet ou mixtes avec ananas et sauce teriyaki. Servies avec riz oriental.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Poulet Poblano</div>
+      <div class="dish-desc">Filets de poulet au four avec salsa verte, lanières de piment poblano et épis de maïs. Servis avec riz rouge et champignons à la mexicaine.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Spaghetti Mamma Rosa au Homard ou aux Crevettes</div>
+      <div class="dish-desc">Crémeuse sauce mamma rosa avec homard effiloché ou crevettes.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Piment Farci</div>
+      <div class="dish-desc">Piment poblano farci de picadillo nappé de sauce tomate. Servi avec riz et haricots.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Poulet au Curry</div>
+      <div class="dish-desc">Filets de poulet avec pommes de terre en sauce curry au four. Servis avec quinoa et haricots verts vapeur.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Pozole</div>
+      <div class="dish-desc">Le traditionnel pozole mexicain au maïs. Servi avec avocat, radis, oignon rouge, habanero et citron vert.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Saumon Sauce Mandarine</div>
+      <div class="dish-desc">Filets de saumon au four en sauce à la mandarine. Servi avec quinoa sauté et asperges rôties.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Spaghetti Bolognaise</div>
+      <div class="dish-desc">Pâtes avec la traditionnelle sauce à base de viande. Servies avec salade caprese.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Tacos de Laitue au Saumon</div>
+      <div class="dish-desc">Feuilles de laitue romaine garnies de saumon grillé avec salsa mangue-avocat. Servies avec salade de cœurs de palmier.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Poisson à la Veracruzana</div>
+      <div class="dish-desc">Filets de poisson en sauce tomate avec olives, câpres, oignon et poivron. Servis avec riz blanc et pommes de terre rôties.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Saumon Salsa Verde</div>
+      <div class="dish-desc">Filets de saumon en sauce coriandre, tomatillo et olives. Servi avec riz complet et pommes de terre au romarin.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Gaoneras de Rib Eye</div>
+      <div class="dish-desc">Fines tranches de rib eye sur croûte de fromage et tortilla de maïs. Servi avec avocat, pico de gallo et salsa.</div>
+    </div>
+    <div class="dish">
+      <div class="dish-name">Arrachera et/ou Rib Eye au Barbecue</div>
+      <div class="dish-desc">Servi avec volcanes, quesadillas, guacamole, oignons grillés et légumes au grill.</div>
+    </div>
+  </div>
+  <div class="buffet-block" style="margin-top:2.5rem;">
+    <h3>Pour les enfants</h3>
+    <ul>
+      <li>Sandwich Jambon Fromage — avec mélange de fromages fondus et mac &amp; cheese</li>
+      <li>Nuggets de Poulet — panés, servis avec purée de pommes de terre</li>
+    </ul>
+  </div>
+</section>
+
+<!-- TAPAS -->
+<section id="tapas" class="section">
+  <div class="section-header">
+    <h2>Menu Tapas</h2>
+  </div>
+  <div class="botanas-grid">
+    <div class="botana-item">Jicama, Concombre et Carotte au Citron Vert et Tajin</div>
+    <div class="botana-item">Houmous et Tzatziki avec Chips de Pita</div>
+    <div class="botana-item">Guacamole et Chips de Tortilla</div>
+    <div class="botana-item">Plateau de Fromages et Charcuteries</div>
+    <div class="botana-item">Assortiment de Chips et Cacahuètes Japonaises à la Sauce Valentina</div>
+    <div class="botana-item">Fromage Panela Grillé et Cubes Panés à la Salsa Verte</div>
+    <div class="botana-item">Frites avec Ketchup</div>
+    <div class="botana-item">Frites de Patate Douce à la Mayo Chipotle</div>
+    <div class="botana-item">Dés de Jicama, Concombre, Carotte et Ananas au Jus d'Orange, Citron Vert et Piment avec Cacahuètes Japonaises</div>
+  </div>
+</section>
+
+<!-- BOISSONS -->
+<section id="boissons" class="section">
+  <div class="section-header">
+    <h2>Menu Boissons</h2>
+  </div>
+  <div class="bebidas-list">
+    <div class="bebida"><div class="bebida-name">Michelada</div><div class="bebida-desc">Bière avec sauces noires et citron vert</div></div>
+    <div class="bebida"><div class="bebida-name">Chelada</div><div class="bebida-desc">Bière avec citron vert et sel</div></div>
+    <div class="bebida"><div class="bebida-name">Ojo Rojo</div><div class="bebida-desc">Clamato à la bière</div></div>
+    <div class="bebida"><div class="bebida-name">Margarita au Citron Vert</div><div class="bebida-desc">Frozen au citron vert et tequila</div></div>
+    <div class="bebida"><div class="bebida-name">Piña Colada</div><div class="bebida-desc">Frozen au rhum ou vierge</div></div>
+    <div class="bebida"><div class="bebida-name">Aperol Spritz</div><div class="bebida-desc">Rondelles d'orange, aperol et prosecco</div></div>
+    <div class="bebida"><div class="bebida-name">Mojito</div><div class="bebida-desc">Au rhum, menthe et sucre</div></div>
+    <div class="bebida"><div class="bebida-name">Carajillo</div><div class="bebida-desc">Licor 43 avec shot d'expresso et glace</div></div>
+    <div class="bebida"><div class="bebida-name">Sangría</div><div class="bebida-desc">Limonade avec vin rouge et fruits</div></div>
+    <div class="bebida"><div class="bebida-name">Bloody Mary</div><div class="bebida-desc">Clamato à la vodka</div></div>
+    <div class="bebida"><div class="bebida-name">Daïquiri</div><div class="bebida-desc">Frozen à la fraise au rhum</div></div>
+    <div class="bebida"><div class="bebida-name">Moscow Mule</div><div class="bebida-desc">Ginger beer à la vodka et menthe</div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <img src="/filigrane.png" alt="Signature" style="height:80px; opacity:0.9;" />
+      <div class="footer-tagline">Luxury Real Estate | Riviera Maya</div>
+    </div>
+    <div class="footer-copy">© <span id="yearNow"></span> Signature ˢᶜ Tous droits réservés.</div>
+  </div>
+</footer>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+  document.getElementById('yearNow').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
