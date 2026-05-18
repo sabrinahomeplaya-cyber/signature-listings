@@ -129,6 +129,13 @@
       max-width: 820px;
       margin: 0 auto;
       padding: 3rem 1.5rem 5rem;
+      opacity: 0;
+      animation: fadeIn 0.35s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .section.active { display: block; }
@@ -189,6 +196,8 @@
       text-transform: uppercase;
       color: var(--navy);
       margin-bottom: 0.4rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--teal);
     }
 
     .dish-desc {
@@ -622,14 +631,14 @@
       <div class="dish-name">Arrachera y/o Rib Eye al Asador</div>
       <div class="dish-desc">Acompañada de volcanes, quesadillas, guacamole, cebollas asadas y verduras al grill.</div>
     </div>
-    <div class="dish">
-      <div class="dish-name">Sandwich de Jamón y Queso <span style="font-size:0.65rem;color:var(--muted);font-weight:400;letter-spacing:0.05em;text-transform:none;">— niños</span></div>
-      <div class="dish-desc">Con mezcla de quesos derretidos. Acompañado de mac &amp; cheese.</div>
-    </div>
-    <div class="dish">
-      <div class="dish-name">Dedos de Pollo <span style="font-size:0.65rem;color:var(--muted);font-weight:400;letter-spacing:0.05em;text-transform:none;">— niños</span></div>
-      <div class="dish-desc">Empanizados acompañados de puré de papa.</div>
-    </div>
+  </div>
+
+  <div class="buffet-block" style="margin-top:2.5rem;">
+    <h3>Para los niños</h3>
+    <ul>
+      <li>Sandwich de Jamón y Queso — con mezcla de quesos derretidos y mac &amp; cheese</li>
+      <li>Dedos de Pollo — empanizados acompañados de puré de papa</li>
+    </ul>
   </div>
 </section>
 
