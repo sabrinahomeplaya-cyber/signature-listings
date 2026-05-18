@@ -218,21 +218,27 @@
     .buffet-block ul {
       list-style: none;
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem 1.5rem;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .buffet-block li {
       font-size: 0.82rem;
       font-weight: 300;
       color: rgba(255,255,255,0.8);
-      line-height: 1.8;
+      line-height: 1.6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
 
     .buffet-block li::before {
-      content: '—';
-      margin-right: 0.4rem;
-      color: var(--teal);
+      content: '';
+      display: inline-block;
+      width: 18px;
+      height: 1px;
+      background: var(--teal);
+      flex-shrink: 0;
     }
 
     /* ── BOTANAS GRID ── */
