@@ -34,10 +34,15 @@
       position: relative;
     }
 
+    .subtitle-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-top: 0.4rem;
+    }
+
     .lang-switcher {
-      position: absolute;
-      top: 1.25rem;
-      right: 1.5rem;
       display: flex;
       gap: 0.25rem;
     }
@@ -104,7 +109,6 @@
     }
 
     header p.subtitle {
-      margin-top: 0.4rem;
       font-size: 0.75rem;
       font-weight: 300;
       color: rgba(255,255,255,0.5);
@@ -406,16 +410,18 @@
 <body>
 
 <header>
-  <div class="lang-switcher">
-    <a href="/chefprive/menu/" class="active">ES</a>
-    <a href="/chefprive/menu/en/">EN</a>
-    <a href="/chefprive/menu/fr/">FR</a>
-  </div>
   <div class="header-logo">
     <img src="https://listing.signature-sc.com/logo-contact.png" alt="Signature" />
   </div>
   <h1>CHEF <em>PRIVADO</em></h1>
-  <p class="subtitle">Menu</p>
+  <div class="subtitle-row">
+    <p class="subtitle">Menu</p>
+    <div class="lang-switcher">
+      <a href="/chefprive/menu/" class="active">ES</a>
+      <a href="/chefprive/menu/en/">EN</a>
+      <a href="/chefprive/menu/fr/">FR</a>
+    </div>
+  </div>
 </header>
 
 <nav class="tabs" role="tablist">
