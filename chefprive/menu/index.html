@@ -295,6 +295,8 @@
 
     @media (max-width: 560px) {
       .botanas-grid { grid-template-columns: 1fr; }
+      .botanas-grid .botana-item:nth-child(odd),
+      .botanas-grid .botana-item:nth-child(even) { padding-left: 0; padding-right: 0; border-right: none; }
     }
 
     .botana-item {
@@ -326,6 +328,8 @@
 
     @media (max-width: 560px) {
       .bebidas-list { grid-template-columns: 1fr; }
+      .bebidas-list .bebida:nth-child(odd),
+      .bebidas-list .bebida:nth-child(even) { padding-left: 0; padding-right: 0; border-right: none; }
     }
 
     .bebida {
