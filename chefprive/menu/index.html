@@ -31,6 +31,35 @@
       background: var(--navy);
       padding: 2rem 2rem 1.5rem;
       text-align: center;
+      position: relative;
+    }
+
+    .lang-switcher {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .lang-switcher a {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      padding: 0.3rem 0.5rem;
+      border-radius: 2px;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.2s;
+    }
+
+    .lang-switcher a:hover {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .lang-switcher a.active {
+      color: var(--teal);
+      border-bottom: 1px solid var(--teal);
     }
 
     .header-logo {
@@ -377,6 +406,11 @@
 <body>
 
 <header>
+  <div class="lang-switcher">
+    <a href="/chefprive/menu/" class="active">ES</a>
+    <a href="/chefprive/menu/en/">EN</a>
+    <a href="/chefprive/menu/fr/">FR</a>
+  </div>
   <div class="header-logo">
     <img src="https://listing.signature-sc.com/logo-contact.png" alt="Signature" />
   </div>
