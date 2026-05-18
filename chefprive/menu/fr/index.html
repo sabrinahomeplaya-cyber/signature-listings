@@ -12,8 +12,7 @@
     :root { --navy: #223256; --teal: #61BDCC; --cream: #faf9f6; --cream-dark: #f2f0eb; --text: #1a1a1a; --muted: #6b7280; }
     body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
     header { background: var(--navy); padding: 2rem 2rem 1.5rem; text-align: center; position: relative; }
-    .subtitle-row { display: flex; align-items: center; justify-content: center; position: relative; margin-top: 0.4rem; padding: 0 1.5rem; }
-    .lang-switcher { display: flex; gap: 0.25rem; position: absolute; right: 1.5rem; }
+    .lang-switcher { display: flex; gap: 0.25rem; justify-content: center; margin-top: 0.6rem; }
     .lang-switcher a { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-decoration: none; padding: 0.3rem 0.5rem; border-radius: 2px; color: rgba(255,255,255,0.4); transition: color 0.2s; }
     .lang-switcher a:hover { color: rgba(255,255,255,0.8); }
     .lang-switcher a.active { color: var(--teal); border-bottom: 1px solid var(--teal); }
@@ -70,13 +69,10 @@
     <img src="/logo-contact.png" alt="Signature" />
   </div>
   <h1>CHEF <em>PRIVÉ</em></h1>
-  <div class="subtitle-row">
-    <p class="subtitle">Menu</p>
-    <div class="lang-switcher">
-      <a href="/chefprive/menu/">ES</a>
-      <a href="/chefprive/menu/en/">EN</a>
-      <a href="/chefprive/menu/fr/" class="active">FR</a>
-    </div>
+  <div class="lang-switcher">
+    <a href="/chefprive/menu/">ES</a>
+    <a href="/chefprive/menu/en/">EN</a>
+    <a href="/chefprive/menu/fr/" class="active">FR</a>
   </div>
 </header>
 
