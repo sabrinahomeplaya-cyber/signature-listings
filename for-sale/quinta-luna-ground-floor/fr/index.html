@@ -296,7 +296,6 @@
     },{passive:true});
 
     // Build vertical gallery in modal
-    const photos = state.photos;
     const modalScroll = el('modalScroll');
     photos.forEach((url,idx) => {
       const div=document.createElement('div'); div.setAttribute('data-gidx',String(idx));
