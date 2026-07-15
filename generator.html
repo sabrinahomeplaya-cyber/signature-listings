@@ -1098,7 +1098,7 @@ POINTS FORTS : liste de 10 à 12 mots-clés ou groupes de mots concis. AUCUNE ph
 
 Réponds UNIQUEMENT avec un JSON valide, sans backticks. La rédaction doit être en ${langLabel}.
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"4 paragraphes narratifs Luxe Discret en ${langLabel}","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
+    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
     showStatus('loading','Construction du listing…');
@@ -1139,7 +1139,7 @@ RÈGLES DE FORMATAGE CRITIQUES :
 
 Réponds UNIQUEMENT avec un JSON valide, sans backticks.
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit fidèlement, 4 paragraphes, ton Luxe Discret","highlights":["traduit fidèlement"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})});
+    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})});
     if(!res.ok) throw new Error('Erreur API '+res.status);
     const api = await res.json();
     showStatus('loading','Construction du listing traduit…');
