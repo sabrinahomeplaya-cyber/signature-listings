@@ -94,12 +94,18 @@
     .photos-mode-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 3px rgba(34,50,86,0.1); }
 
     /* Source photos grid */
-    #sourcePhotosGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; }
-    .source-photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
+    #sourcePhotosGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; max-height: 70vh; overflow-y: auto; padding: 2px; }
+    @media (max-width: 600px) { #sourcePhotosGrid { grid-template-columns: repeat(2, 1fr); } }
+    .source-photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; cursor: grab; border: 2px solid transparent; transition: border-color 0.15s; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: pan-y; }
     .source-photo-item.selected { border-color: var(--teal); }
-    .source-photo-item img { width: 100%; height: 100%; object-fit: cover; }
+    .source-photo-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
     .source-photo-item .check { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: var(--teal); display: none; align-items: center; justify-content: center; }
     .source-photo-item.selected .check { display: flex; }
+    .source-photo-item .photo-rank { position: absolute; top: 4px; left: 4px; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; background: rgba(34,50,86,0.78); color: white; font-size: 0.68rem; font-weight: 600; font-variant-numeric: tabular-nums; display: none; align-items: center; justify-content: center; }
+    .source-photo-item.selected .photo-rank { display: flex; }
+    .source-photo-item.dragging { opacity: 0.3; }
+    .photo-ghost { position: fixed; z-index: 9999; width: 150px; aspect-ratio: 4/3; border-radius: 8px; overflow: hidden; pointer-events: none; border: 2px solid var(--teal); box-shadow: 0 10px 28px rgba(34,50,86,0.35); transform: translate(-50%, -50%) rotate(-2deg); }
+    .photo-ghost img { width: 100%; height: 100%; object-fit: cover; }
 
     /* Own photos */
     #ownPhotosArea { border: 2px dashed rgba(34,50,86,0.15); border-radius: 10px; padding: 20px; text-align: center; font-size: 0.83rem; color: rgba(34,50,86,0.5); cursor: pointer; transition: border-color 0.2s; margin-bottom: 12px; }
@@ -366,7 +372,7 @@
 
         <!-- Photos source -->
         <div id="panelPhotoSource">
-          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Cliquez sur les photos pour les sélectionner / désélectionner. Glissez-déposez pour réordonner.</div>
+          <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:12px">Cliquez sur une photo pour la retirer ou la remettre. Faites-la glisser pour changer l'ordre (au doigt : appui maintenu, puis glisser). La photo 1 est la photo principale du listing.</div>
           <div id="sourcePhotosGrid"></div>
           <div style="font-size:0.72rem;color:rgba(34,50,86,0.4);margin-top:8px"><span id="sourcePhotoCount">0</span> photos sélectionnées</div>
         </div>
@@ -437,7 +443,6 @@ let currentMode = 'collab';
 let listingData = {};
 let photosMode = 'source';
 let ownPhotos = []; // { name, url (blob), base64, ext }
-let dragSrcIndex = null;
 
 const SQM_TO_SQFT = 10.7639;
 
@@ -668,40 +673,119 @@ function updatePathPreview() {
 function buildSourcePhotosGrid(images) {
   const grid = document.getElementById('sourcePhotosGrid');
   grid.innerHTML = '';
-  images.forEach((url, idx) => {
+  images.forEach(url => {
     const div = document.createElement('div');
     div.className = 'source-photo-item selected';
     div.dataset.url = url;
-    div.dataset.idx = idx;
-    div.draggable = true;
-    div.innerHTML = `<img src="${url}" loading="lazy" /><div class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+    div.innerHTML = `<img src="${url}" loading="lazy" draggable="false" /><span class="photo-rank"></span><div class="check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>`;
     div.addEventListener('click', () => {
+      if (photoDrag.justDropped) return;
       div.classList.toggle('selected');
       updateSourceCount();
     });
-    // Drag to reorder
-    div.addEventListener('dragstart', () => dragSrcIndex = idx);
-    div.addEventListener('dragover', e => { e.preventDefault(); div.style.opacity = '0.5'; });
-    div.addEventListener('dragleave', () => { div.style.opacity = '1'; });
-    div.addEventListener('drop', e => {
-      e.preventDefault(); div.style.opacity = '1';
-      const items = Array.from(grid.querySelectorAll('.source-photo-item'));
-      const targetIdx = items.indexOf(div);
-      if (dragSrcIndex === null || dragSrcIndex === targetIdx) return;
-      const dragged = items[dragSrcIndex];
-      if (dragSrcIndex < targetIdx) grid.insertBefore(dragged, div.nextSibling);
-      else grid.insertBefore(dragged, div);
-      dragSrcIndex = null;
-      updateSourceCount();
-    });
+    div.addEventListener('pointerdown', e => startPhotoDrag(e, div));
+    // L'appui maintenu au doigt ouvrirait le menu de l'image
+    div.addEventListener('contextmenu', e => { if (photoDrag.item) e.preventDefault(); });
     grid.appendChild(div);
   });
+  if (!grid.dataset.wired) {
+    // Pendant un glissé au doigt, la grille ne défile pas sous la photo tenue
+    grid.addEventListener('touchmove', e => { if (photoDrag.active) e.preventDefault(); }, { passive: false });
+    grid.dataset.wired = '1';
+  }
   updateSourceCount();
 }
 
+// ── Réordonner les photos source ──────────────────────────────────
+// Événements « pointer » plutôt que le glisser-déposer HTML : celui-ci retenait
+// la place de départ de chaque photo, fausse dès la première photo déplacée, et
+// ne marchait pas au doigt. Souris : le glissé part après 5 px ; doigt : après un
+// appui maintenu de 250 ms, sinon le doigt fait défiler la grille.
+const photoDrag = { item: null, active: false, ghost: null, timer: null, raf: null, justDropped: false };
+
+function startPhotoDrag(e, div) {
+  if (e.button !== 0 || photoDrag.item) return;
+  Object.assign(photoDrag, { item: div, active: false, pointerId: e.pointerId, touch: e.pointerType === 'touch', x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY });
+  if (photoDrag.touch) photoDrag.timer = setTimeout(activatePhotoDrag, 250);
+  window.addEventListener('pointermove', movePhotoDrag);
+  window.addEventListener('pointerup', endPhotoDrag);
+  window.addEventListener('pointercancel', endPhotoDrag);
+}
+
+function activatePhotoDrag() {
+  const { item } = photoDrag;
+  photoDrag.active = true;
+  item.classList.add('dragging');
+  const ghost = document.createElement('div');
+  ghost.className = 'photo-ghost';
+  ghost.innerHTML = `<img src="${item.dataset.url}" />`;
+  document.body.appendChild(ghost);
+  photoDrag.ghost = ghost;
+  moveGhost();
+  photoDrag.raf = requestAnimationFrame(autoScrollPhotos);
+}
+
+function movePhotoDrag(e) {
+  if (e.pointerId !== photoDrag.pointerId) return;
+  photoDrag.x = e.clientX; photoDrag.y = e.clientY;
+  if (!photoDrag.active) {
+    const far = Math.hypot(e.clientX - photoDrag.x0, e.clientY - photoDrag.y0);
+    if (photoDrag.touch) { if (far > 8) endPhotoDrag(); return; }
+    if (far < 5) return;
+    activatePhotoDrag();
+  }
+  e.preventDefault();
+  moveGhost();
+  placeDraggedPhoto();
+}
+
+function moveGhost() {
+  photoDrag.ghost.style.left = photoDrag.x + 'px';
+  photoDrag.ghost.style.top = photoDrag.y + 'px';
+}
+
+// La photo tenue prend la place de celle qu'elle survole
+function placeDraggedPhoto() {
+  const { item, x, y } = photoDrag;
+  const target = document.elementFromPoint(x, y)?.closest('.source-photo-item');
+  if (!target || target === item || target.parentNode !== item.parentNode) return;
+  const items = [...item.parentNode.children];
+  if (items.indexOf(item) < items.indexOf(target)) target.after(item); else target.before(item);
+  updateSourceCount();
+}
+
+// Près du haut ou du bas de la grille, elle défile seule
+function autoScrollPhotos() {
+  if (!photoDrag.active) return;
+  const grid = photoDrag.item.parentNode, r = grid.getBoundingClientRect(), edge = 60;
+  let dy = 0;
+  if (photoDrag.y < r.top + edge) dy = -Math.min(20, Math.ceil((r.top + edge - photoDrag.y) / 4));
+  else if (photoDrag.y > r.bottom - edge) dy = Math.min(20, Math.ceil((photoDrag.y - r.bottom + edge) / 4));
+  if (dy) { grid.scrollTop += dy; placeDraggedPhoto(); }
+  photoDrag.raf = requestAnimationFrame(autoScrollPhotos);
+}
+
+function endPhotoDrag(e) {
+  if (e && e.pointerId !== photoDrag.pointerId) return;
+  clearTimeout(photoDrag.timer);
+  cancelAnimationFrame(photoDrag.raf);
+  window.removeEventListener('pointermove', movePhotoDrag);
+  window.removeEventListener('pointerup', endPhotoDrag);
+  window.removeEventListener('pointercancel', endPhotoDrag);
+  if (photoDrag.active) {
+    photoDrag.item.classList.remove('dragging');
+    photoDrag.ghost.remove();
+    // Le clic qui suit le lâcher ne doit pas retirer la photo
+    photoDrag.justDropped = true;
+    setTimeout(() => { photoDrag.justDropped = false; }, 0);
+  }
+  Object.assign(photoDrag, { item: null, active: false, ghost: null });
+}
+
 function updateSourceCount() {
-  const selected = document.querySelectorAll('.source-photo-item.selected').length;
-  document.getElementById('sourcePhotoCount').textContent = selected;
+  const selected = document.querySelectorAll('.source-photo-item.selected');
+  document.getElementById('sourcePhotoCount').textContent = selected.length;
+  selected.forEach((el, i) => { el.querySelector('.photo-rank').textContent = i + 1; });
 }
 
 function getSelectedSourcePhotos() {
