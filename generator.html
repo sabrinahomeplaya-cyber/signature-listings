@@ -49,6 +49,10 @@
     .status-bar { margin-top: 20px; border-radius: 10px; padding: 14px 18px; font-size: 0.83rem; display: none; align-items: center; gap: 10px; }
     .status-bar.loading { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); color: var(--navy); display: flex; }
     .status-bar.error { background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2); color: #c0392b; display: flex; }
+    .status-bar.success { background: rgba(45,106,79,0.07); border: 1px solid rgba(45,106,79,0.25); color: #2d6a4f; display: flex; }
+    #publish-bar { margin: 12px 20px; flex-wrap: wrap; }
+    #publish-bar a { color: inherit; font-weight: 600; word-break: break-all; }
+    #publish-bar .btn-sm { margin-left: auto; }
     .spinner { width: 16px; height: 16px; border: 2px solid rgba(97,189,204,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -269,6 +273,14 @@
         Publier
       </button>
     </div>
+  </div>
+
+  <!-- Lien du listing publié -->
+  <div id="publish-bar" class="status-bar">
+    <div class="spinner" id="publish-spinner"></div>
+    <span id="publish-text"></span>
+    <a id="publish-link" href="#" target="_blank" rel="noopener"></a>
+    <button class="btn-sm btn-outline" onclick="copyPublishedLink()">Copier le lien</button>
   </div>
 
   <!-- Preview -->
@@ -1366,6 +1378,7 @@ async function publishToGitHub() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error||'Erreur GitHub');
     toast('✓ Publié sur listing.signature-sc.com/'+path);
+    showPublishedLink(`https://listing.signature-sc.com/for-sale/${currentSlug}/${currentLang}/`, generatedCode);
     btn.textContent='✓ Publié'; btn.style.background='#1a3d2e';
     setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier'; btn.style.background=''; },5000);
   } catch(err) {
@@ -1374,8 +1387,50 @@ async function publishToGitHub() {
   }
 }
 
+// ── Lien du listing publié ────────────────────────────────────────
+// Vercel met environ deux minutes à mettre en ligne ce qui vient d'arriver sur GitHub :
+// le bandeau le dit, puis passe à « En ligne » quand la page servie est exactement
+// celle qu'on vient de publier (une ancienne version au même lien ne compte pas).
+let publishWatch = null;
+
+function setPublishBar(state, text, url, spin = state === 'loading') {
+  document.getElementById('publish-bar').className = 'status-bar ' + state;
+  document.getElementById('publish-spinner').style.display = spin ? 'block' : 'none';
+  document.getElementById('publish-text').textContent = text;
+  const a = document.getElementById('publish-link');
+  a.href = url; a.textContent = url;
+}
+
+function hidePublishBar() {
+  clearTimeout(publishWatch);
+  document.getElementById('publish-bar').className = 'status-bar';
+}
+
+function showPublishedLink(url, html) {
+  clearTimeout(publishWatch);
+  setPublishBar('loading', 'Publié. Mise en ligne en cours, environ 2 minutes :', url);
+  let tries = 0;
+  const check = async () => {
+    try {
+      const res = await fetch(url + '?v=' + Date.now(), { cache: 'no-store' });
+      if (res.ok && (await res.text()) === html) { setPublishBar('success', '✓ En ligne :', url); return; }
+    } catch (e) {}
+    if (++tries >= 36) { setPublishBar('loading', 'Publié, mais pas encore visible après 6 minutes. Le lien fonctionnera dès que Vercel aura fini :', url, false); return; }
+    publishWatch = setTimeout(check, 10000);
+  };
+  publishWatch = setTimeout(check, 10000);
+}
+
+async function copyPublishedLink() {
+  const url = document.getElementById('publish-link').href;
+  try { await navigator.clipboard.writeText(url); }
+  catch(e) { const t=document.createElement('textarea'); t.value=url; t.style.cssText='position:fixed;opacity:0'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
+  toast('✓ Lien copié');
+}
+
 // ── Helpers ───────────────────────────────────────────────────────
 function backToGenerator() {
+  hidePublishBar();
   document.getElementById('screen-result').style.display='none';
   document.getElementById('screen-generator').style.display='flex';
   showTab('preview');
