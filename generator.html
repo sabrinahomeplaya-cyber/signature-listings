@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Signature ˢᶜ — Générateur de Listings</title>
+  <title>Signature ˢᶜ · Générateur de Listings</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -137,7 +137,7 @@
 <body>
 
 <!-- ══════════════════════════════════════════════
-     SCREEN 1 — GENERATOR
+     SCREEN 1 : GENERATOR
 ═══════════════════════════════════════════════ -->
 <div id="screen-generator">
   <header class="gen-header">
@@ -174,7 +174,7 @@
           <div>
             <label class="input-label" for="listing-slug" style="font-size:0.68rem">Slug du bien</label>
             <input id="listing-slug" type="text" class="small-input" placeholder="casa-xaman-ek" autocomplete="off" spellcheck="false" />
-            <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview">casa-xaman-ek</strong>/fr</div>
+            <div style="font-size:0.68rem;color:rgba(34,50,86,0.4);margin-top:5px">→ for-sale/<strong id="slug-preview">casa-xaman-ek</strong>/<span id="lang-preview">fr</span></div>
           </div>
           <div>
             <label class="input-label" for="listing-lang" style="font-size:0.68rem">Langue</label>
@@ -238,7 +238,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
-     SCREEN 2 — RESULT
+     SCREEN 2 : RESULT
 ═══════════════════════════════════════════════ -->
 <div id="screen-result">
   <div class="result-topbar">
@@ -441,6 +441,9 @@ let dragSrcIndex = null;
 
 const SQM_TO_SQFT = 10.7639;
 
+// Le nom du dossier tel qu'il sera créé : l'aperçu et la publication suivent la même règle
+const slugify = s => s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+
 // ── Init ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initUploadZone();
@@ -448,19 +451,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Collab slug/lang preview
   const slugInput = document.getElementById('listing-slug');
   const langSelect = document.getElementById('listing-lang');
-  slugInput.addEventListener('input', () => {
-    document.getElementById('slug-preview').textContent = (slugInput.value.trim() || 'listing') + '/' + langSelect.value;
-  });
-  langSelect.addEventListener('change', () => {
-    document.getElementById('slug-preview').textContent = (slugInput.value.trim() || 'listing') + '/' + langSelect.value;
-  });
+  const updateCP = () => {
+    document.getElementById('slug-preview').textContent = slugify(slugInput.value) || slugInput.placeholder;
+    document.getElementById('lang-preview').textContent = langSelect.value;
+  };
+  slugInput.addEventListener('input', updateCP);
+  langSelect.addEventListener('change', updateCP);
+  updateCP();
 
   // Translate slug/lang preview + auto-fill
   const tUrl = document.getElementById('translate-url');
   const tSlug = document.getElementById('translate-slug');
   const tLang = document.getElementById('translate-lang');
   const updateTP = () => {
-    document.getElementById('slug-preview-t').textContent = tSlug.value.trim() || 'listing';
+    document.getElementById('slug-preview-t').textContent = slugify(tSlug.value) || 'listing';
     document.getElementById('lang-preview-t').textContent = tLang.value;
   };
   tUrl.addEventListener('input', () => {
@@ -1036,7 +1040,7 @@ function buildTemplate(data) {
     const imgCounter = el('imgCounter');
     if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
     el('shareBtn').onclick=async()=>{
-      const data={title:listing.title,text:listing.price+' '+listing.currency+' — '+listing.title,url:listing.publicUrl};
+      const data={title:listing.title,text:listing.price+' '+listing.currency+' · '+listing.title,url:listing.publicUrl};
       if(navigator.share){try{await navigator.share(data);}catch(e){}}
       else{navigator.clipboard.writeText(listing.publicUrl).then(()=>{const b=el('shareBtn');const t=b.innerHTML;b.textContent='Copied!';setTimeout(()=>{b.innerHTML=t;},1500);}).catch(()=>{});}
     };
@@ -1061,9 +1065,18 @@ async function generateListing() {
   currentMode === 'translate' ? await translateListing() : await extractListing();
 }
 
+// Un délai dépassé chez Vercel rend une page sans JSON : dire ce qui s'est passé plutôt que « {} »
+async function apiError(res) {
+  const e = await res.json().catch(() => ({}));
+  const detail = e?.error?.message || e?.error?.type || (typeof e?.error === 'string' ? e.error : '');
+  if (detail) return new Error(`Erreur API ${res.status} : ${detail}`);
+  if (res.status === 504) return new Error('Le serveur a mis plus de 60 secondes à répondre. Réessayez dans un instant.');
+  return new Error(`Erreur API ${res.status}`);
+}
+
 async function extractListing() {
   const url = document.getElementById('listing-url').value.trim();
-  const slug = document.getElementById('listing-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-|-$/g,'');
+  const slug = slugify(document.getElementById('listing-slug').value);
   const lang = document.getElementById('listing-lang').value;
   if (!url || !url.startsWith('http')) { showStatus('error','Lien invalide.'); document.getElementById('btn-generate').disabled=false; return; }
   if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
@@ -1099,12 +1112,13 @@ POINTS FORTS : liste de 10 à 12 mots-clés ou groupes de mots concis. AUCUNE ph
 Réponds UNIQUEMENT avec un JSON valide, sans backticks. La rédaction doit être en ${langLabel}.
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"4 paragraphes narratifs Luxe Discret en ${langLabel}","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
-    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(`Erreur API ${res.status} — ${e?.error?.message||e?.error?.type||JSON.stringify(e)}`);}
+    if(!res.ok) throw await apiError(res);
     const api = await res.json();
     showStatus('loading','Construction du listing…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
     const d=JSON.parse(m[0]);
+    if(Array.isArray(api.images)) d.images=api.images;
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1112,7 +1126,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
 
 async function translateListing() {
   const url = document.getElementById('translate-url').value.trim();
-  const slug = document.getElementById('translate-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-|-$/g,'');
+  const slug = slugify(document.getElementById('translate-slug').value);
   const targetLang = document.getElementById('translate-lang').value;
   if (!url||!url.includes('listing.signature-sc.com')) { showStatus('error','URL listing.signature-sc.com requis.'); document.getElementById('btn-generate').disabled=false; return; }
   if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
@@ -1140,12 +1154,13 @@ RÈGLES DE FORMATAGE CRITIQUES :
 Réponds UNIQUEMENT avec un JSON valide, sans backticks.
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit fidèlement, 4 paragraphes, ton Luxe Discret","highlights":["traduit fidèlement"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
     const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})});
-    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(`Erreur API ${res.status} — ${e?.error?.message||e?.error?.type||JSON.stringify(e)}`);}
+    if(!res.ok) throw await apiError(res);
     const api = await res.json();
     showStatus('loading','Construction du listing traduit…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
     const d=JSON.parse(m[0]);
+    if(Array.isArray(api.images)) d.images=api.images;
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
     d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
     showResult(d);

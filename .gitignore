@@ -1,0 +1,5 @@
+# La clé Anthropic ne doit jamais partir sur GitHub
+anthropic.key
+
+# Les dépendances se réinstallent avec npm install
+node_modules/

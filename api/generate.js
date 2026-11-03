@@ -20,6 +20,7 @@ export default async function handler(req, res) {
     const listingUrl = urlMatch ? urlMatch[0] : null;
 
     let pageContent = '';
+    let photos = null;
 
     if (listingUrl) {
       try {
@@ -29,7 +30,8 @@ export default async function handler(req, res) {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
           },
-          redirect: 'follow'
+          redirect: 'follow',
+          signal: AbortSignal.timeout(15000)
         });
 
         if (pageResponse.ok) {
@@ -96,7 +98,7 @@ export default async function handler(req, res) {
             }
           }
 
-          const uniqueImages = [...imageUrls];
+          photos = onePerPhoto([...imageUrls]);
 
           // ── 7. Highlights depuis l'objet JS inline (listing.signature-sc.com) ──
           let inlineHighlights = [];
@@ -120,15 +122,13 @@ export default async function handler(req, res) {
             .trim()
             .substring(0, 12000);
 
-          const imagesSection = uniqueImages.length > 0
-            ? `\n\n=== IMAGES (${uniqueImages.length} photos) ===\n` + uniqueImages.join('\n')
-            : '\n\n=== AUCUNE IMAGE TROUVÉE ===';
-
           const highlightsSection = inlineHighlights.length > 0
             ? `\n\n=== HIGHLIGHTS OBLIGATOIRES (copie exacte, aucune modification) ===\n` + inlineHighlights.map(h => `- ${h}`).join('\n')
             : '';
 
-          pageContent = textContent + imagesSection + highlightsSection;
+          // Les photos ne passent plus par Claude : les lui faire recopier une à une
+          // dépassait les 60 secondes (1 129 URLs sur un listing Christie's).
+          pageContent = textContent + highlightsSection;
         }
       } catch (fetchErr) {
         console.error('Page fetch error:', fetchErr.message);
@@ -138,7 +138,7 @@ export default async function handler(req, res) {
     const enhancedMessages = [{
       role: 'user',
       content: pageContent
-        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Pour le champ "images" : inclus TOUTES les URLs listées dans la section IMAGES ci-dessus sans aucune limite ni sélection.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS utiliser ces highlights tels quels dans le champ "highlights" du JSON, sans aucune modification, traduction ou reformulation.`
+        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Laisse le champ "images" vide ([]) : les photos sont ajoutées par le serveur.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS utiliser ces highlights tels quels dans le champ "highlights" du JSON, sans aucune modification, traduction ou reformulation.`
         : (body.messages?.[0]?.content || '')
     }];
 
@@ -161,6 +161,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     if (!response.ok) return res.status(response.status).json(data);
+    if (photos) data.images = photos;
     return res.status(200).json(data);
 
   } catch (err) {
@@ -168,9 +169,36 @@ export default async function handler(req, res) {
   }
 }
 
+// WordPress publie chaque photo en plusieurs tailles (105x70, 300x200, ..., 1536x1025,
+// l'original, et leurs copies .jpg.webp) : une seule URL par photo, la plus grande
+// qui ne dépasse pas 2000 px de large, sinon l'original. La même photo revient aussi
+// avec ou sans « www. » et avec un « #imageobject » en suffixe.
+function onePerPhoto(urls) {
+  const width = u => { const m = u.match(/-(\d+)x\d+\.(?:jpe?g|png|webp)/i); return m ? +m[1] : Infinity; };
+  const groups = new Map();
+  for (const raw of urls) {
+    const url = raw.replace(/&amp;/g, '&').replace(/#.*$/, '');
+    const key = url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\.(jpe?g|png)\.webp/i, '.$1').replace(/-\d+x\d+(\.(?:jpe?g|png|webp))/i, '$1');
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(url);
+  }
+  return [...groups.values()].map(variants => {
+    const plain = variants.filter(u => !/\.(jpe?g|png)\.webp/i.test(u));
+    const pool = plain.length ? plain : variants;
+    const sized = pool.filter(u => width(u) <= 2000).sort((a, b) => width(b) - width(a));
+    // Une photo qui n'existe qu'en vignette (105x70) est celle d'un AUTRE bien du site
+    if (pool.every(u => width(u) < 400)) return null;
+    return sized[0] || pool[0];
+  }).filter(Boolean);
+}
+
 function isValidPhoto(url) {
   if (!url || !url.startsWith('http')) return false;
-  if (!/\.(jpg|jpeg|png|webp)/i.test(url)) return false;
+  // L'extension se cherche dans le chemin : un lien de partage Pinterest porte
+  // l'image dans ses paramètres, ce n'est pas une photo.
+  let path;
+  try { path = new URL(url.replace(/&amp;/g, '&')).pathname; } catch { return false; }
+  if (!/\.(jpg|jpeg|png|webp)/i.test(path)) return false;
   const lower = url.toLowerCase();
   const exclude = ['logo', 'icon', 'favicon', 'avatar', 'badge', 'pixel', 'tracking',
                    'placeholder', 'blank', 'spacer', '1x1', 'sprite', 'flag',
