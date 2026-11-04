@@ -16,7 +16,8 @@ export default async function handler(req, res) {
   try {
     const body = req.body;
     const userMessage = body.messages?.[0]?.content || '';
-    const urlMatch = userMessage.match(/https?:\/\/[^\s]+/);
+    // noFetch : le générateur envoie déjà le texte à traduire, aucune page à lire
+    const urlMatch = body.noFetch ? null : userMessage.match(/https?:\/\/[^\s]+/);
     const listingUrl = urlMatch ? urlMatch[0] : null;
 
     let pageContent = '';
@@ -138,7 +139,7 @@ export default async function handler(req, res) {
     const enhancedMessages = [{
       role: 'user',
       content: pageContent
-        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Laisse le champ "images" vide ([]) : les photos sont ajoutées par le serveur.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS utiliser ces highlights tels quels dans le champ "highlights" du JSON, sans aucune modification, traduction ou reformulation.`
+        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Laisse le champ "images" vide ([]) : les photos sont ajoutées par le serveur.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS reprendre ces highlights un par un dans le champ "highlights" du JSON, dans le même ordre, sans en ajouter, en retirer ni en reformuler aucun. S'ils ne sont pas dans la langue demandée, traduis-les fidèlement.`
         : (body.messages?.[0]?.content || '')
     }];
 

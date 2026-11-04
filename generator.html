@@ -51,8 +51,13 @@
     .status-bar.error { background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2); color: #c0392b; display: flex; }
     .status-bar.success { background: rgba(45,106,79,0.07); border: 1px solid rgba(45,106,79,0.25); color: #2d6a4f; display: flex; }
     #publish-bar { margin: 12px 20px; flex-wrap: wrap; }
-    #publish-bar a { color: inherit; font-weight: 600; word-break: break-all; }
-    #publish-bar .btn-sm { margin-left: auto; }
+    #btn-translate-others { margin-left: auto; }
+    #publish-links { flex-basis: 100%; display: flex; flex-direction: column; gap: 6px; }
+    #publish-links:empty { display: none; }
+    .publish-link { display: flex; align-items: center; gap: 10px; }
+    .publish-link a { color: inherit; font-weight: 600; word-break: break-all; }
+    .status-bar.error .publish-link a { color: var(--navy); } /* une langue en échec ne rend pas les autres suspectes */
+    .publish-link .btn-sm { margin-left: auto; }
     .spinner { width: 16px; height: 16px; border: 2px solid rgba(97,189,204,0.3); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -200,13 +205,14 @@
           <div class="step-item"><span class="step-num">1</span><span>Collez le lien public du listing collaborateur.</span></div>
           <div class="step-item"><span class="step-num">2</span><span>Claude extrait les informations et photos automatiquement.</span></div>
           <div class="step-item"><span class="step-num">3</span><span>Modifiez si nécessaire, puis cliquez <strong>Publier</strong>.</span></div>
+          <div class="step-item"><span class="step-num">4</span><span><strong>Traduire et publier</strong> crée les deux autres langues, avec les mêmes photos et la même carte.</span></div>
         </div>
       </div>
 
       <!-- Panel traduction -->
       <div id="panelTranslate" style="display:none">
         <div class="info-box">
-          Collez le lien d'un de vos listings <strong>déjà publié</strong>. Claude traduit et convertit les surfaces automatiquement <strong>(m² ↔ sq ft)</strong>.
+          Collez le lien d'un de vos listings <strong>déjà publié</strong>. Claude traduit et convertit les surfaces automatiquement <strong>(m² ↔ sq ft)</strong>. Les photos, leur ordre et la carte sont repris tels quels.
         </div>
         <div style="margin-bottom:24px">
           <label class="input-label" for="translate-url">Lien de votre listing</label>
@@ -232,6 +238,7 @@
           <div class="step-item"><span class="step-num">1</span><span>Collez le lien de votre listing déjà publié (FR, EN ou ES).</span></div>
           <div class="step-item"><span class="step-num">2</span><span>Choisissez la langue cible. Surfaces converties automatiquement.</span></div>
           <div class="step-item"><span class="step-num">3</span><span>Modifiez si nécessaire, puis cliquez <strong>Publier</strong>.</span></div>
+          <div class="step-item"><span class="step-num">4</span><span><strong>Traduire et publier</strong> crée la langue qui manque, sans toucher à l'original.</span></div>
         </div>
       </div>
 
@@ -279,8 +286,8 @@
   <div id="publish-bar" class="status-bar">
     <div class="spinner" id="publish-spinner"></div>
     <span id="publish-text"></span>
-    <a id="publish-link" href="#" target="_blank" rel="noopener"></a>
-    <button class="btn-sm btn-outline" onclick="copyPublishedLink()">Copier le lien</button>
+    <button class="btn-sm btn-teal" id="btn-translate-others" onclick="translateOthers()"></button>
+    <div id="publish-links"></div>
   </div>
 
   <!-- Preview -->
@@ -451,6 +458,7 @@
 let generatedCode = '';
 let currentSlug = '';
 let currentLang = 'fr';
+let sourceLang = null; // en mode Traduire, la langue du listing d'origine, que la traduction n'écrase jamais
 let currentMode = 'collab';
 let listingData = {};
 let photosMode = 'source';
@@ -1176,7 +1184,7 @@ async function extractListing() {
   const lang = document.getElementById('listing-lang').value;
   if (!url || !url.startsWith('http')) { showStatus('error','Lien invalide.'); document.getElementById('btn-generate').disabled=false; return; }
   if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
-  currentSlug=slug; currentLang=lang;
+  currentSlug=slug; currentLang=lang; sourceLang=null;
   const publicUrl=`https://listing.signature-sc.com/for-sale/${slug}/${lang}/`;
   const langLabel = lang==='fr'?'français':lang==='en'?'anglais':'espagnol (Mexique)';
   showStatus('loading','Lecture de la page…');
@@ -1220,25 +1228,18 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
 }
 
-async function translateListing() {
-  const url = document.getElementById('translate-url').value.trim();
-  const slug = slugify(document.getElementById('translate-slug').value);
-  const targetLang = document.getElementById('translate-lang').value;
-  if (!url||!url.includes('listing.signature-sc.com')) { showStatus('error','URL listing.signature-sc.com requis.'); document.getElementById('btn-generate').disabled=false; return; }
-  if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
-  currentSlug=slug; currentLang=targetLang;
-  const publicUrl=`https://listing.signature-sc.com/for-sale/${slug}/${targetLang}/`;
-  const langLabel=targetLang==='en'?'anglais':targetLang==='es'?'espagnol (Mexique)':'français';
-  showStatus('loading',`Traduction en ${langLabel}…`);
-  try {
-    const locRule=targetLang==='en'
-      ?'Convertis IMPÉRATIVEMENT tous les mètres carrés (m²) en pieds carrés (sq ft, arrondi entier). Utilise le terme "showing" (jamais "viewing").'
-      :targetLang==='es'
-      ?'Utilise exclusivement le vocabulaire immobilier du Mexique (MX). Convertis tous les pieds carrés (sq ft) en mètres carrés (m²).'
-      :'Utilise les mètres carrés (m²) et les pieds carrés (sq ft) entre parenthèses juste après. Terminologie haut de gamme.';
-    const sys = `Tu es le traducteur officiel de l'agence "Signature ˢᶜ". Tu appliques la règle de FIDÉLITÉ ABSOLUE.
+const LANG_LABELS = { en: 'anglais', es: 'espagnol (Mexique)', fr: 'français' };
 
-Traduis ce listing immobilier vers le ${langLabel} avec une fidélité chirurgicale. Conserve la structure, l'intention et le ton "Luxe Discret" exacts de la source. N'invente, ne supprime et ne reformule aucune caractéristique.
+// La règle de traduction, la même pour une page publiée et pour le listing à l'écran
+function translationRules(targetLang) {
+  const locRule=targetLang==='en'
+    ?'Convertis IMPÉRATIVEMENT tous les mètres carrés (m²) en pieds carrés (sq ft, arrondi entier). Utilise le terme "showing" (jamais "viewing").'
+    :targetLang==='es'
+    ?'Utilise exclusivement le vocabulaire immobilier du Mexique (MX). Convertis tous les pieds carrés (sq ft) en mètres carrés (m²).'
+    :'Utilise les mètres carrés (m²) et les pieds carrés (sq ft) entre parenthèses juste après. Terminologie haut de gamme.';
+  return `Tu es le traducteur officiel de l'agence "Signature ˢᶜ". Tu appliques la règle de FIDÉLITÉ ABSOLUE.
+
+Traduis ce listing immobilier vers le ${LANG_LABELS[targetLang]} avec une fidélité chirurgicale. Conserve la structure, l'intention et le ton "Luxe Discret" exacts de la source. N'invente, ne supprime et ne reformule aucune caractéristique.
 
 RÈGLE DE LOCALISATION OBLIGATOIRE : ${locRule}
 
@@ -1247,20 +1248,75 @@ RÈGLES DE FORMATAGE CRITIQUES :
 2. INTERDICTION FORMELLE d'utiliser des tirets du bas (_).
 3. Les points forts doivent être UNIQUEMENT des mots-clés ou groupes de mots concis. AUCUNE phrase descriptive.
 
-Réponds UNIQUEMENT avec un JSON valide, sans backticks.
+Réponds UNIQUEMENT avec un JSON valide, sans backticks.`;
+}
+
+// La page publiée garde les photos dans l'ordre choisi et les coordonnées de la carte :
+// elles se reprennent telles quelles, Claude ne les relit pas.
+async function readPublished(url) {
+  try {
+    const res = await fetch(new URL(url).pathname + '?v=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return { images: [] };
+    const html = await res.text();
+    const ll = html.match(/maps\.google\.com\/maps\?ll=(-?[\d.]+),(-?[\d.]+)/);
+    const list = html.match(/(?:\bimages\s*:|const photos\s*=)\s*\[([\s\S]*?)\]/);
+    const images = list ? [...list[1].matchAll(/["'](https?:\/\/[^"']+)["']/g)].map(m => m[1]) : [];
+    return { images, lat: ll ? ll[1] : '', lng: ll ? ll[2] : '' };
+  } catch (e) { return { images: [] }; }
+}
+
+async function translateListing() {
+  const url = document.getElementById('translate-url').value.trim();
+  const slug = slugify(document.getElementById('translate-slug').value);
+  const targetLang = document.getElementById('translate-lang').value;
+  if (!url||!url.includes('listing.signature-sc.com')) { showStatus('error','URL listing.signature-sc.com requis.'); document.getElementById('btn-generate').disabled=false; return; }
+  if (!slug) { showStatus('error','Slug manquant.'); document.getElementById('btn-generate').disabled=false; return; }
+  currentSlug=slug; currentLang=targetLang;
+  sourceLang=(url.match(/\/for-sale\/[^/]+\/(fr|en|es)\b/)||[])[1]||null;
+  const publicUrl=`https://listing.signature-sc.com/for-sale/${slug}/${targetLang}/`;
+  showStatus('loading',`Traduction en ${LANG_LABELS[targetLang]}…`);
+  try {
+    const sys = translationRules(targetLang) + `
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit fidèlement, 4 paragraphes, ton Luxe Discret","highlights":["traduit fidèlement"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})});
+    const [res, kept] = await Promise.all([
+      fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})}),
+      readPublished(url)
+    ]);
     if(!res.ok) throw await apiError(res);
     const api = await res.json();
     showStatus('loading','Construction du listing traduit…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
     const d=JSON.parse(m[0]);
-    if(Array.isArray(api.images)) d.images=api.images;
+    if(kept.images.length) d.images=kept.images; else if(Array.isArray(api.images)) d.images=api.images;
+    if(kept.lat && kept.lng) { d.lat=kept.lat; d.lng=kept.lng; }
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
     d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
+}
+
+// Ce que la traduction touche : le texte seul. Le titre est le nom du bien, il ne se
+// traduit pas ; les photos et leur ordre, la carte, le prix et le dossier restent
+// ceux du listing publié.
+const TEXT_FIELDS = ['subtitle','location','beds','baths','year','construction','lot','hoa','predial','description','highlights'];
+
+async function translateData(src, targetLang) {
+  const texts = Object.fromEntries(TEXT_FIELDS.map(k => [k, src[k] ?? (k === 'highlights' ? [] : '')]));
+  const sys = translationRules(targetLang) + `
+Tu reçois le listing en JSON. Rends le même JSON, avec les mêmes clés et les valeurs traduites. Une valeur vide reste vide.`;
+  const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,noFetch:true,system:sys,messages:[{role:'user',content:JSON.stringify(texts,null,2)}]})});
+  if (!res.ok) throw await apiError(res);
+  const api = await res.json();
+  let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
+  const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
+  const t = JSON.parse(m[0]);
+  const d = { ...src };
+  for (const k of TEXT_FIELDS) if (typeof t[k] === typeof texts[k]) d[k] = t[k];
+  if (targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
+  d.lang = targetLang;
+  d.publicUrl = `https://listing.signature-sc.com/for-sale/${src.slug}/${targetLang}/`;
+  return d;
 }
 
 // ── Show result ───────────────────────────────────────────────────
@@ -1374,11 +1430,12 @@ async function publishToGitHub() {
   const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
   const message = `${currentMode==='translate'?'Translate':'Add'} listing: ${currentSlug} (${currentLang})`;
   try {
-    const res = await fetch('/api/github-publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path,content:generatedCode,message})});
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error||'Erreur GitHub');
+    await publishPage(path, generatedCode, message);
     toast('✓ Publié sur listing.signature-sc.com/'+path);
-    showPublishedLink(`https://listing.signature-sc.com/for-sale/${currentSlug}/${currentLang}/`, generatedCode);
+    publishedData = { ...listingData, slug: currentSlug, lang: currentLang };
+    publishedPages = [{ lang: currentLang, url: `https://listing.signature-sc.com/for-sale/${currentSlug}/${currentLang}/`, html: generatedCode, live: false }];
+    renderPublishLinks();
+    watchLive();
     btn.textContent='✓ Publié'; btn.style.background='#1a3d2e';
     setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier'; btn.style.background=''; },5000);
   } catch(err) {
@@ -1387,42 +1444,104 @@ async function publishToGitHub() {
   }
 }
 
+async function publishPage(path, content, message) {
+  const res = await fetch('/api/github-publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path,content,message})});
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error||'Erreur GitHub');
+}
+
 // ── Lien du listing publié ────────────────────────────────────────
 // Vercel met environ deux minutes à mettre en ligne ce qui vient d'arriver sur GitHub :
-// le bandeau le dit, puis passe à « En ligne » quand la page servie est exactement
+// le bandeau le dit, puis passe à « En ligne » quand chaque page servie est exactement
 // celle qu'on vient de publier (une ancienne version au même lien ne compte pas).
 let publishWatch = null;
+let publishedPages = [];  // { lang, url, html, live } : ce qui a été publié depuis cet écran
+let publishedData = null; // le listing tel qu'il a été publié, la source des traductions
 
-function setPublishBar(state, text, url, spin = state === 'loading') {
+function setPublishBar(state, text, spin = state === 'loading') {
   document.getElementById('publish-bar').className = 'status-bar ' + state;
   document.getElementById('publish-spinner').style.display = spin ? 'block' : 'none';
   document.getElementById('publish-text').textContent = text;
-  const a = document.getElementById('publish-link');
-  a.href = url; a.textContent = url;
+  updateTranslateBtn();
 }
 
 function hidePublishBar() {
   clearTimeout(publishWatch);
+  publishedPages = []; publishedData = null;
   document.getElementById('publish-bar').className = 'status-bar';
 }
 
-function showPublishedLink(url, html) {
+function renderPublishLinks() {
+  const box = document.getElementById('publish-links');
+  box.innerHTML = '';
+  for (const p of publishedPages) {
+    const row = document.createElement('div'); row.className = 'publish-link';
+    const a = document.createElement('a'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = p.url;
+    const b = document.createElement('button'); b.className = 'btn-sm btn-outline'; b.textContent = 'Copier le lien'; b.onclick = () => copyLink(p.url);
+    row.append(a, b); box.append(row);
+  }
+}
+
+function watchLive() {
   clearTimeout(publishWatch);
-  setPublishBar('loading', 'Publié. Mise en ligne en cours, environ 2 minutes :', url);
+  const n = publishedPages.length;
+  setPublishBar('loading', 'Publié. Mise en ligne en cours, environ 2 minutes :');
   let tries = 0;
   const check = async () => {
-    try {
-      const res = await fetch(url + '?v=' + Date.now(), { cache: 'no-store' });
-      if (res.ok && (await res.text()) === html) { setPublishBar('success', '✓ En ligne :', url); return; }
-    } catch (e) {}
-    if (++tries >= 36) { setPublishBar('loading', 'Publié, mais pas encore visible après 6 minutes. Le lien fonctionnera dès que Vercel aura fini :', url, false); return; }
+    for (const p of publishedPages.filter(p => !p.live)) {
+      try {
+        const res = await fetch(p.url + '?v=' + Date.now(), { cache: 'no-store' });
+        if (res.ok && (await res.text()) === p.html) p.live = true;
+      } catch (e) {}
+    }
+    if (publishedPages.every(p => p.live)) { setPublishBar('success', n > 1 ? `✓ En ligne en ${n} langues :` : '✓ En ligne :'); return; }
+    if (++tries >= 36) { setPublishBar('loading', `Publié, mais pas encore visible après 6 minutes. ${n > 1 ? 'Les liens fonctionneront' : 'Le lien fonctionnera'} dès que Vercel aura fini :`, false); return; }
     publishWatch = setTimeout(check, 10000);
   };
   publishWatch = setTimeout(check, 10000);
 }
 
-async function copyPublishedLink() {
-  const url = document.getElementById('publish-link').href;
+// ── Traduire et publier dans les autres langues ───────────────────
+// La langue d'origine d'un listing traduit n'est jamais réécrite par une traduction de traduction.
+function remainingLangs() {
+  if (!publishedData) return [];
+  return ['fr','en','es'].filter(l => l !== sourceLang && !publishedPages.some(p => p.lang === l));
+}
+
+function updateTranslateBtn() {
+  const btn = document.getElementById('btn-translate-others');
+  const langs = remainingLangs();
+  btn.style.display = langs.length ? '' : 'none';
+  btn.textContent = '🌐 Traduire et publier en ' + langs.map(l => l.toUpperCase()).join(' et ');
+}
+
+async function translateOthers() {
+  const langs = remainingLangs();
+  if (!langs.length) return;
+  clearTimeout(publishWatch);
+  const names = langs.map(l => l.toUpperCase()).join(' et ');
+  setPublishBar('loading', `Traduction en ${names}, environ une minute…`);
+  document.getElementById('btn-translate-others').style.display = 'none';
+  const results = await Promise.allSettled(langs.map(l => translateData(publishedData, l)));
+  const failed = [];
+  for (const [i, r] of results.entries()) {
+    const name = langs[i].toUpperCase();
+    if (r.status === 'rejected') { failed.push(`Traduction en ${name} non publiée : ${r.reason.message}`); continue; }
+    const d = r.value, html = buildTemplate(d);
+    setPublishBar('loading', `Publication en ${name}…`);
+    document.getElementById('btn-translate-others').style.display = 'none';
+    try {
+      await publishPage(`for-sale/${d.slug}/${d.lang}/index.html`, html, `Translate listing: ${d.slug} (${d.lang})`);
+      publishedPages.push({ lang: d.lang, url: d.publicUrl, html, live: false });
+      renderPublishLinks();
+    } catch (err) { failed.push(`Traduction en ${name} non publiée : ${err.message}`); }
+  }
+  // Le bouton, qui ne propose plus que les langues manquantes, sert à réessayer
+  if (failed.length) { setPublishBar('error', failed.join(' · '), false); return; }
+  watchLive();
+}
+
+async function copyLink(url) {
   try { await navigator.clipboard.writeText(url); }
   catch(e) { const t=document.createElement('textarea'); t.value=url; t.style.cssText='position:fixed;opacity:0'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
   toast('✓ Lien copié');
