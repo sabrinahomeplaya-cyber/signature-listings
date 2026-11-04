@@ -291,12 +291,12 @@
         <button class="tab-btn active" id="tab-preview" onclick="showTab('preview')">👁 Aperçu</button>
         <button class="tab-btn" id="tab-edit" onclick="showTab('edit')">✏️ Modifier</button>
       </div>
-      <button class="btn-sm btn-teal" onclick="copyCode()">
+      <button class="btn-sm btn-teal" id="btn-copy-live" onclick="copyLink(liveUrl())" style="display:none">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copier
+        Copier le lien
       </button>
+      <button class="btn-sm btn-outline" id="btn-open-live" onclick="window.open(liveUrl(),'_blank','noopener')" style="display:none" title="Ouvre la page en ligne. Tes changements y seront après « Publier ».">↗ Ouvrir le listing</button>
       <button class="btn-sm btn-navy-light" onclick="downloadCode()">↓ Télécharger</button>
-      <button class="btn-sm btn-outline" onclick="openInNewTab()">↗ Onglet</button>
       <button class="btn-sm btn-green" id="btn-publish" onclick="publishToGitHub()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         Publier
@@ -1484,6 +1484,23 @@ function showResult(data) {
   refreshPreview();
   hideStatus();
   document.getElementById('btn-generate').disabled = false;
+  checkLive();
+}
+
+// ── Le vrai lien du listing ───────────────────────────────────────
+// Copier le lien et Ouvrir le listing visent la page publiée : ils ne s'affichent que si elle existe
+// (déjà en ligne, ou publiée depuis cet écran), sinon ils ne mèneraient qu'à une page introuvable.
+const liveUrl = () => `https://listing.signature-sc.com/for-sale/${currentSlug}/${currentLang}/`;
+
+function showLiveButtons(on) {
+  for (const id of ['btn-copy-live', 'btn-open-live']) document.getElementById(id).style.display = on ? '' : 'none';
+}
+
+async function checkLive() {
+  showLiveButtons(false);
+  const url = liveUrl();
+  const ok = await fetch(new URL(url).pathname + '?v=' + Date.now(), { method: 'HEAD', cache: 'no-store' }).then(r => r.ok).catch(() => false);
+  if (liveUrl() === url) showLiveButtons(ok || publishedPages.length > 0);
 }
 
 // ── Apply changes ─────────────────────────────────────────────────
@@ -1526,7 +1543,9 @@ function applyChanges() {
 
 function refreshPreview() {
   const iframe = document.getElementById('preview-pane');
-  const blob = new Blob([generatedCode], {type:'text/html;charset=utf-8'});
+  // L'aperçu vient d'un blob : sans <base>, le logo et l'icône (/logo-site.png, /favicon.png) ne se trouvent pas
+  const html = generatedCode.replace('<head>', `<head>\n  <base href="${location.origin}/">`);
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
   iframe.src = URL.createObjectURL(blob);
 }
 
@@ -1559,6 +1578,7 @@ async function publishToGitHub() {
     publishedPages = [{ lang: currentLang, url: `https://listing.signature-sc.com/for-sale/${currentSlug}/${currentLang}/`, html: generatedCode, live: false }];
     renderPublishLinks();
     watchLive();
+    showLiveButtons(true);
     btn.textContent='✓ Publié'; btn.style.background='#1a3d2e';
     setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier'; btn.style.background=''; },5000);
   } catch(err) {
@@ -1679,21 +1699,9 @@ function backToGenerator() {
   showTab('preview');
 }
 
-async function copyCode() {
-  if (!generatedCode) return;
-  try { await navigator.clipboard.writeText(generatedCode); }
-  catch(e) { const t=document.createElement('textarea'); t.value=generatedCode; t.style.cssText='position:fixed;opacity:0'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
-  toast('✓ Code copié dans le presse-papiers');
-}
-
 function downloadCode() {
   if (!generatedCode) return;
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generatedCode],{type:'text/html;charset=utf-8'})); a.download='index.html'; a.click();
-}
-
-function openInNewTab() {
-  if (!generatedCode) return;
-  window.open(URL.createObjectURL(new Blob([generatedCode],{type:'text/html;charset=utf-8'})),'_blank');
 }
 
 
