@@ -316,7 +316,7 @@
       mainImg.onclick=()=>openModal(state.index);
       el('closeBtn').onclick=closeModal;
       const imgCounter = el('imgCounter');
-      if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
+      if(imgCounter && photos.length){ imgCounter.textContent='Fotos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
       el('shareBtn').onclick=async()=>{
         const url=window.location.href;
         if(navigator.share){try{await navigator.share({url});}catch(e){}}

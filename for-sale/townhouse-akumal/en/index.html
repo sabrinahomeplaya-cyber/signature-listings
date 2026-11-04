@@ -315,7 +315,7 @@ Puerto Aventuras distinguishes itself as a masterfully planned community where g
     el('closeBtn').onclick=closeModal;
 
     const imgCounter = el('imgCounter');
-    if(imgCounter && photos.length){ imgCounter.textContent='All photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
+    if(imgCounter && photos.length){ imgCounter.textContent='Photos'; imgCounter.style.cursor='pointer'; imgCounter.onclick=()=>openModal(state.index); }
 
     el('shareBtn').onclick=async()=>{
       const data={title:listing.title,text:listing.price+' '+listing.currency+' — '+listing.title,url:listing.publicUrl};
