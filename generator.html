@@ -50,6 +50,7 @@
     .status-bar.loading { background: rgba(97,189,204,0.08); border: 1px solid rgba(97,189,204,0.25); color: var(--navy); display: flex; }
     .status-bar.error { background: rgba(220,53,69,0.06); border: 1px solid rgba(220,53,69,0.2); color: #c0392b; display: flex; }
     .status-bar.success { background: rgba(45,106,79,0.07); border: 1px solid rgba(45,106,79,0.25); color: #2d6a4f; display: flex; }
+    .status-bar.warn { background: rgba(181,129,28,0.08); border: 1px solid rgba(181,129,28,0.3); color: #7a5a14; display: flex; }
     #publish-bar { margin: 12px 20px; flex-wrap: wrap; }
     #btn-translate-others { margin-left: auto; }
     #publish-links { flex-basis: 100%; display: flex; flex-direction: column; gap: 6px; }
@@ -177,6 +178,10 @@
           🌐 Traduire mon listing
           <span>EN / ES / FR</span>
         </button>
+        <button class="mode-btn" id="modeEditBtn" onclick="setMode('edit')">
+          ✏️ Modifier mon listing
+          <span>Rouvrir une page publiée</span>
+        </button>
       </div>
 
       <!-- Panel collaborateur -->
@@ -239,6 +244,23 @@
           <div class="step-item"><span class="step-num">2</span><span>Choisissez la langue cible. Surfaces converties automatiquement.</span></div>
           <div class="step-item"><span class="step-num">3</span><span>Modifiez si nécessaire, puis cliquez <strong>Publier</strong>.</span></div>
           <div class="step-item"><span class="step-num">4</span><span><strong>Traduire et publier</strong> crée la langue qui manque, sans toucher à l'original.</span></div>
+        </div>
+      </div>
+
+      <!-- Panel modification -->
+      <div id="panelEdit" style="display:none">
+        <div class="info-box">
+          La page s'ouvre <strong>telle qu'elle est publiée</strong>, avec ses photos dans l'ordre et sa carte. Rien ne passe par Claude.
+        </div>
+        <div style="margin-bottom:24px">
+          <label class="input-label" for="edit-url">Lien de votre listing</label>
+          <input id="edit-url" type="url" class="url-input" placeholder="https://listing.signature-sc.com/for-sale/villa-marina-palms/en/" autocomplete="off" spellcheck="false" />
+        </div>
+        <hr class="divider" style="margin-top:0">
+        <div class="step-list">
+          <div class="step-item"><span class="step-num">1</span><span>Collez le lien de la page à modifier (FR, EN ou ES).</span></div>
+          <div class="step-item"><span class="step-num">2</span><span>Modifiez le texte, les photos ou la carte, puis cliquez <strong>Publier</strong> : la page est remplacée.</span></div>
+          <div class="step-item"><span class="step-num">3</span><span><strong>Traduire et publier</strong> remplace les deux autres langues par une traduction de cette page.</span></div>
         </div>
       </div>
 
@@ -503,6 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Enter key
   document.getElementById('listing-url').addEventListener('keydown', e => { if (e.key === 'Enter') generateListing(); });
   tUrl.addEventListener('keydown', e => { if (e.key === 'Enter') generateListing(); });
+  document.getElementById('edit-url').addEventListener('keydown', e => { if (e.key === 'Enter') generateListing(); });
 
   // Path preview for own photos
   document.getElementById('e-photo-path').addEventListener('input', updatePathPreview);
@@ -514,9 +537,11 @@ function setMode(mode) {
   currentMode = mode;
   document.getElementById('panelCollab').style.display = mode === 'collab' ? 'block' : 'none';
   document.getElementById('panelTranslate').style.display = mode === 'translate' ? 'block' : 'none';
+  document.getElementById('panelEdit').style.display = mode === 'edit' ? 'block' : 'none';
   document.getElementById('modeCollabBtn').classList.toggle('active', mode === 'collab');
   document.getElementById('modeTranslateBtn').classList.toggle('active', mode === 'translate');
-  document.getElementById('btn-label').textContent = mode === 'translate' ? 'Traduire le listing' : 'Générer le listing';
+  document.getElementById('modeEditBtn').classList.toggle('active', mode === 'edit');
+  document.getElementById('btn-label').textContent = mode === 'translate' ? 'Traduire le listing' : mode === 'edit' ? 'Ouvrir le listing' : 'Générer le listing';
 }
 
 // ── Photo compression & upload ────────────────────────────────────
@@ -1166,7 +1191,7 @@ function buildTemplate(data) {
 // ── Generate / Translate ──────────────────────────────────────────
 async function generateListing() {
   document.getElementById('btn-generate').disabled = true;
-  currentMode === 'translate' ? await translateListing() : await extractListing();
+  currentMode === 'translate' ? await translateListing() : currentMode === 'edit' ? await openListing() : await extractListing();
 }
 
 // Un délai dépassé chez Vercel rend une page sans JSON : dire ce qui s'est passé plutôt que « {} »
@@ -1200,16 +1225,17 @@ RÈGLES DE FORMATAGE ET D'INTERDICTION (CRITIQUES) :
 3. Ne justifie jamais tes choix, fournis uniquement le résultat final.
 
 RÈGLES DE LOCALISATION ET CONVERSION :
-${langLabel==='anglais'?'- Anglais (standards US) : Convertis IMPÉRATIVEMENT tous les mètres carrés (m²) en pieds carrés (sq ft). Utilise le terme "showing" (jamais "viewing").':langLabel==='espagnol (Mexique)'?'- Espagnol (Mexique) : Utilise exclusivement le vocabulaire immobilier du Mexique (MX). Convertis tous les pieds carrés (sq ft) en mètres carrés (m²).':'- Français : Utilise les mètres carrés (m²) et également les pieds carrés (sq ft) entre parenthèses juste après les m². Terminologie haut de gamme.'}
+${LOC_RULES[lang]}
+${LOC_EVERYWHERE}
 
 STRUCTURE OBLIGATOIRE DU TEXTE :
 TITRE : Invente un titre évocateur en anglais basé sur la caractéristique principale (ex: The Horizon Residence, The Canopy Estate, The Palm Grove Pavilion). N'utilise pas systématiquement "Sanctuary" ou "Fairway", varie.
-SOUS-TITRE : Courte accroche descriptive du titre.
-DESCRIPTION (champ description) : 4 paragraphes narratifs séparés par deux sauts de ligne.
-- Paragraphe 1 (L'Atmosphère) : 3 à 4 phrases pour planter le décor, l'emplacement et l'émotion.
+SOUS-TITRE : 4 à 8 mots, clairs et concrets, qui disent ce qu'est le bien et son atout principal (ex : "Villa en bord de marina avec ponton privé"). Aucune métaphore, aucun superlatif.
+DESCRIPTION (champ description) : 4 paragraphes narratifs séparés par deux sauts de ligne. On finit de parler de la propriété avant de parler de Puerto Aventuras, de la communauté et de la région : les paragraphes 1 à 3 ne parlent que du bien, le paragraphe 4 ne parle plus du bien.
+- Paragraphe 1 (L'Atmosphère) : 3 à 4 phrases pour planter le décor immédiat du bien (canal, mer, jardin, vue) et l'émotion. La communauté, la région et leurs atouts se gardent pour le paragraphe 4.
 - Paragraphe 2 (La Résidence / L'Architecture Intérieure / L'Essence du Lieu) : fluidité des intérieurs, lumière, matériaux, chambres, finitions.
-- Paragraphe 3 (L'Harmonie Extérieure / Le Refuge Tropical / L'Oasis Privée) : piscine, jardins, terrasses, équipements d'autonomie.
-- Paragraphe 4 (Le Style de Vie) : communauté sécurisée, marina, plage, golf, valeur investissement.
+- Paragraphe 3 (L'Harmonie Extérieure / Le Refuge Tropical / L'Oasis Privée) : piscine, jardins, terrasses, ponton, et TOUS les équipements techniques et d'autonomie (panneaux solaires, générateur, purification d'eau, ouvertures anti ouragan).
+- Paragraphe 4 (Le Style de Vie) : Puerto Aventuras, communauté sécurisée, marina, plage, golf, distances, région, valeur investissement.
 
 POINTS FORTS : liste de 10 à 12 mots-clés ou groupes de mots concis. AUCUNE phrase descriptive (ex: "Piscine chauffée" OUI. "Une belle piscine chauffée" NON). Ordre : intérieur, extérieur, communauté.
 
@@ -1230,18 +1256,25 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
 
 const LANG_LABELS = { en: 'anglais', es: 'espagnol (Mexique)', fr: 'français' };
 
+// Les mesures suivent la langue du lecteur, et partout : sous-titre, description, points forts, détails.
+// Les montants, eux, gardent leur forme dans les trois langues ($3,250,000).
+const LOC_RULES = {
+  en: `- Anglais (standards US) : TOUTES les mesures en unités impériales seulement. Surfaces en sq ft (arrondi entier), longueurs en feet (ex : "a 79 ft dock"). Convertis IMPÉRATIVEMENT les m² et les mètres de la source. Utilise le terme "showing" (jamais "viewing").`,
+  fr: `- Français : TOUTES les mesures en système métrique, suivies de l'impérial entre parenthèses pour les acheteurs canadiens. Surfaces : "750 m² (8,073 sq ft)". Longueurs : "un ponton de 24 m (79 pieds)", "pieds" en toutes lettres, jamais "pi" ni "ft". Convertis les sq ft et les pieds de la source. Terminologie haut de gamme.`,
+  es: `- Espagnol (Mexique) : vocabulaire immobilier du Mexique (MX) exclusivement. TOUTES les mesures en système métrique seulement : m² pour les surfaces, mètres pour les longueurs (ex : "un muelle de 24 m"). Convertis les sq ft et les pieds de la source.`,
+};
+const LOC_EVERYWHERE = `- Ces conversions s'appliquent PARTOUT : sous-titre, description, points forts et champs de surface. Aucune mesure ne reste dans l'unité d'une autre langue.
+- Les nombres et les montants gardent la virgule des milliers et le point décimal, dans toutes les langues ("$3,250,000", "8,073 sq ft", "$1,250 MXN"). Les montants ne se convertissent jamais.`;
+
 // La règle de traduction, la même pour une page publiée et pour le listing à l'écran
 function translationRules(targetLang) {
-  const locRule=targetLang==='en'
-    ?'Convertis IMPÉRATIVEMENT tous les mètres carrés (m²) en pieds carrés (sq ft, arrondi entier). Utilise le terme "showing" (jamais "viewing").'
-    :targetLang==='es'
-    ?'Utilise exclusivement le vocabulaire immobilier du Mexique (MX). Convertis tous les pieds carrés (sq ft) en mètres carrés (m²).'
-    :'Utilise les mètres carrés (m²) et les pieds carrés (sq ft) entre parenthèses juste après. Terminologie haut de gamme.';
   return `Tu es le traducteur officiel de l'agence "Signature ˢᶜ". Tu appliques la règle de FIDÉLITÉ ABSOLUE.
 
 Traduis ce listing immobilier vers le ${LANG_LABELS[targetLang]} avec une fidélité chirurgicale. Conserve la structure, l'intention et le ton "Luxe Discret" exacts de la source. N'invente, ne supprime et ne reformule aucune caractéristique.
 
-RÈGLE DE LOCALISATION OBLIGATOIRE : ${locRule}
+RÈGLES DE LOCALISATION OBLIGATOIRES :
+${LOC_RULES[targetLang]}
+${LOC_EVERYWHERE}
 
 RÈGLES DE FORMATAGE CRITIQUES :
 1. INTERDICTION FORMELLE d'utiliser le tiret cadratin (—) ou le tiret court (-) pour lier des mots ou des phrases.
@@ -1251,18 +1284,100 @@ RÈGLES DE FORMATAGE CRITIQUES :
 Réponds UNIQUEMENT avec un JSON valide, sans backticks.`;
 }
 
+// Relit une page publiée par le générateur, champ par champ, sans Claude. Les cases de
+// détails se reconnaissent à leur libellé, dans les trois langues : les pages anciennes
+// n'ont ni les mêmes cases, ni le même ordre.
+const DETAIL_LABELS = [
+  ['beds', /^(chambres|bedrooms|recámaras|recamaras|habitaciones)/i],
+  ['baths', /^(salles de bain|bathrooms|baños)/i],
+  ['year', /^(année|year|año)/i],
+  ['construction', /^(constru|living area|surface habitable|superficie habitable|área habitable)/i],
+  ['lot', /^(terrain|lot|terreno)/i],
+  ['predial', /(taxe|tax|predial)/i],
+  ['hoa', /(frais mensuels|hoa|mantenimiento|maintenance|cuota)/i],
+];
+
+// pageUrl sert aux pages anciennes, qui nomment leurs photos « ../photos/1.jpg ».
+// d.notes dit ce que le générateur ne sait pas refaire et qui disparaîtrait à la publication.
+function parsePublished(html, pageUrl) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const text = el => el ? el.textContent.trim() : '';
+  const list = re => { const m = html.match(re); return m ? [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(x => JSON.parse('"' + x[1] + '"')) : []; };
+  const notes = [];
+  const h1 = doc.querySelector('h1');
+  const sub = h1 && h1.nextElementSibling;
+  // Le libellé lui-même, pas le cadre qui l'entoure et dont le texte est le même
+  const label = re => [...doc.querySelectorAll('div')].find(d => !d.children.length && re.test(text(d)));
+  const priceLabel = label(/^(PRIX|PRICE|PRECIO)$/i);
+  const splitPrice = s => { const m = s.match(/^(.*?)\s+([A-Z]{3})$/); return m ? [m[1], m[2]] : [s, '']; };
+  const [price, currency] = splitPrice(text(priceLabel && priceLabel.nextElementSibling));
+  // Une description écrite à la main en paragraphes : le texte se garde, pas le gras
+  let description = text(doc.querySelector('.whitespace-pre-line'));
+  if (!description) {
+    const head = label(/^(DESCRIPTION|DESCRIPCIÓN)$/i);
+    const box = head && head.parentElement.nextElementSibling;
+    if (box) {
+      box.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+      const paras = [...box.querySelectorAll('p')];
+      description = (paras.length ? paras.map(p => p.textContent.trim()).join('\n\n') : box.textContent).replace(/[ \t]*\n[ \t]*/g, '\n').trim();
+      if (box.querySelector('strong, b, em, a')) notes.push('La description perd sa mise en forme (gras, liens) : seul le texte est repris.');
+    }
+  }
+  const d = {
+    title: text(h1),
+    subtitle: sub && sub.tagName === 'P' ? text(sub) : '',
+    location: text(h1 && h1.previousElementSibling),
+    price, currency: currency || 'USD',
+    priceOld: splitPrice(text(doc.querySelector('.line-through')))[0],
+    description,
+    highlights: list(/(?:\bhighlights\s*:|const highlights\s*=)\s*\[([\s\S]*?)\]\s*[,;]/),
+    images: list(/(?:\bimages\s*:|const photos\s*=)\s*\[([\s\S]*?)\]/)
+      .map(u => { try { return new URL(u, pageUrl || location.href).href; } catch (e) { return ''; } })
+      .filter(u => /^https?:\/\//.test(u)),
+  };
+  for (const cell of doc.querySelectorAll('.bg-neutral-50')) {
+    if (cell.children.length !== 2) continue;
+    const label = text(cell.children[0]), value = text(cell.children[1]);
+    const hit = DETAIL_LABELS.find(([k, re]) => re.test(label) && d[k] === undefined);
+    if (hit) d[hit[0]] = value;
+    // Le prix au m² se recalcule ; le garage a été retiré du générateur
+    else if (value && !/\/\s*(m²|sq ft)|^garage/i.test(label)) notes.push(`La case « ${label} : ${value} » n'existe pas dans le générateur : elle disparaîtra.`);
+  }
+  for (const [k] of DETAIL_LABELS) if (d[k] === undefined) d[k] = '';
+  const ll = html.match(/maps\.google\.com\/maps\?ll=(-?[\d.]+),\s*(-?[\d.]+)/);
+  d.lat = ll ? ll[1] : ''; d.lng = ll ? ll[2] : '';
+  d.notes = notes;
+  return d;
+}
+
 // La page publiée garde les photos dans l'ordre choisi et les coordonnées de la carte :
 // elles se reprennent telles quelles, Claude ne les relit pas.
 async function readPublished(url) {
   try {
     const res = await fetch(new URL(url).pathname + '?v=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) return { images: [] };
-    const html = await res.text();
-    const ll = html.match(/maps\.google\.com\/maps\?ll=(-?[\d.]+),(-?[\d.]+)/);
-    const list = html.match(/(?:\bimages\s*:|const photos\s*=)\s*\[([\s\S]*?)\]/);
-    const images = list ? [...list[1].matchAll(/["'](https?:\/\/[^"']+)["']/g)].map(m => m[1]) : [];
-    return { images, lat: ll ? ll[1] : '', lng: ll ? ll[2] : '' };
+    return parsePublished(await res.text(), url);
   } catch (e) { return { images: [] }; }
+}
+
+async function openListing() {
+  const url = document.getElementById('edit-url').value.trim();
+  const m = url.match(/\/for-sale\/([^/?#]+)\/(fr|en|es)\b/);
+  if (!m) { showStatus('error','Collez le lien d\'une page publiée, par exemple listing.signature-sc.com/for-sale/villa-marina-palms/en/'); document.getElementById('btn-generate').disabled=false; return; }
+  const [, slug, lang] = m;
+  showStatus('loading','Ouverture du listing…');
+  try {
+    const res = await fetch(`/for-sale/${slug}/${lang}/?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status === 404 ? `Aucune page publiée à ce lien (for-sale/${slug}/${lang}).` : `Erreur ${res.status} à l'ouverture de la page.`);
+    const publicUrl = `https://listing.signature-sc.com/for-sale/${slug}/${lang}/`;
+    const d = parsePublished(await res.text(), publicUrl);
+    // Une page montée à la main perdrait son titre ou ses photos : elle ne se rouvre pas
+    if (!d.title || !d.images.length) throw new Error('Cette page a été faite à la main : la rouvrir ici lui ferait perdre ' + (!d.title ? 'son titre' : 'ses photos') + '.');
+    currentSlug = slug; currentLang = lang; sourceLang = null;
+    d.slug = slug; d.lang = lang; d.publicUrl = publicUrl;
+    showResult(d);
+    if (d.notes.length) setPublishBar('warn', 'À vérifier avant de publier : ' + d.notes.join(' '), false);
+  } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
 }
 
 async function translateListing() {
@@ -1276,12 +1391,20 @@ async function translateListing() {
   const publicUrl=`https://listing.signature-sc.com/for-sale/${slug}/${targetLang}/`;
   showStatus('loading',`Traduction en ${LANG_LABELS[targetLang]}…`);
   try {
+    // Une page du générateur se relit exactement : seul son texte part à Claude, et le
+    // prix, les photos dans l'ordre et la carte restent ceux de la page
+    const src = await readPublished(url);
+    if (src.title && src.images.length) {
+      const d = await translateData({ ...src, slug }, targetLang);
+      showResult(d);
+      if (d.notes.length) setPublishBar('warn', 'À vérifier avant de publier : ' + d.notes.join(' '), false);
+      return;
+    }
+    // Une page montée à la main : Claude la relit
     const sys = translationRules(targetLang) + `
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"traduit fidèlement, 4 paragraphes, ton Luxe Discret","highlights":["traduit fidèlement"],"images":["conserve les URLs telles quelles"],"lat":"","lng":""}`;
-    const [res, kept] = await Promise.all([
-      fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})}),
-      readPublished(url)
-    ]);
+    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL du listing à traduire: '+url}]})});
+    const kept = src;
     if(!res.ok) throw await apiError(res);
     const api = await res.json();
     showStatus('loading','Construction du listing traduit…');
@@ -1428,7 +1551,7 @@ async function publishToGitHub() {
   const btn = document.getElementById('btn-publish');
   btn.disabled = true; btn.textContent = 'Publication…';
   const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
-  const message = `${currentMode==='translate'?'Translate':'Add'} listing: ${currentSlug} (${currentLang})`;
+  const message = `${currentMode==='translate'?'Translate':currentMode==='edit'?'Update':'Add'} listing: ${currentSlug} (${currentLang})`;
   try {
     await publishPage(path, generatedCode, message);
     toast('✓ Publié sur listing.signature-sc.com/'+path);
@@ -1468,6 +1591,7 @@ function setPublishBar(state, text, spin = state === 'loading') {
 function hidePublishBar() {
   clearTimeout(publishWatch);
   publishedPages = []; publishedData = null;
+  renderPublishLinks();
   document.getElementById('publish-bar').className = 'status-bar';
 }
 
