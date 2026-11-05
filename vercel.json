@@ -5,6 +5,9 @@
     },
     "api/github-publish.js": {
       "maxDuration": 30
+    },
+    "api/copy-photos.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
