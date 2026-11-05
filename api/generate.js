@@ -174,8 +174,12 @@ export default async function handler(req, res) {
 // l'original, et leurs copies .jpg.webp) : une seule URL par photo, la plus grande
 // qui ne dépasse pas 2000 px de large, sinon l'original. La même photo revient aussi
 // avec ou sans « www. » et avec un « #imageobject » en suffixe.
+// Une copie dont le grand côté fait moins de 1200 px ne remplace jamais l'original :
+// Casa Rapha n'exposait que 374x240 et l'original de 2048 px, et la vignette était partie.
 function onePerPhoto(urls) {
-  const width = u => { const m = u.match(/-(\d+)x\d+\.(?:jpe?g|png|webp)/i); return m ? +m[1] : Infinity; };
+  const size = u => u.match(/-(\d+)x(\d+)\.(?:jpe?g|png|webp)/i);
+  const width = u => { const m = size(u); return m ? +m[1] : Infinity; };
+  const longSide = u => { const m = size(u); return m ? Math.max(+m[1], +m[2]) : Infinity; };
   const groups = new Map();
   for (const raw of urls) {
     const url = raw.replace(/&amp;/g, '&').replace(/#.*$/, '');
@@ -189,7 +193,9 @@ function onePerPhoto(urls) {
     const sized = pool.filter(u => width(u) <= 2000).sort((a, b) => width(b) - width(a));
     // Une photo qui n'existe qu'en vignette (105x70) est celle d'un AUTRE bien du site
     if (pool.every(u => width(u) < 400)) return null;
-    return sized[0] || pool[0];
+    const original = pool.find(u => !size(u));
+    if (sized[0] && (longSide(sized[0]) >= 1200 || !original)) return sized[0];
+    return original || pool[0];
   }).filter(Boolean);
 }
 

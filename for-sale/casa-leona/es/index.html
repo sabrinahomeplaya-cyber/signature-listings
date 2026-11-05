@@ -268,7 +268,7 @@
         btn.className = "shrink-0 rounded-2xl overflow-hidden ring-1 ring-black/5 hover:ring-[#61BDCC] transition bg-white";
         btn.addEventListener("click", () => setMain(idx));
         const img = document.createElement("img");
-        img.src = url; img.alt = "Foto " + (idx+1); img.loading = "lazy";
+        img.loading = "lazy"; img.src = url; img.alt = "Foto " + (idx+1);
         img.className = "h-20 w-28 sm:h-24 sm:w-36 object-cover";
         btn.appendChild(img); strip.appendChild(btn);
       });
@@ -291,15 +291,29 @@
         if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx<0?setMain(state.index+1):setMain(state.index-1);}
       },{passive:true});
       const modalScroll = el('modalScroll');
+      modalScroll.style.overflowAnchor='none';
+      const loadNear = new IntersectionObserver(entries => entries.sort((a,b)=>Math.abs(a.boundingClientRect.top)-Math.abs(b.boundingClientRect.top)).forEach(e => {
+        const img=e.target.querySelector('img');
+        if(img.naturalWidth) loadNear.unobserve(e.target);
+        else if(!e.isIntersecting) img.removeAttribute('src');
+        else if(!img.getAttribute('src')) img.src=img.dataset.src;
+      }),{root:modalScroll,rootMargin:'100% 0px'});
+      const placeH = new WeakMap();
+      const keepPlace = new ResizeObserver(entries => entries.forEach(e => {
+        const h=e.target.offsetHeight, was=placeH.get(e.target)||0; placeH.set(e.target,h);
+        if(was && h && e.target.getBoundingClientRect().top < modalScroll.getBoundingClientRect().top) modalScroll.scrollTop += h-was;
+      }));
+      mainImg.addEventListener('load',()=>[1,-1].forEach(d=>{ new Image().src=photos[(state.index+d+photos.length)%photos.length]; }));
       photos.forEach((url,idx) => {
         const div=document.createElement('div'); div.setAttribute('data-gidx',String(idx));
-        const img=document.createElement('img'); img.src=url; img.className='w-full block'; img.draggable=false; img.style.display='block';
-        div.appendChild(img); modalScroll.appendChild(div);
+        const img=document.createElement('img'); img.dataset.src=url; img.className='w-full block'; img.draggable=false; img.style.cssText='display:block;aspect-ratio:auto 3/2;background:#f3f4f6';
+        div.appendChild(img); modalScroll.appendChild(div); keepPlace.observe(img);
       });
-      const ioCounter = new IntersectionObserver(entries => {
-        let best=null, bestR=0;
-        entries.forEach(e=>{ if(e.intersectionRatio>bestR){bestR=e.intersectionRatio;best=e;} });
-        if(best){ const i=parseInt(best.target.getAttribute('data-gidx')); el('counter').textContent=(i+1)+' / '+photos.length; state.index=i; }
+      const ioCounter = new IntersectionObserver(() => {
+        const top=modalScroll.getBoundingClientRect().top, kids=Array.from(modalScroll.children);
+        const end=modalScroll.scrollTop+modalScroll.clientHeight>=modalScroll.scrollHeight-2;
+        const best=end?kids[kids.length-1]:kids.find(c=>{const r=c.getBoundingClientRect();return r.bottom-top>r.height*0.5;});
+        if(best){ const i=parseInt(best.getAttribute('data-gidx')); el('counter').textContent=(i+1)+' / '+photos.length; state.index=i; }
       },{threshold:[0.3,0.5,0.8]});
       const openModal = startIdx => {
         if(!photos.length) return;
@@ -307,7 +321,7 @@
         el('counter').textContent=(startIdx+1)+' / '+photos.length;
         Array.from(modalScroll.children).forEach(c=>ioCounter.observe(c));
         const target=modalScroll.children[startIdx];
-        if(target) setTimeout(()=>target.scrollIntoView({behavior:'instant',block:'start'}),20);
+        setTimeout(()=>{ if(target) target.scrollIntoView({behavior:'instant',block:'start'}); Array.from(modalScroll.children).forEach(c=>loadNear.observe(c)); },20);
       };
       const closeModal = () => {
         el('modal').style.display='none'; document.body.style.overflow='';
