@@ -299,8 +299,8 @@ The home is designed for quiet independence. It operates seamlessly with discree
     }),{root:modalScroll,rootMargin:'100% 0px'});
     const placeH = new WeakMap();
     const keepPlace = new ResizeObserver(entries => entries.forEach(e => {
-      const h=e.target.offsetHeight, was=placeH.get(e.target)||0; placeH.set(e.target,h);
-      if(was && h && e.target.getBoundingClientRect().top < modalScroll.getBoundingClientRect().top) modalScroll.scrollTop += h-was;
+      const r=e.target.getBoundingClientRect(), h=r.height, was=placeH.get(e.target)||0; placeH.set(e.target,h);
+      if(was && h && r.top < modalScroll.getBoundingClientRect().top-2) modalScroll.scrollTop += h-was;
     }));
     mainImg.addEventListener('load',()=>[1,-1].forEach(d=>{ new Image().src=photos[(state.index+d+photos.length)%photos.length]; }));
     photos.forEach((url,idx) => {
