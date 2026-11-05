@@ -1212,6 +1212,7 @@ async function generateListing() {
 async function apiError(res) {
   const e = await res.json().catch(() => ({}));
   const detail = e?.error?.message || e?.error?.type || (typeof e?.error === 'string' ? e.error : '');
+  if (e?.error?.unreadable) return new Error(detail);
   if (detail) return new Error(`Erreur API ${res.status} : ${detail}`);
   if (res.status === 504) return new Error('Le serveur a mis plus de 60 secondes à répondre. Réessayez dans un instant.');
   return new Error(`Erreur API ${res.status}`);
@@ -1260,7 +1261,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
     const api = await res.json();
     showStatus('loading','Construction du listing…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
-    const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
+    const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error("Claude n'a rien trouvé à extraire sur cette page. Vérifie le lien, ou colle celui de la même annonce sur le site de l'agence.");
     const d=JSON.parse(m[0]);
     if(Array.isArray(api.images)) d.images=api.images;
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;

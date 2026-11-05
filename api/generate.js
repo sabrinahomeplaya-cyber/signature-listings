@@ -136,6 +136,14 @@ export default async function handler(req, res) {
       }
     }
 
+    // Une page illisible ne part pas chez Claude : il répondrait en phrases, sans JSON, et
+    // l'écran dirait « Aucun JSON trouvé ». Properstar la garde derrière un défi que seul
+    // un navigateur passe (403 ici), et rien ne doit chercher à le contourner.
+    if (listingUrl && !pageContent) {
+      const site = listingUrl.replace(/^https?:\/\/(www\.)?/i, '').split('/')[0];
+      return res.status(422).json({ error: { unreadable: true, message: `Ce site (${site}) ne laisse pas lire ses pages automatiquement. Cherche la même annonce sur le site de l'agence et colle ce lien-là.` } });
+    }
+
     const enhancedMessages = [{
       role: 'user',
       content: pageContent
