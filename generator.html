@@ -567,9 +567,11 @@ function setMode(mode) {
 let uploadItems = []; // « Mes propres photos », dans l'ordre du listing : { name, preview, file, done }
 
 function compressImage(file) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
+    // Sans cette sortie, un fichier que le navigateur n'ouvre pas (HEIC) ferait attendre tout l'envoi
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Format illisible par le navigateur')); };
     img.onload = () => {
       URL.revokeObjectURL(url);
       const MAX = 1920;
@@ -579,6 +581,7 @@ function compressImage(file) {
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       canvas.toBlob(blob => {
+        if (!blob) { reject(new Error('Photo trop grande pour le navigateur')); return; }
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]); // base64 only
         reader.readAsDataURL(blob);
@@ -597,11 +600,21 @@ function initUploadZone() {
   input.addEventListener('change', () => { addFilesToUpload(Array.from(input.files)); input.value = ''; });
 }
 
+// Le nom d'une photo finit dans son adresse : ni espace ni accent. Deux photos du même nom se
+// remplaceraient, et feraient échouer tout le lot : la seconde prend un numéro.
+function uploadName(file) {
+  const stem = file.name.replace(/\.[^.]+$/, '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w-]+/g, '-').replace(/^-+|-+$/g, '') || 'photo';
+  const taken = new Set(uploadItems.map(i => i.name.toLowerCase()));
+  let name = stem + '.jpg';
+  for (let n = 2; taken.has(name.toLowerCase()); n++) name = `${stem}-${n}.jpg`;
+  return name;
+}
+
 function addFilesToUpload(files) {
   const valid = files.filter(f => f.type.startsWith('image/'));
   if (!valid.length) return;
   valid.forEach(f => {
-    uploadItems.push({ file: f, name: f.name.replace(/\.[^.]+$/, '.jpg'), preview: URL.createObjectURL(f) });
+    uploadItems.push({ file: f, name: uploadName(f), preview: URL.createObjectURL(f) });
   });
   renderUploadPreview();
 }
@@ -653,39 +666,53 @@ function removeUploadItem(item) {
   syncUploadOrder();
 }
 
+// Les photos se déposent une à une chez GitHub sans rien publier, puis se rangent en un seul
+// commit : une écriture par photo ferait un déploiement Vercel par photo, 100 par jour au plus.
+// Un dépôt réussi se garde dans item.sha : après une panne, le nouvel essai ne reprend que le reste.
 async function uploadPhotosToGitHub() {
   const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/, '/').replace(/^\//, '');
-  if (!path || path === '/') { alert('Entrez d\'abord le chemin GitHub (ex: for-sale/villa/photos/)'); return; }
-  const waiting = uploadItems.filter(i => !i.done);
-  if (!waiting.length) return;
+  const slug = (path.match(/^for-sale\/([a-z0-9]+(?:-[a-z0-9]+)*)\/photos\/$/) || [])[1];
+  if (!slug) { alert('Le chemin doit avoir cette forme : for-sale/nom-du-listing/photos/'); return; }
+  if (!uploadItems.some(i => !i.done)) return;
   const btn = document.getElementById('btn-upload-github');
   const status = document.getElementById('upload-status');
   btn.disabled = true;
-  for (let i = 0; i < waiting.length; i++) {
-    const item = waiting[i];
-    status.textContent = `Compression et upload ${i + 1}/${waiting.length} : ${item.name}…`;
+  const failed = new Map();
+  for (let round = 0; round < 2; round++) {
+    const todo = uploadItems.filter(i => !i.done && !i.sha);
+    failed.clear();
+    for (let i = 0; i < todo.length; i++) {
+      const item = todo[i];
+      if (!uploadItems.includes(item)) continue; // retirée pendant l'envoi
+      status.textContent = `Compression et envoi ${i + 1}/${todo.length} : ${item.name}…`;
+      try {
+        // Pas plus de 75 dépôts par minute : GitHub refuse au-delà de 80
+        const [data] = await Promise.all([
+          compressImage(item.file).then(content => copyPhotosApi({ action:'blob', content })),
+          new Promise(r => setTimeout(r, 800))
+        ]);
+        item.sha = data.sha;
+      } catch (err) {
+        failed.set(item, err.message); // une photo refusée n'arrête pas les autres
+      }
+    }
+  }
+  const ready = uploadItems.filter(i => i.sha && !i.done);
+  if (ready.length) {
+    status.textContent = `Mise en ligne des ${ready.length} photo(s) d'un seul coup…`;
     try {
-      const base64 = await compressImage(item.file);
-      const res = await apiFetch('/api/github-publish', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: path + item.name, content: base64, isBase64: true, message: 'Upload photo: ' + item.name })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erreur GitHub');
-      item.done = true;
+      await commitPhotos(slug, ready.map(({ name, sha }) => ({ name, sha })));
+      ready.forEach(i => { i.done = true; });
     } catch (err) {
-      // Celles déjà envoyées restent dans la liste, le nouvel essai ne reprend que les autres
-      renderUploadPreview();
-      syncUploadOrder();
-      status.textContent = 'Erreur sur ' + item.name + ' : ' + err.message;
+      status.textContent = `Erreur : ${err.message}. Tes photos sont gardées : clique à nouveau, elles ne repartent pas de zéro.`;
       btn.disabled = false;
       return;
     }
   }
   renderUploadPreview();
   syncUploadOrder();
-  status.textContent = '✓ ' + waiting.length + ' photo(s) uploadée(s) et compressées sur GitHub.';
+  const refused = failed.size ? `⚠ Non envoyée(s) : ${[...failed.keys()].map(i => i.name).join(', ')} (${[...failed.values()][0]}).` : '';
+  status.textContent = [ready.length ? `✓ ${ready.length} photo(s) compressée(s) et mise(s) en ligne d'un seul coup.` : '', refused].filter(Boolean).join(' ');
   btn.disabled = false;
 }
 
@@ -1883,6 +1910,12 @@ async function copyPhotosApi(body) {
   return data;
 }
 
+// Pendant qu'un déploiement bascule, la route peut répondre 404 quelques secondes
+async function commitPhotos(slug, files) {
+  const commit = { action:'commit', slug, files };
+  await copyPhotosApi(commit).catch(async () => { await new Promise(r => setTimeout(r, 8000)); return copyPhotosApi(commit); });
+}
+
 async function copyPhotos() {
   const images = listingData.images || [];
   const todo = [...new Set(images)].filter(u => !u.startsWith(OWN_SITE) && !copiedPhotos.has(u));
@@ -1910,9 +1943,7 @@ async function copyPhotos() {
     }
     setPublishBar('loading', `Rangement des ${done.length} photos sur ton site…`);
     const files = done.map(r => ({ url:r.url, sha:r.sha, name:`${r.sha.slice(0, 12)}.${r.ext}` }));
-    const commit = { action:'commit', slug:currentSlug, files:files.map(({ name, sha }) => ({ name, sha })) };
-    // Pendant qu'un déploiement bascule, la route peut répondre 404 quelques secondes
-    await copyPhotosApi(commit).catch(async () => { await new Promise(r => setTimeout(r, 8000)); return copyPhotosApi(commit); });
+    await commitPhotos(currentSlug, files.map(({ name, sha }) => ({ name, sha })));
     for (const f of files) copiedPhotos.set(f.url, `${OWN_SITE}for-sale/${currentSlug}/photos/${f.name}`);
   }
   const own = images.filter(u => !failed.has(u)).map(u => copiedPhotos.get(u) || u);

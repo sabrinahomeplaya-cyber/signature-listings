@@ -2,7 +2,8 @@ import { locked } from './_auth.js';
 
 // Copie les photos d'un listing sur le site : un autre site peut les bloquer (Casa Rapha, 403
 // dès que la demande vient d'ailleurs), les retirer ou tomber en panne, et le listing reste vide.
-// Deux appels du générateur : « fetch » dépose quelques photos chez GitHub sans rien publier,
+// Trois appels du générateur : « fetch » va chercher des photos sur un autre site et les dépose
+// chez GitHub sans rien publier, « blob » y dépose une photo envoyée depuis l'ordinateur, et
 // « commit » les range toutes en un seul commit. Une écriture par photo ferait un déploiement
 // par photo, et le forfait gratuit de Vercel en autorise 100 par jour.
 const OWNER = 'sabrinahomeplaya-cyber';
@@ -25,12 +26,17 @@ export default async function handler(req, res) {
   const token = process.env.GITHUB_TOKEN;
   if (!token) return res.status(500).json({ error: 'GitHub token not configured' });
 
-  const { action, urls, slug, files } = req.body || {};
+  const { action, urls, slug, files, content } = req.body || {};
 
   try {
     if (action === 'fetch') {
       if (!Array.isArray(urls) || !urls.length || urls.length > MAX_BATCH) return res.status(400).json({ error: 'Bad urls' });
       return res.status(200).json({ results: await Promise.all(urls.map(url => copyOne(url, token))) });
+    }
+    if (action === 'blob') {
+      if (!imageKind(Buffer.from(String(content || ''), 'base64'))) return res.status(400).json({ error: "Ce n'est pas une photo" });
+      const blob = await github('/git/blobs', token, { method: 'POST', body: { content, encoding: 'base64' } });
+      return res.status(200).json({ sha: blob.sha });
     }
     if (action === 'commit') {
       const valid = Array.isArray(files) && files.length && files.every(f => /^[\w-]+\.(jpg|png|webp)$/.test(f.name) && /^[0-9a-f]{40}$/.test(f.sha));
