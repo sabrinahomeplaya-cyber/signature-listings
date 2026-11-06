@@ -119,6 +119,7 @@
     .p2h-sub{font-size:0.55rem;color:rgba(255,255,255,0.4);margin-top:1px;letter-spacing:0.08em;text-transform:uppercase;}
     .p2h img{height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
     .p2-teal-bar{height:3px;background:linear-gradient(90deg,var(--teal),var(--navy));flex-shrink:0;}
+    .p2-desc{padding:14px 28px 0;flex-shrink:0;}
     .p2-photos{padding:16px 28px 0;flex-shrink:0;}
     .p2-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
     .p2-photo-item{aspect-ratio:16/9;border-radius:0;overflow:hidden;background:#dde4ee;}
@@ -401,6 +402,11 @@
             <img src="https://listing.signature-sc.com/logo-contact.png" alt="Logo" onerror="this.style.display='none'"/>
           </div>
           <div class="p2-teal-bar"></div>
+          <!-- La fin d'une description trop longue pour la page 1 : voir fitBrochure() -->
+          <div class="p2-desc" id="r-desc2-box" style="display:none">
+            <div class="p1-section-title" id="r-desc2-label"></div>
+            <div class="p1-desc-text" id="r-desc2"></div>
+          </div>
           <div class="p2-photos">
             <div class="p2-photo-grid" id="r-photo-grid"></div>
           </div>
@@ -536,15 +542,15 @@ const el = id => document.getElementById(id);
 const L = {
   fr:{beds:'Chambres',baths:'Salles de bain',constr:'Construction',lot:'Terrain',year:'Année',
       hoa:'Frais mensuels',predial:'Taxe annuelle',ppa:'Prix / m² (Prix / sq ft)',
-      desc:'DESCRIPTION',hl:'POINTS FORTS',notes:'NOTES',gallery:'Galerie photos',contact:'CONTACT',
+      desc:'DESCRIPTION',descMore:'DESCRIPTION (SUITE)',hl:'POINTS FORTS',notes:'NOTES',gallery:'Galerie photos',contact:'CONTACT',
       role:'Fondatrice & CEO · Conseillère Immobilière'},
   en:{beds:'Bedrooms',baths:'Bathrooms',constr:'Construction',lot:'Lot size',year:'Year built',
       hoa:'Monthly HOA',predial:'Annual Property Tax',ppa:'Price / sq ft',
-      desc:'DESCRIPTION',hl:'HIGHLIGHTS',notes:'NOTES',gallery:'Photo gallery',contact:'CONTACT',
+      desc:'DESCRIPTION',descMore:'DESCRIPTION (CONTINUED)',hl:'HIGHLIGHTS',notes:'NOTES',gallery:'Photo gallery',contact:'CONTACT',
       role:'Founder & CEO · Real Estate Advisor'},
   es:{beds:'Recámaras',baths:'Baños',constr:'Construcción',lot:'Terreno',year:'Año',
       hoa:'Mantenimiento mensual',predial:'Predial anual',ppa:'Precio / m²',
-      desc:'DESCRIPCIÓN',hl:'PUNTOS DESTACADOS',notes:'NOTAS',gallery:'Galería de fotos',contact:'CONTACTO',
+      desc:'DESCRIPCIÓN',descMore:'DESCRIPCIÓN (CONTINUACIÓN)',hl:'PUNTOS DESTACADOS',notes:'NOTAS',gallery:'Galería de fotos',contact:'CONTACTO',
       role:'Fundadora & CEO · Asesora Inmobiliaria'}
 };
 
@@ -660,6 +666,7 @@ Note: constrLabel = le label exact du champ surface principale (ex: "Constructio
     applyAndRender();
     el('screen-setup').style.display='none';
     const se=el('screen-editor'); se.style.display='flex'; se.style.flexDirection='column';
+    fitBrochure(); document.fonts.ready.then(fitBrochure); // mesuré une fois visible, puis avec ses polices
     el('editor-title').textContent=(currentMode==='fiche'?'Fiche Client — ':'')+( d.title||'Listing');
   } catch(err){ showStatus('error',err.message); }
   el('btn-load').disabled=false;
@@ -831,6 +838,46 @@ function applyBrochureRender() {
     if(galleryPhotos[i]) item.innerHTML=`<img src="${galleryPhotos[i]}" alt=""/>`;
     else item.innerHTML=`<div class="p2-photo-placeholder"></div>`;
     pg.appendChild(item);
+  }
+  fitBrochure();
+}
+
+// La page 1 a une hauteur fixe et coupe ce qui dépasse : la description s'arrêtait en pleine phrase, et
+// les points forts et le lien disparaissaient (43 pages sur 74 le 06/11/2026). La photo se réduit
+// d'abord, puis la description continue en page 2, à la place de photos de la galerie s'il le faut.
+const COVER_MIN_HEIGHT = 300, COVER_MARGIN = 8, GALLERY_MIN_PHOTOS = 4;
+function fitBrochure() {
+  const page1=el('page1'), page2=el('page2');
+  if(!page1.offsetHeight) return; // page cachée, rien à mesurer : elle sera ajustée à l'affichage
+  const excess=page=>page.scrollHeight-page.clientHeight;
+  const cover=el('r-cover-img').style.display==='none'?el('r-cover-placeholder'):el('r-cover-img');
+  const words=el('p-desc').value.trim().split(/\s+/);
+  const photos=[...el('r-photo-grid').children];
+  cover.style.height='';
+  el('r-desc').textContent=el('p-desc').value;
+  el('r-desc2-box').style.display='none';
+  photos.forEach(p=>{p.style.display='';});
+  if(excess(page1)<=0) return;
+  cover.style.height=Math.max(COVER_MIN_HEIGHT,cover.offsetHeight-excess(page1)-COVER_MARGIN)+'px';
+  if(excess(page1)<=0) return;
+  // Le plus de mots possible sur la page 1, puis retour à la fin de la dernière phrase entière
+  const keep=n=>{el('r-desc').textContent=words.slice(0,n).join(' ');};
+  let fits=0, tooMany=words.length;
+  while(tooMany-fits>1){
+    const middle=Math.floor((fits+tooMany)/2);
+    keep(middle);
+    if(excess(page1)<=0) fits=middle; else tooMany=middle;
+  }
+  let cut=fits;
+  while(cut>0&&!/[.!?…]["»”)]?$/.test(words[cut-1])) cut--;
+  if(!cut) cut=fits;
+  keep(cut);
+  el('r-desc2').textContent=words.slice(cut).join(' ');
+  el('r-desc2-label').textContent=(L[currentLang]||L.fr).descMore;
+  el('r-desc2-box').style.display='';
+  for(let shown=photos.length;excess(page2)>0&&shown>GALLERY_MIN_PHOTOS;shown-=2){
+    photos[shown-1].style.display='none';
+    photos[shown-2].style.display='none';
   }
 }
 
