@@ -187,21 +187,30 @@ export default async function handler(req, res) {
 // avec ou sans « www. » et avec un « #imageobject » en suffixe.
 // Une copie dont le grand côté fait moins de 1200 px ne remplace jamais l'original :
 // Casa Rapha n'exposait que 374x240 et l'original de 2048 px, et la vignette était partie.
+// La taille peut aussi venir après le nom du fichier : Villa Noy (Squarespace) donnait chaque
+// photo en huit versions, de « ?format=100w » à l'original, et 22 photos en faisaient 176.
 function onePerPhoto(urls) {
-  const size = u => u.match(/-(\d+)x(\d+)\.(?:jpe?g|png|webp)/i);
+  const size = u => {
+    const m = u.match(/-(\d+)x(\d+)\.(?:jpe?g|png|webp)/i);
+    if (m) return m;
+    const q = u.match(/[?&](?:format|w|width)=(\d+)w?(?:&|$)/i);
+    return q && [q[0], q[1], q[1]];
+  };
   const width = u => { const m = size(u); return m ? +m[1] : Infinity; };
   const longSide = u => { const m = size(u); return m ? Math.max(+m[1], +m[2]) : Infinity; };
   const groups = new Map();
   for (const raw of urls) {
     const url = raw.replace(/&amp;/g, '&').replace(/#.*$/, '');
-    const key = url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\.(jpe?g|png)\.webp/i, '.$1').replace(/-\d+x\d+(\.(?:jpe?g|png|webp))/i, '$1');
+    const key = url.replace(/\?.*$/, '').replace(/^https?:\/\/(www\.)?/i, '').replace(/\.(jpe?g|png)\.webp/i, '.$1').replace(/-\d+x\d+(\.(?:jpe?g|png|webp))/i, '$1');
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(url);
   }
   return [...groups.values()].map(variants => {
     const plain = variants.filter(u => !/\.(jpe?g|png)\.webp/i.test(u));
     const pool = plain.length ? plain : variants;
-    const sized = pool.filter(u => width(u) <= 2000).sort((a, b) => width(b) - width(a));
+    // Squarespace plafonne à 2500 px et reste léger (526 Ko à Villa Noy, l'original lui-même) :
+    // la limite de 2000 px protège des originaux WordPress, qui pèsent plusieurs Mo
+    const sized = pool.filter(u => width(u) <= (/[?&]format=/i.test(u) ? 2500 : 2000)).sort((a, b) => width(b) - width(a));
     // Une photo qui n'existe qu'en vignette (105x70) est celle d'un AUTRE bien du site
     if (pool.every(u => width(u) < 400)) return null;
     const original = pool.find(u => !size(u));

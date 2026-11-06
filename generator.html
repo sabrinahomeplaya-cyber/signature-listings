@@ -261,8 +261,9 @@
         <hr class="divider" style="margin-top:0">
         <div class="step-list">
           <div class="step-item"><span class="step-num">1</span><span>Collez le lien de la page à modifier (FR, EN ou ES).</span></div>
-          <div class="step-item"><span class="step-num">2</span><span>Modifiez le texte, les photos ou la carte, puis cliquez <strong>Publier</strong> : la page est remplacée.</span></div>
-          <div class="step-item"><span class="step-num">3</span><span><strong>Traduire et publier</strong> remplace les deux autres langues par une traduction de cette page.</span></div>
+          <div class="step-item"><span class="step-num">2</span><span>Modifiez ce qu'il faut, puis cliquez <strong>Publier</strong>.</span></div>
+          <div class="step-item"><span class="step-num">3</span><span>Prix, chambres, salles de bain, année, HOA, predial et localisation se reportent seuls dans les autres langues.</span></div>
+          <div class="step-item"><span class="step-num">4</span><span>Si le texte a changé, <strong>Traduire et publier</strong> remplace les autres langues par une traduction de cette page.</span></div>
         </div>
       </div>
 
@@ -322,6 +323,12 @@
   <!-- Edit -->
   <div id="edit-pane">
     <div style="max-width:860px;margin:0 auto">
+
+      <!-- Report dans les autres langues -->
+      <label id="sync-box" class="info-box" style="display:none;align-items:flex-start;gap:10px;cursor:pointer">
+        <input id="e-sync" type="checkbox" checked style="margin-top:2px;accent-color:var(--navy);flex-shrink:0">
+        <span id="sync-text"></span>
+      </label>
 
       <!-- Infos principales -->
       <div class="edit-section">
@@ -464,7 +471,7 @@
       <div style="text-align:center;padding:8px 0 32px">
         <button class="btn-apply" onclick="applyChanges()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Appliquer les modifications et mettre à jour l'aperçu
+          Mettre à jour l'aperçu
         </button>
       </div>
 
@@ -485,6 +492,9 @@ let currentLang = 'fr';
 let sourceLang = null; // en mode Traduire, la langue du listing d'origine, que la traduction n'écrase jamais
 let currentMode = 'collab';
 let listingData = {};
+let openedFields = null; // en mode Modifier, le formulaire tel qu'il était à l'ouverture : la différence dit ce qu'elle a changé
+let textChanged = false; // à la dernière publication depuis Modifier, autre chose que les champs reportés a-t-il changé ?
+let syncFailed = []; // les langues où le dernier report n'a pas abouti
 let photosMode = 'source';
 let ownPhotos = []; // { name, url (blob), base64, ext }
 
@@ -856,6 +866,39 @@ function convertSurface(value, toLang) {
 }
 
 // ── Build template ────────────────────────────────────────────────
+const TEMPLATE_LABELS = {
+  fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m² (Prix / sq ft)', hoa:'Frais mensuels', predial:'Taxe annuelle', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', photos:'Photos', back:'Retour', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
+  en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', year:'Year built', construction:'Construction', lot:'Lot size', pricePerArea:'Price / sq ft', hoa:'Monthly HOA', predial:'Annual Property Tax', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', photos:'Photos', back:'Back', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
+  es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', year:'Año', construction:'Construcción', lot:'Terreno', pricePerArea:'Precio / m²', hoa:'Mantenimiento mensual', predial:'Predial anual', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', photos:'Fotos', back:'Volver', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
+};
+
+function pricePerAreaOf(data, lang) {
+  if (!data.price || !data.construction) return '';
+  const priceNum = parseFloat(data.price.replace(/[^0-9.]/g, ''));
+  if (!priceNum) return '';
+  const sqftMatch = data.construction.match(/([\d,\.]+)\s*sq\s*ft/i);
+  const sqmMatch  = data.construction.match(/([\d,\.]+)\s*m[²2]/i);
+  if (lang === 'en') {
+    let area = null;
+    if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,''));
+    else if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,'')) * 10.764;
+    if (!area) return '';
+    return '$' + Math.round(priceNum / area).toLocaleString('en-US');
+  } else if (lang === 'fr') {
+    let sqm = null, sqft = null;
+    if (sqmMatch) { sqm = parseFloat(sqmMatch[1].replace(/,/g,'')); sqft = sqm * 10.764; }
+    else if (sqftMatch) { sqft = parseFloat(sqftMatch[1].replace(/,/g,'')); sqm = sqft / 10.764; }
+    if (!sqm) return '';
+    return '$' + Math.round(priceNum / sqm).toLocaleString('en-US') + ' <span class="text-sm font-normal">($' + Math.round(priceNum / sqft).toLocaleString('en-US') + ')</span>';
+  } else {
+    let area = null;
+    if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,''));
+    else if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,'')) / 10.764;
+    if (!area) return '';
+    return '$' + Math.round(priceNum / area).toLocaleString('en-US');
+  }
+}
+
 function buildTemplate(data) {
   const images = data.images || [];
   const imagesJSON = JSON.stringify(images, null, 6);
@@ -866,43 +909,14 @@ function buildTemplate(data) {
   const base = `https://listing.signature-sc.com/for-sale/${data.slug || 'listing'}/`;
   const lang = data.lang || 'fr';
 
-  const L = {
-    fr: { price:'PRIX', details:'DÉTAILS', beds:'Chambres', baths:'Salles de bain', year:'Année', construction:'Construction', lot:'Terrain', pricePerArea:'Prix / m² (Prix / sq ft)', hoa:'Frais mensuels', predial:'Taxe annuelle', desc:'DESCRIPTION', hl:'POINTS FORTS', loc:'LOCALISATION', locNote:'La localisation exacte est fournie lors de la visite.', photos:'Photos', back:'Retour', wa:'WhatsApp', mail:'Email', visit:'Demander une visite', rights:'Tous droits réservés', waIntro:'Bonjour Sabrina, Je souhaite obtenir des informations sur ce bien :', waVisit:'Bonjour Sabrina, je souhaite organiser une visite.', mSub:"Demande d'informations - ", mBody:'Bonjour Sabrina,\n\nJe souhaite obtenir des informations :\nTitre : ', mB2:'\nPrix : ', mB3:'\nLien : ', mB4:'\n\nMerci,' },
-    en: { price:'PRICE', details:'DETAILS', beds:'Bedrooms', baths:'Bathrooms', year:'Year built', construction:'Construction', lot:'Lot size', pricePerArea:'Price / sq ft', hoa:'Monthly HOA', predial:'Annual Property Tax', desc:'DESCRIPTION', hl:'HIGHLIGHTS', loc:'LOCATION', locNote:'Exact location provided upon visit.', photos:'Photos', back:'Back', wa:'WhatsApp', mail:'Email', visit:'Schedule a visit', rights:'All rights reserved', waIntro:'Hello Sabrina, I would like information about this property:', waVisit:'Hello Sabrina, I would like to schedule a visit.', mSub:'Property inquiry - ', mBody:'Hello Sabrina,\n\nInquiry about:\nTitle: ', mB2:'\nPrice: ', mB3:'\nLink: ', mB4:'\n\nThank you,' },
-    es: { price:'PRECIO', details:'DETALLES', beds:'Recámaras', baths:'Baños', year:'Año', construction:'Construcción', lot:'Terreno', pricePerArea:'Precio / m²', hoa:'Mantenimiento mensual', predial:'Predial anual', desc:'DESCRIPCIÓN', hl:'PUNTOS DESTACADOS', loc:'UBICACIÓN', locNote:'La ubicación exacta se proporciona durante la visita.', photos:'Fotos', back:'Volver', wa:'WhatsApp', mail:'Correo electrónico', visit:'Solicitar una visita', rights:'Todos los derechos reservados', waIntro:'Hola Sabrina, me gustaría obtener información sobre esta propiedad:', waVisit:'Hola Sabrina, me gustaría agendar una visita.', mSub:'Solicitud de información - ', mBody:'Hola Sabrina,\n\nSolicitud sobre:\nTítulo: ', mB2:'\nPrecio: ', mB3:'\nEnlace: ', mB4:'\n\nGracias,' }
-  }[lang] || {};
+  const L = TEMPLATE_LABELS[lang] || {};
 
   const agentRole = lang === 'fr' ? 'Agent Immobilier' : lang === 'en' ? 'Real Estate Advisor' : 'Asesora Inmobiliaria';
   const esc = s => (s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
   const escHtml = s => (s||'').replace(/"/g,'&quot;');
   const fmtArea = v => (v||'').replace(/(\([\d,\. ]+sq\s*ft\))/gi, '<span class="text-sm font-normal">$1</span>');
 
-  const pricePerArea = (() => {
-    if (!data.price || !data.construction) return '';
-    const priceNum = parseFloat(data.price.replace(/[^0-9.]/g, ''));
-    if (!priceNum) return '';
-    const sqftMatch = data.construction.match(/([\d,\.]+)\s*sq\s*ft/i);
-    const sqmMatch  = data.construction.match(/([\d,\.]+)\s*m[²2]/i);
-    if (lang === 'en') {
-      let area = null;
-      if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,''));
-      else if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,'')) * 10.764;
-      if (!area) return '';
-      return '$' + Math.round(priceNum / area).toLocaleString('en-US');
-    } else if (lang === 'fr') {
-      let sqm = null, sqft = null;
-      if (sqmMatch) { sqm = parseFloat(sqmMatch[1].replace(/,/g,'')); sqft = sqm * 10.764; }
-      else if (sqftMatch) { sqft = parseFloat(sqftMatch[1].replace(/,/g,'')); sqm = sqft / 10.764; }
-      if (!sqm) return '';
-      return '$' + Math.round(priceNum / sqm).toLocaleString('en-US') + ' <span class="text-sm font-normal">($' + Math.round(priceNum / sqft).toLocaleString('en-US') + ')</span>';
-    } else {
-      let area = null;
-      if (sqmMatch) area = parseFloat(sqmMatch[1].replace(/,/g,''));
-      else if (sqftMatch) area = parseFloat(sqftMatch[1].replace(/,/g,'')) / 10.764;
-      if (!area) return '';
-      return '$' + Math.round(priceNum / area).toLocaleString('en-US');
-    }
-  })();
+  const pricePerArea = pricePerAreaOf(data, lang);
 
   return `<!doctype html>
 <html lang="${lang}">
@@ -1351,14 +1365,16 @@ function parsePublished(html, pageUrl) {
     images: list(/(?:\bimages\s*:|const photos\s*=)\s*\[([\s\S]*?)\]/)
       .map(u => { try { return new URL(u, pageUrl || location.href).href; } catch (e) { return ''; } })
       .filter(u => /^https?:\/\//.test(u)),
+    labels: {}, // le libellé de chaque case tel qu'il est écrit sur cette page : le report s'en sert pour la retrouver
   };
   for (const cell of doc.querySelectorAll('.bg-neutral-50')) {
     if (cell.children.length !== 2) continue;
     const label = text(cell.children[0]), value = text(cell.children[1]);
     const hit = DETAIL_LABELS.find(([k, re]) => re.test(label) && d[k] === undefined);
-    if (hit) d[hit[0]] = value;
+    if (hit) { d[hit[0]] = value; d.labels[hit[0]] = label; }
     // Le prix au m² se recalcule ; le garage a été retiré du générateur
-    else if (value && !/\/\s*(m²|sq ft)|^garage/i.test(label)) notes.push(`La case « ${label} : ${value} » n'existe pas dans le générateur : elle disparaîtra.`);
+    else if (/\/\s*(m²|sq ft)/i.test(label)) d.labels.perArea = label;
+    else if (value && !/^garage/i.test(label)) notes.push(`La case « ${label} : ${value} » n'existe pas dans le générateur : elle disparaîtra.`);
   }
   for (const [k] of DETAIL_LABELS) if (d[k] === undefined) d[k] = '';
   const ll = html.match(/maps\.google\.com\/maps\?ll=(-?[\d.]+),\s*(-?[\d.]+)/);
@@ -1384,16 +1400,18 @@ async function openListing() {
   const [, slug, lang] = m;
   showStatus('loading','Ouverture du listing…');
   try {
-    const res = await fetch(`/for-sale/${slug}/${lang}/?v=${Date.now()}`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(res.status === 404 ? `Aucune page publiée à ce lien (for-sale/${slug}/${lang}).` : `Erreur ${res.status} à l'ouverture de la page.`);
+    const html = await readPage(slug, lang);
+    if (html === null) throw new Error(`Aucune page publiée à ce lien (for-sale/${slug}/${lang}).`);
     const publicUrl = `https://listing.signature-sc.com/for-sale/${slug}/${lang}/`;
-    const d = parsePublished(await res.text(), publicUrl);
+    const d = parsePublished(html, publicUrl);
     // Une page montée à la main perdrait son titre ou ses photos : elle ne se rouvre pas
     if (!d.title || !d.images.length) throw new Error('Cette page a été faite à la main : la rouvrir ici lui ferait perdre ' + (!d.title ? 'son titre' : 'ses photos') + '.');
     currentSlug = slug; currentLang = lang; sourceLang = null;
     d.slug = slug; d.lang = lang; d.publicUrl = publicUrl;
     showResult(d);
-    if (d.notes.length) setPublishBar('warn', 'À vérifier avant de publier : ' + d.notes.join(' '), false);
+    openedFields = formFields();
+    showSyncBox();
+    if (d.notes.length) setPublishBar('warn', 'À vérifier si tu changes le texte, les photos ou la carte : ' + d.notes.join(' '), false);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
 }
 
@@ -1441,8 +1459,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
 // ceux du listing publié.
 const TEXT_FIELDS = ['subtitle','location','beds','baths','year','construction','lot','hoa','predial','description','highlights'];
 
-async function translateData(src, targetLang) {
-  const texts = Object.fromEntries(TEXT_FIELDS.map(k => [k, src[k] ?? (k === 'highlights' ? [] : '')]));
+async function translateTexts(texts, targetLang) {
   const sys = translationRules(targetLang) + `
 Tu reçois le listing en JSON. Rends le même JSON, avec les mêmes clés et les valeurs traduites. Une valeur vide reste vide.`;
   const res = await apiFetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,noFetch:true,system:sys,messages:[{role:'user',content:JSON.stringify(texts,null,2)}]})});
@@ -1450,7 +1467,12 @@ Tu reçois le listing en JSON. Rends le même JSON, avec les mêmes clés et les
   const api = await res.json();
   let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
   const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
-  const t = JSON.parse(m[0]);
+  return JSON.parse(m[0]);
+}
+
+async function translateData(src, targetLang) {
+  const texts = Object.fromEntries(TEXT_FIELDS.map(k => [k, src[k] ?? (k === 'highlights' ? [] : '')]));
+  const t = await translateTexts(texts, targetLang);
   const d = { ...src };
   for (const k of TEXT_FIELDS) if (typeof t[k] === typeof texts[k]) d[k] = t[k];
   if (targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
@@ -1463,6 +1485,8 @@ Tu reçois le listing en JSON. Rends le même JSON, avec les mêmes clés et les
 function showResult(data) {
   listingData = data;
   generatedCode = buildTemplate(data);
+  openedFields = null;
+  document.getElementById('sync-box').style.display = 'none';
 
   // Fill edit fields
   document.getElementById('e-title').value = data.title||'';
@@ -1520,42 +1544,33 @@ async function checkLive() {
   if (liveUrl() === url) showLiveButtons(ok || publishedPages.length > 0);
 }
 
-// ── Apply changes ─────────────────────────────────────────────────
-function applyChanges() {
-  // Read fields
-  listingData.title = document.getElementById('e-title').value.trim();
-  listingData.subtitle = document.getElementById('e-subtitle').value.trim();
-  listingData.location = document.getElementById('e-location').value.trim();
-  listingData.currency = document.getElementById('e-currency').value;
-  listingData.price = document.getElementById('e-price').value.trim();
-  listingData.priceOld = document.getElementById('e-price-old').value.trim();
-  listingData.beds = document.getElementById('e-beds').value.trim();
-  listingData.baths = document.getElementById('e-baths').value.trim();
-  listingData.year = document.getElementById('e-year').value.trim();
-  listingData.construction = document.getElementById('e-construction').value.trim();
-  listingData.lot = document.getElementById('e-lot').value.trim();
-  listingData.hoa = document.getElementById('e-hoa').value.trim();
-  listingData.predial = document.getElementById('e-predial').value.trim();
-  listingData.description = document.getElementById('e-description').value.trim();
-  listingData.highlights = document.getElementById('e-highlights').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
-  listingData.lat = document.getElementById('e-lat').value.trim();
-  listingData.lng = document.getElementById('e-lng').value.trim();
-
-  // Photos
-  if (photosMode === 'source') {
-    listingData.images = getSelectedSourcePhotos();
-  } else {
-    const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/,'/');
-    const files = document.getElementById('e-photo-files').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
-    listingData.images = files.map(f => 'https://listing.signature-sc.com/' + path + f);
+// ── Ce que dit le formulaire ──────────────────────────────────────
+function formFields() {
+  const value = id => document.getElementById(id).value.trim();
+  const lines = id => value(id).split('\n').map(s=>s.trim()).filter(Boolean);
+  const fields = {
+    title: value('e-title'), subtitle: value('e-subtitle'), location: value('e-location'),
+    currency: value('e-currency'), price: value('e-price'), priceOld: value('e-price-old'),
+    beds: value('e-beds'), baths: value('e-baths'), year: value('e-year'),
+    construction: value('e-construction'), lot: value('e-lot'), hoa: value('e-hoa'), predial: value('e-predial'),
+    description: value('e-description'), highlights: lines('e-highlights'), lat: value('e-lat'), lng: value('e-lng'),
+  };
+  if (photosMode === 'source') fields.images = getSelectedSourcePhotos();
+  else {
+    const path = value('e-photo-path').replace(/\/?$/,'/');
+    fields.images = lines('e-photo-files').map(f => 'https://listing.signature-sc.com/' + path + f);
   }
+  return fields;
+}
 
+function applyChanges() {
+  Object.assign(listingData, formFields());
   generatedCode = buildTemplate(listingData);
   refreshPreview();
 
   // Switch to preview tab
   showTab('preview');
-  toast('✓ Modifications appliquées');
+  toast('✓ Aperçu mis à jour');
 }
 
 function refreshPreview() {
@@ -1584,18 +1599,47 @@ function showTab(tab) {
 // ── Publish ───────────────────────────────────────────────────────
 async function publishToGitHub() {
   if (!generatedCode) return;
+  // Publier prend ce qui est dans le formulaire : « Mettre à jour l'aperçu » n'est plus une étape à retenir
+  const fields = formFields();
+  if (!fields.images.length) { alert("Aucune photo n'est sélectionnée : rien n'est publié."); return; }
+  Object.assign(listingData, fields);
+  generatedCode = buildTemplate(listingData);
+  refreshPreview();
   const btn = document.getElementById('btn-publish');
   btn.disabled = true; btn.textContent = 'Publication…';
   const path = `for-sale/${currentSlug}/${currentLang}/index.html`;
   const message = `${currentMode==='translate'?'Translate':currentMode==='edit'?'Update':'Add'} listing: ${currentSlug} (${currentLang})`;
+  const differs = k => JSON.stringify(fields[k]) !== JSON.stringify(openedFields[k]);
+  const shared = openedFields ? SHARED_FIELDS.filter(differs) : [];
+  const changes = Object.fromEntries(shared.map(k => [k, fields[k]]));
+  textChanged = !!openedFields && Object.keys(fields).some(k => !SHARED_FIELDS.includes(k) && differs(k));
+  // Hors du texte et des photos, la page ne se refait pas : on remplace la valeur, et rien d'autre ne bouge
+  const rewrite = !openedFields || textChanged || fields.images.some(u => !u.startsWith(OWN_SITE));
   try {
-    await copyPhotos();
-    await publishPage(path, generatedCode, message);
-    toast('✓ Publié sur listing.signature-sc.com/'+path);
+    let html = generatedCode;
+    if (rewrite) {
+      await copyPhotos();
+      html = generatedCode;
+      await publishPage(path, html, message);
+    } else if (shared.length) {
+      setPublishBar('loading', `Mise à jour en ${currentLang.toUpperCase()}…`);
+      const current = await readPage(currentSlug, currentLang);
+      const patched = patchPage(current, currentLang, changes, liveUrl());
+      if (patched.failed.length) throw new Error(`${currentLang.toUpperCase()} non publiée : ${patched.failed.join(', ')} introuvable sur la page.`);
+      html = patched.html;
+      if (html !== current) await publishPage(path, html, message); // au nouvel essai après une panne, elle est déjà à jour
+    }
+    const nothing = !rewrite && !shared.length;
+    const report = shared.length && document.getElementById('e-sync').checked ? await syncOtherLangs(changes) : { pages: [], problems: [], failed: [] };
+    syncFailed = report.failed;
+    if (!report.problems.length) openedFields = openedFields && fields;
+    if (!nothing) toast('✓ Publié sur listing.signature-sc.com/'+path);
     publishedData = { ...listingData, slug: currentSlug, lang: currentLang };
-    publishedPages = [{ lang: currentLang, url: `https://listing.signature-sc.com/for-sale/${currentSlug}/${currentLang}/`, html: generatedCode, live: false }];
+    publishedPages = [{ lang: currentLang, url: liveUrl(), html, live: nothing }, ...report.pages];
     renderPublishLinks();
-    watchLive();
+    if (nothing) setPublishBar('success', "Rien n'a changé sur cette page, rien n'est publié :", false);
+    else if (report.problems.length) setPublishBar('error', `${report.problems.join(' · ')} Clique à nouveau sur Publier pour réessayer.`, false);
+    else watchLive();
     showLiveButtons(true);
     btn.textContent='✓ Publié'; btn.style.background='#1a3d2e';
     setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier'; btn.style.background=''; },5000);
@@ -1604,6 +1648,140 @@ async function publishToGitHub() {
     if(!err.cancelled) alert('Erreur : '+err.message);
     btn.disabled=false; btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Publier';
   }
+}
+
+// ── Reporter une valeur dans les autres langues ───────────────────
+// Refaire une page avec le gabarit lui ferait perdre ses cases et sa mise en forme : seules 7 pages
+// sur 65 en ressortaient identiques le 05/11/2026. On remplace donc la valeur là où elle est écrite,
+// et la page n'est publiée que si, relue, elle dit exactement ce qu'on attend d'elle.
+const SHARED_FIELDS = ['price','priceOld','currency','beds','baths','year','hoa','predial','location'];
+const SHARED_WORDS = ['beds','baths','year','hoa','predial','location']; // ceux qui peuvent porter des mots
+const FEE_ROW = (label, value) => `<div class="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-neutral-50 ring-1 ring-black/5"><span class="text-[#223256]/70 text-xs sm:text-sm">${label}</span><span class="font-semibold text-[#223256] text-xs sm:text-sm">${value}</span></div>`;
+
+const reEscape = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Un montant entier seulement : $895,000 ne doit pas se reconnaître dans $1,895,000 ni dans $895,000,000
+const replaceValue = (html, from, to) => from ? html.replace(new RegExp(`(?<![\\d,.])${reEscape(from)}(?![\\d,])`, 'g'), () => to) : html;
+const cellRe = label => new RegExp(`(>\\s*${reEscape(label)}\\s*</(div|span)>\\s*<\\2[^>]*>)([\\s\\S]*?)(</\\2>)`);
+const setCell = (html, label, value) => html.replace(cellRe(label), (m, open, tag, old, close) => open + value + close);
+const removeCell = (html, label) => html.replace(new RegExp(`[ \\t]*<div[^>]*bg-neutral-50[^>]*>\\s*<(div|span)[^>]*>\\s*${reEscape(label)}\\s*</\\1>\\s*<\\1[^>]*>[\\s\\S]*?</\\1>\\s*</div>\\r?\\n?`), '');
+const hasWords = v => /\p{L}/u.test(v.replace(/\b(USD|MXN|CAD|EUR|N\/A)\b/gi, ''));
+
+// Les frais mensuels et la taxe ne sont pas sur toutes les pages : la ligne se pose à côté de l'autre,
+// ou dans sa propre grille sous celle des détails si la page n'a aucune des deux.
+function addFee(html, lang, key, value, labels) {
+  const row = FEE_ROW(TEMPLATE_LABELS[lang][key], value);
+  const other = labels[key === 'hoa' ? 'predial' : 'hoa'];
+  if (other) {
+    const m = html.match(new RegExp(`[ \\t]*<div[^>]*bg-neutral-50[^>]*>\\s*<span[^>]*>\\s*${reEscape(other)}\\s*</span>\\s*<span[^>]*>[\\s\\S]*?</span>\\s*</div>`));
+    if (!m) return html;
+    const pad = m[0].match(/^[ \t]*/)[0];
+    return key === 'hoa'
+      ? html.slice(0, m.index) + pad + row + '\n' + html.slice(m.index)
+      : html.slice(0, m.index + m[0].length) + '\n' + pad + row + html.slice(m.index + m[0].length);
+  }
+  const last = cellRe(Object.values(labels).pop() || '\0').exec(html);
+  const end = last && html.slice(last.index + last[0].length).match(/^\s*<\/div>\s*<\/div>/);
+  if (!end) return html;
+  const at = last.index + last[0].length + end[0].length;
+  return `${html.slice(0, at)}\n          <div class="grid sm:grid-cols-2 gap-2 sm:gap-4 text-sm mt-2 sm:mt-4">\n            ${row}\n          </div>${html.slice(at)}`;
+}
+
+function patchPage(html, lang, changes, pageUrl) {
+  const was = parsePublished(html, pageUrl);
+  const now = { ...was, ...changes };
+  const swapPrice = s => (now.price === was.price && now.currency === was.currency) ? s
+    : replaceValue(replaceValue(s, `${was.price} ${was.currency}`, `${now.price} ${now.currency}`), was.price, now.price);
+  // Une page faite par le gabarit se refait à l'identique : c'est le plus sûr, et rien ne manque jamais
+  const page = { ...was, lang, slug: pageUrl.split('/for-sale/')[1].split('/')[0], publicUrl: pageUrl };
+  let out = html;
+  if (buildTemplate(page) === html.replace(/\r\n/g, '\n')) out = buildTemplate({ ...page, ...changes });
+  else {
+    out = swapPrice(out);
+    if (now.price !== was.price || now.currency !== was.currency) {
+      out = out.replace(/(\bprice:\s*")[^"]*(")/, (m, a, b) => a + now.price + b)
+        .replace(/(\bcurrency:\s*")[^"]*(")/, (m, a, b) => a + now.currency + b)
+        .replace(/(\bconst price\s*=\s*")[^"]*(")/, (m, a, b) => `${a}${now.price} ${now.currency}${b}`)
+        // L'aperçu du lien : il peut porter un prix périmé que le remplacement exact ne reconnaît pas
+        .replace(/(og:description" content="[^"]*? · )[^"]*/, (m, a) => `${a}${now.price} ${now.currency}`);
+      const perArea = pricePerAreaOf(now, lang);
+      if (perArea && was.labels.perArea) out = setCell(out, was.labels.perArea, perArea);
+    }
+    if (now.priceOld !== was.priceOld || now.currency !== was.currency) {
+      const struck = /[ \t]*<div[^>]*line-through[^>]*>[^<]*<\/div>\r?\n?/;
+      if (was.priceOld && now.priceOld) out = out.replace(/(<div[^>]*line-through[^>]*>)[^<]*/, (m, a) => `${a}${now.priceOld} ${now.currency}`);
+      else if (was.priceOld) out = out.replace(struck, '');
+      else if (now.priceOld) out = out.replace(/(>\s*(?:PRIX|PRICE|PRECIO)\s*<\/div>\s*<div[^>]*>[^<]*<\/div>)/, (m, a) => `${a}\n            <div class="text-[10px] sm:text-base text-[#223256]/60 line-through mt-0.5">${now.priceOld} ${now.currency}</div>`);
+    }
+    for (const k of ['beds','baths','year','hoa','predial']) {
+      if (now[k] === was[k]) continue;
+      if (was.labels[k]) out = now[k] ? setCell(out, was.labels[k], now[k]) : removeCell(out, was.labels[k]);
+      else if (k === 'hoa' || k === 'predial') out = addFee(out, lang, k, now[k], was.labels);
+    }
+    if (now.location !== was.location) {
+      const h1 = out.indexOf('<h1'), at = out.lastIndexOf(`>${was.location}<`, h1);
+      if (at >= 0) out = out.slice(0, at + 1) + now.location + out.slice(at + 1 + was.location.length);
+      out = out.replace(/(og:description" content=")[^"]*?( · )/, (m, a, b) => a + now.location.replace(/"/g, '&quot;') + b);
+      const tag = s => s.toUpperCase().split(',')[0].trim();
+      if (tag(was.location) && tag(now.location)) out = out.split(`>${tag(was.location)}<`).join(`>${tag(now.location)}<`);
+    }
+  }
+  // Relue, la page doit dire ce qu'on attend, et rien d'autre ne doit avoir bougé
+  const after = parsePublished(out, pageUrl);
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const failed = SHARED_FIELDS.filter(k => after[k] !== now[k]);
+  for (const k of ['title','subtitle','description','construction','lot']) if (after[k] !== swapPrice(was[k])) failed.push(k);
+  if (!same(after.highlights, was.highlights.map(swapPrice))) failed.push('highlights');
+  if (!same(after.images, was.images)) failed.push('images');
+  return { html: out, failed };
+}
+
+// La page telle qu'elle est sur GitHub : null si cette langue n'existe pas
+async function readPage(slug, lang) {
+  const res = await apiFetch(`/api/github-page?slug=${encodeURIComponent(slug)}&lang=${lang}`);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.html === undefined) throw new Error(data.error || `Erreur ${res.status} à la lecture de la page ${lang.toUpperCase()}.`);
+  return data.html;
+}
+
+async function translateChanges(changes, lang) {
+  const texts = Object.fromEntries(SHARED_WORDS.filter(k => changes[k] && hasWords(changes[k])).map(k => [k, changes[k]]));
+  if (!Object.keys(texts).length) return changes;
+  const t = await translateTexts(texts, lang);
+  const out = { ...changes };
+  for (const k of Object.keys(texts)) if (typeof t[k] === 'string' && t[k].trim()) out[k] = t[k].trim();
+  return out;
+}
+
+async function syncOtherLangs(changes) {
+  const pages = [], problems = [], failed = [];
+  for (const lang of ['fr','en','es'].filter(l => l !== currentLang)) {
+    const name = lang.toUpperCase();
+    try {
+      const html = await readPage(currentSlug, lang);
+      if (html === null) continue;
+      setPublishBar('loading', `Mise à jour en ${name}…`);
+      const url = `${OWN_SITE}for-sale/${currentSlug}/${lang}/`;
+      const patched = patchPage(html, lang, await translateChanges(changes, lang), url);
+      if (patched.failed.length) { problems.push(`${name} non publiée : ${patched.failed.join(', ')} introuvable sur la page.`); failed.push(lang); continue; }
+      // Les photos copiées depuis la page ouverte valent aussi pour les autres langues
+      const page = [...copiedPhotos].reduce((s, [from, to]) => s.split(from).join(to), patched.html);
+      if (page !== html) await publishPage(`for-sale/${currentSlug}/${lang}/index.html`, page, `Sync listing: ${currentSlug} (${lang})`);
+      pages.push({ lang, url, html: page, live: page === html, synced: true });
+    } catch (err) { problems.push(`${name} non publiée : ${err.message}.`); failed.push(lang); }
+  }
+  return { pages, problems, failed };
+}
+
+// La case à cocher ne s'affiche que s'il existe une autre langue à mettre à jour
+async function showSyncBox() {
+  const others = ['fr','en','es'].filter(l => l !== currentLang);
+  const slug = currentSlug, lang = currentLang;
+  const exists = await Promise.all(others.map(l => fetch(`/for-sale/${slug}/${l}/?v=${Date.now()}`, { method: 'HEAD', cache: 'no-store' }).then(r => r.ok).catch(() => false)));
+  const langs = others.filter((l, i) => exists[i]).map(l => l.toUpperCase());
+  if (!langs.length || slug !== currentSlug || lang !== currentLang) return;
+  document.getElementById('e-sync').checked = true;
+  document.getElementById('sync-text').textContent = `Reporter aussi en ${langs.join(' et ')} : prix, chambres, salles de bain, année, HOA, predial et localisation.`;
+  document.getElementById('sync-box').style.display = 'flex';
 }
 
 // ── Copier les photos sur le site ─────────────────────────────────
@@ -1721,7 +1899,9 @@ function watchLive() {
 // La langue d'origine d'un listing traduit n'est jamais réécrite par une traduction de traduction.
 function remainingLangs() {
   if (!publishedData) return [];
-  return ['fr','en','es'].filter(l => l !== sourceLang && !publishedPages.some(p => p.lang === l));
+  // Une langue qui vient de recevoir le report n'a plus rien à traduire, sauf si le texte a changé.
+  // Une langue dont le report a échoué se réessaie par Publier : traduire referait toute sa page.
+  return ['fr','en','es'].filter(l => l !== sourceLang && !syncFailed.includes(l) && !publishedPages.some(p => p.lang === l && !(p.synced && textChanged)));
 }
 
 function updateTranslateBtn() {
@@ -1748,6 +1928,7 @@ async function translateOthers() {
     document.getElementById('btn-translate-others').style.display = 'none';
     try {
       await publishPage(`for-sale/${d.slug}/${d.lang}/index.html`, html, `Translate listing: ${d.slug} (${d.lang})`);
+      publishedPages = publishedPages.filter(p => p.lang !== d.lang);
       publishedPages.push({ lang: d.lang, url: d.publicUrl, html, live: false });
       renderPublishLinks();
     } catch (err) { failed.push(`Traduction en ${name} non publiée : ${err.message}`); }
@@ -1766,6 +1947,8 @@ async function copyLink(url) {
 // ── Helpers ───────────────────────────────────────────────────────
 function backToGenerator() {
   hidePublishBar();
+  openedFields = null;
+  syncFailed = [];
   document.getElementById('screen-result').style.display='none';
   document.getElementById('screen-generator').style.display='flex';
   showTab('preview');

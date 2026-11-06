@@ -69,7 +69,8 @@ async function copyOne(url, token) {
   if (!isPublicUrl(url)) return { url, error: 'Adresse refusée' };
   try {
     const source = await lighterCopy(url).catch(() => url);
-    const res = await fetch(source, { headers: { 'User-Agent': UA }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
+    // Squarespace envoie du WebP à qui ne dit rien : le JPEG passe partout, aperçus de lien compris
+    const res = await fetch(source, { headers: { 'User-Agent': UA, 'Accept': 'image/jpeg,image/png;q=0.9,*/*;q=0.8' }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
     if (!res.ok) return { url, error: `Le site répond ${res.status}` };
     const bytes = Buffer.from(await res.arrayBuffer());
     if (bytes.length > MAX_BYTES) return { url, error: 'Photo trop lourde' };
