@@ -127,12 +127,14 @@
     #photo-drop-zone { border: 2px dashed rgba(34,50,86,0.2); border-radius: 10px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; background: rgba(34,50,86,0.02); }
     #photo-drop-zone:hover, #photo-drop-zone.drag-active { border-color: var(--teal); background: rgba(97,189,204,0.06); }
     #photo-drop-zone svg { opacity: 0.35; margin-bottom: 8px; }
-    #upload-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin-bottom: 12px; }
-    .upload-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: #eee; }
-    .upload-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    #upload-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; max-height: 70vh; overflow-y: auto; padding: 2px; margin-bottom: 12px; }
+    .upload-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: #eee; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: pan-y; }
+    .upload-thumb.dragging { opacity: 0.3; }
+    .upload-thumb img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .upload-thumb .photo-rank { position: absolute; top: 3px; left: 3px; min-width: 20px; height: 18px; padding: 0 5px; border-radius: 9px; background: rgba(34,50,86,0.78); color: white; font-size: 0.64rem; font-weight: 600; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; }
     .upload-thumb .thumb-name { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.55); color: white; font-size: 9px; padding: 2px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .upload-thumb .thumb-remove { position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; font-size: 9px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .upload-thumb .thumb-ok { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #22c55e; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+    .upload-thumb .thumb-ok { position: absolute; top: 3px; right: 22px; width: 18px; height: 18px; border-radius: 50%; background: #22c55e; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; }
     #btn-upload-github { width: 100%; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 11px 16px; font-size: 0.83rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; margin-bottom: 12px; }
     #btn-upload-github:hover { background: #1a2845; }
     #btn-upload-github:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -451,12 +453,13 @@
             </div>
             <!-- Aperçu + bouton upload -->
             <div id="upload-preview-section" style="display:none">
+              <div style="font-size:0.78rem;color:rgba(34,50,86,0.55);margin-bottom:10px">Faites glisser une photo pour changer l'ordre, avant ou après l'envoi (au doigt : appui maintenu, puis glisser). La photo 1 est la photo principale du listing.</div>
               <div id="upload-preview-grid"></div>
               <button id="btn-upload-github" onclick="uploadPhotosToGitHub()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 Compresser et uploader sur GitHub
               </button>
-              <div id="upload-status" style="font-size:0.75rem;color:rgba(34,50,86,0.6);text-align:center;min-height:18px"></div>
+              <div id="upload-status" style="font-size:0.75rem;color:rgba(34,50,86,0.6);text-align:center;min-height:18px;margin-bottom:14px"></div>
             </div>
             <div class="field-group">
               <label class="field-label">Noms des fichiers (un par ligne)</label>
@@ -542,6 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Path preview for own photos
   document.getElementById('e-photo-path').addEventListener('input', updatePathPreview);
   document.getElementById('e-photo-files').addEventListener('input', updatePathPreview);
+  document.getElementById('e-photo-files').addEventListener('change', uploadGridFromNames);
 });
 
 // ── Mode toggle ───────────────────────────────────────────────────
@@ -557,7 +561,7 @@ function setMode(mode) {
 }
 
 // ── Photo compression & upload ────────────────────────────────────
-let pendingUploadFiles = []; // { file, name }
+let uploadItems = []; // « Mes propres photos », dans l'ordre du listing : { name, preview, file, done }
 
 function compressImage(file) {
   return new Promise((resolve) => {
@@ -594,8 +598,7 @@ function addFilesToUpload(files) {
   const valid = files.filter(f => f.type.startsWith('image/'));
   if (!valid.length) return;
   valid.forEach(f => {
-    const name = f.name.replace(/\.[^.]+$/, '.jpg');
-    pendingUploadFiles.push({ file: f, name });
+    uploadItems.push({ file: f, name: f.name.replace(/\.[^.]+$/, '.jpg'), preview: URL.createObjectURL(f) });
   });
   renderUploadPreview();
 }
@@ -604,34 +607,60 @@ function renderUploadPreview() {
   const grid = document.getElementById('upload-preview-grid');
   const section = document.getElementById('upload-preview-section');
   grid.innerHTML = '';
-  if (!pendingUploadFiles.length) { section.style.display = 'none'; return; }
+  if (!uploadItems.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
-  pendingUploadFiles.forEach((item, idx) => {
+  uploadItems.forEach((item, i) => {
     const div = document.createElement('div');
     div.className = 'upload-thumb';
-    const previewUrl = URL.createObjectURL(item.file);
-    div.innerHTML = `<img src="${previewUrl}"><div class="thumb-name">${item.name}</div>${item.done ? '<div class="thumb-ok">✓</div>' : `<button class="thumb-remove" onclick="removeUploadFile(${idx})">✕</button>`}`;
+    div.dataset.url = item.preview;
+    div.uploadItem = item;
+    div.innerHTML = `<img src="${item.preview}" loading="lazy" draggable="false" /><span class="photo-rank">${i + 1}</span><div class="thumb-name">${item.name}</div>${item.done ? '<div class="thumb-ok">✓</div>' : ''}<button type="button" class="thumb-remove" title="Retirer du listing">✕</button>`;
+    div.querySelector('.thumb-remove').addEventListener('click', () => removeUploadItem(item));
+    makePhotoDraggable(div);
     grid.appendChild(div);
   });
-  document.getElementById('upload-status').textContent = pendingUploadFiles.length + ' photo(s) prête(s)';
+  wirePhotoGrid(grid);
+  const waiting = uploadItems.filter(i => !i.done).length;
+  document.getElementById('btn-upload-github').style.display = waiting ? '' : 'none';
+  document.getElementById('upload-status').textContent = waiting ? `${waiting} photo(s) à envoyer` : `✓ ${uploadItems.length} photo(s) sur GitHub.`;
 }
 
-function removeUploadFile(idx) {
-  pendingUploadFiles.splice(idx, 1);
+// L'ordre de la grille est celui du listing : les noms le suivent, et Publier lit les noms
+function syncUploadOrder() {
+  const grid = document.getElementById('upload-preview-grid');
+  uploadItems = [...grid.children].map(div => div.uploadItem);
+  [...grid.children].forEach((div, i) => { div.querySelector('.photo-rank').textContent = i + 1; });
+  document.getElementById('e-photo-files').value = uploadItems.filter(i => i.done).map(i => i.name).join('\n');
+  updatePathPreview();
+}
+
+// La liste des noms a changé (dossier relu, ou tapée à la main) : la grille la suit
+function uploadGridFromNames() {
+  const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/, '/').replace(/^\//, '');
+  const names = document.getElementById('e-photo-files').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const waiting = uploadItems.filter(i => !i.done);
+  uploadItems = [...names.map(name => uploadItems.find(i => i.done && i.name === name) || { name, done: true, preview: OWN_SITE + path + name }), ...waiting];
   renderUploadPreview();
+}
+
+// Retirer une photo du listing ne l'efface pas de GitHub
+function removeUploadItem(item) {
+  uploadItems = uploadItems.filter(i => i !== item);
+  renderUploadPreview();
+  syncUploadOrder();
 }
 
 async function uploadPhotosToGitHub() {
   const path = document.getElementById('e-photo-path').value.trim().replace(/\/?$/, '/').replace(/^\//, '');
   if (!path || path === '/') { alert('Entrez d\'abord le chemin GitHub (ex: for-sale/villa/photos/)'); return; }
-  if (!pendingUploadFiles.length) return;
+  const waiting = uploadItems.filter(i => !i.done);
+  if (!waiting.length) return;
   const btn = document.getElementById('btn-upload-github');
   const status = document.getElementById('upload-status');
   btn.disabled = true;
-  const uploadedNames = [];
-  for (let i = 0; i < pendingUploadFiles.length; i++) {
-    const item = pendingUploadFiles[i];
-    status.textContent = `Compression et upload ${i + 1}/${pendingUploadFiles.length} : ${item.name}…`;
+  for (let i = 0; i < waiting.length; i++) {
+    const item = waiting[i];
+    status.textContent = `Compression et upload ${i + 1}/${waiting.length} : ${item.name}…`;
     try {
       const base64 = await compressImage(item.file);
       const res = await apiFetch('/api/github-publish', {
@@ -642,21 +671,18 @@ async function uploadPhotosToGitHub() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erreur GitHub');
       item.done = true;
-      uploadedNames.push(item.name);
     } catch (err) {
+      // Celles déjà envoyées restent dans la liste, le nouvel essai ne reprend que les autres
+      renderUploadPreview();
+      syncUploadOrder();
       status.textContent = 'Erreur sur ' + item.name + ' : ' + err.message;
       btn.disabled = false;
       return;
     }
   }
-  // Auto-fill textarea
-  const textarea = document.getElementById('e-photo-files');
-  const existing = textarea.value.trim();
-  textarea.value = (existing ? existing + '\n' : '') + uploadedNames.join('\n');
-  updatePathPreview();
   renderUploadPreview();
-  status.textContent = '✓ ' + uploadedNames.length + ' photo(s) uploadée(s) et compressées sur GitHub.';
-  pendingUploadFiles = pendingUploadFiles.filter(f => !f.done);
+  syncUploadOrder();
+  status.textContent = '✓ ' + waiting.length + ' photo(s) uploadée(s) et compressées sur GitHub.';
   btn.disabled = false;
 }
 
@@ -702,6 +728,7 @@ async function readGithubFolder() {
       status.textContent = 'Aucune photo trouvée dans ce dossier.';
     } else {
       document.getElementById('e-photo-files').value = data.photos.join('\n');
+      uploadGridFromNames();
       status.style.background = 'rgba(40,167,69,0.08)';
       status.style.color = '#1a6830';
       status.textContent = '✓ ' + data.photos.length + ' photo(s) chargée(s) automatiquement.';
@@ -740,20 +767,28 @@ function buildSourcePhotosGrid(images) {
       div.classList.toggle('selected');
       updateSourceCount();
     });
-    div.addEventListener('pointerdown', e => startPhotoDrag(e, div));
-    // L'appui maintenu au doigt ouvrirait le menu de l'image
-    div.addEventListener('contextmenu', e => { if (photoDrag.item) e.preventDefault(); });
+    makePhotoDraggable(div);
     grid.appendChild(div);
   });
-  if (!grid.dataset.wired) {
-    // Pendant un glissé au doigt, la grille ne défile pas sous la photo tenue
-    grid.addEventListener('touchmove', e => { if (photoDrag.active) e.preventDefault(); }, { passive: false });
-    grid.dataset.wired = '1';
-  }
+  wirePhotoGrid(grid);
   updateSourceCount();
 }
 
-// ── Réordonner les photos source ──────────────────────────────────
+// ── Réordonner les photos ─────────────────────────────────────────
+// Le même geste pour les deux grilles : celle du listing source et « Mes propres photos ».
+function makePhotoDraggable(div) {
+  div.addEventListener('pointerdown', e => { if (!e.target.closest('.thumb-remove')) startPhotoDrag(e, div); });
+  // L'appui maintenu au doigt ouvrirait le menu de l'image
+  div.addEventListener('contextmenu', e => { if (photoDrag.item) e.preventDefault(); });
+}
+
+function wirePhotoGrid(grid) {
+  if (grid.dataset.wired) return;
+  // Pendant un glissé au doigt, la grille ne défile pas sous la photo tenue
+  grid.addEventListener('touchmove', e => { if (photoDrag.active) e.preventDefault(); }, { passive: false });
+  grid.dataset.wired = '1';
+}
+
 // Événements « pointer » plutôt que le glisser-déposer HTML : celui-ci retenait
 // la place de départ de chaque photo, fausse dès la première photo déplacée, et
 // ne marchait pas au doigt. Souris : le glissé part après 5 px ; doigt : après un
@@ -804,11 +839,11 @@ function moveGhost() {
 // La photo tenue prend la place de celle qu'elle survole
 function placeDraggedPhoto() {
   const { item, x, y } = photoDrag;
-  const target = document.elementFromPoint(x, y)?.closest('.source-photo-item');
+  const target = document.elementFromPoint(x, y)?.closest('.source-photo-item, .upload-thumb');
   if (!target || target === item || target.parentNode !== item.parentNode) return;
   const items = [...item.parentNode.children];
   if (items.indexOf(item) < items.indexOf(target)) target.after(item); else target.before(item);
-  updateSourceCount();
+  if (item.classList.contains('upload-thumb')) syncUploadOrder(); else updateSourceCount();
 }
 
 // Près du haut ou du bas de la grille, elle défile seule
@@ -1537,6 +1572,11 @@ function showResult(data) {
 
   // Own photos: prefill path from slug
   document.getElementById('e-photo-path').value = `for-sale/${data.slug||'listing'}/photos/`;
+  // Les photos importées pour le listing précédent ne suivent pas dans celui qu'on ouvre
+  uploadItems = [];
+  document.getElementById('e-photo-files').value = '';
+  renderUploadPreview();
+  setPhotosMode('source');
   updatePathPreview();
 
   document.getElementById('result-name').textContent = data.title||'Listing';
