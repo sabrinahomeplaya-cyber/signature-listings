@@ -548,11 +548,23 @@ const L = {
       role:'Fundadora & CEO · Asesora Inmobiliaria'}
 };
 
-async function listingPhotos(url) {
-  try {
-    const res = await fetch(new URL(url).pathname+'?v='+Date.now(),{cache:'no-store'});
-    return res.ok ? publishedPhotos(await res.text(),url) : [];
-  } catch(e) { return []; }
+// Un listing à nous se lit sur sa page, case par case : relu en texte à plat, une case vide faisait
+// prendre à Claude le libellé suivant pour la valeur (« Construction » dans l'année). La page dans la
+// langue demandée si elle existe, sinon celle du lien.
+async function readOwnListing(url,lang) {
+  const base=(url.match(/\/for-sale\/[^/?#]+\//)||[])[0];
+  if(!base) return null;
+  const urlLang=(url.match(/\/for-sale\/[^/]+\/(fr|en|es)\b/)||[])[1];
+  for(const l of new Set([lang,urlLang].filter(Boolean))){
+    try {
+      const res=await fetch(base+l+'/?v='+Date.now(),{cache:'no-store'});
+      if(!res.ok) continue;
+      const publicUrl='https://listing.signature-sc.com'+base+l+'/';
+      const d=parsePublished(await res.text(),publicUrl);
+      if(d.title&&d.price) return {...d,lang:l,publicUrl,constrLabel:d.labels.construction,lotLabel:d.labels.lot};
+    } catch(e) { /* page illisible : on essaie l'autre, puis Claude */ }
+  }
+  return null;
 }
 
 async function loadListing() {
@@ -565,6 +577,10 @@ async function loadListing() {
   try {
     const langLabel = lang==='fr'?'français':lang==='en'?'anglais':'espagnol (Mexique)';
     const isSignature = url.includes('listing.signature-sc.com');
+    const own = isSignature ? await readOwnListing(url,lang) : null;
+    let d, api = {};
+    if (own && own.lang === lang) d = own;
+    else {
     const sys = isSignature
       ? `Tu es le traducteur officiel de l'agence "Signature ˢᶜ". Tu appliques la règle de FIDÉLITÉ ABSOLUE pour la génération de brochures et fiches client.
 
@@ -602,16 +618,19 @@ Note: constrLabel = le label exact du champ surface principale (ex: "Constructio
     const res = await apiFetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({system:sys,messages:[{role:'user',content:'URL du listing: '+url}]})});
     if (!res.ok) throw await apiError(res);
-    const api = await res.json();
+    api = await res.json();
     showStatus('loading','Construction de la brochure…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Données introuvables.');
-    const d=parseClaudeJson(m[0]);
+    d=parseClaudeJson(m[0]);
+    // Une langue sans page : Claude traduit le texte, les chiffres restent ceux de la page
+    if (own) for (const k of ['title','price','priceOld','currency','location','beds','baths','year','hoa','predial']) d[k]=own[k];
+    }
     d.publicUrl=d.publicUrl||url;
 
     // 1. Nos listings : les photos de la page, dans l'ordre choisi. Le dossier GitHub les rangeait par nom,
     // et une photo copiée porte un nom tiré au hasard : la couverture l'était aussi.
-    allPhotos=isSignature?await listingPhotos(url):[];
+    allPhotos=own?own.images:[];
     // 2. Sinon celles que la route a relevées sur la page d'origine : Claude ne les recopie plus
     if(!allPhotos.length) allPhotos=(api.images||d.images||[]).filter(u=>u&&u.startsWith('http'));
 
@@ -649,18 +668,18 @@ Note: constrLabel = le label exact du champ surface principale (ex: "Constructio
 function fillPanel(d) {
   const lb=L[currentLang]||L.fr;
   el('p-title').value=d.title||''; el('p-subtitle').value=d.subtitle||'';
-  el('p-price').value=priceAmount(d.price); el('p-currency').value=d.currency||'USD';
+  el('p-price').value=priceAmount(d.price,d.currency); el('p-currency').value=d.currency||'USD';
   el('p-location').value=d.location||''; el('p-url').value=d.publicUrl||'';
   el('p-desc').value=d.description||'';
   el('p-hl').value=(d.highlights||[]).join('\n');
   el('p-beds').value=d.beds||''; el('p-baths').value=d.baths||'';
-  el('p-garage').value=d.garage||''; el('p-year').value=d.year||'';
+  el('p-garage').value=d.garage||''; el('p-year').value=yearOnly(d.year);
   el('p-construction').value=d.construction||''; el('p-lot').value=d.lot||'';
   el('p-constr-label').value=d.constrLabel||lb.constr; el('p-lot-label').value=d.lotLabel||lb.lot;
   // Fiche Client fields
   el('p-hoa').value=feeAmount(d.hoa); el('p-predial').value=feeAmount(d.predial);
   el('p-ppa').value=''; // auto-calculated on render
-  el('p-price-old').value=priceAmount(d.priceOld);
+  el('p-price-old').value=priceAmount(d.priceOld,d.currency);
   el('lbl-beds').textContent=lb.beds; el('lbl-baths').textContent=lb.baths;
   el('lbl-constr').textContent=lb.constr; el('lbl-lot').textContent=lb.lot;
   el('lbl-ppa').textContent=lb.ppa;

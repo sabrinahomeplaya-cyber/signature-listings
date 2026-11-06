@@ -148,7 +148,7 @@ export default async function handler(req, res) {
     }
 
     const userText = pageContent
-        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Laisse le champ "images" vide ([]) : les photos sont ajoutées par le serveur.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS reprendre ces highlights un par un dans le champ "highlights" du JSON, dans le même ordre, sans en ajouter, en retirer ni en reformuler aucun. S'ils ne sont pas dans la langue demandée, traduis-les fidèlement.`
+        ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Laisse le champ "images" vide ([]) : les photos sont ajoutées par le serveur.\n- Une information absente ou une case vide reste vide (""). Ne prends jamais le libellé suivant pour une valeur : dans « Year built Construction 7,448 sq ft », l'année est vide.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS reprendre ces highlights un par un dans le champ "highlights" du JSON, dans le même ordre, sans en ajouter, en retirer ni en reformuler aucun. S'ils ne sont pas dans la langue demandée, traduis-les fidèlement.`
         : (body.messages?.[0]?.content || '');
 
     // Claude regarde quelques photos avant d'écrire : l'annonce d'origine ne dit souvent rien des

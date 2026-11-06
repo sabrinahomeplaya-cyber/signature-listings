@@ -550,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Les montants : le champ montre tout de suite ce qui sera publié
   for (const id of ['e-hoa', 'e-predial']) document.getElementById(id).addEventListener('change', e => { e.target.value = feeAmount(e.target.value); });
-  for (const id of ['e-price', 'e-price-old']) document.getElementById(id).addEventListener('change', e => { e.target.value = priceAmount(e.target.value); });
+  for (const id of ['e-price', 'e-price-old']) document.getElementById(id).addEventListener('change', e => { e.target.value = priceAmount(e.target.value, document.getElementById('e-currency').value); });
 });
 
 // ── Mode toggle ───────────────────────────────────────────────────
@@ -1353,7 +1353,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error("Claude n'a rien trouvé à extraire sur cette page. Vérifie le lien, ou colle celui de la même annonce sur le site de l'agence.");
     const d=parseClaudeJson(m[0]);
     if(Array.isArray(api.images)) d.images=api.images;
-    d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial); d.price=priceAmount(d.price); d.priceOld=priceAmount(d.priceOld);
+    d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial); d.price=priceAmount(d.price,d.currency); d.priceOld=priceAmount(d.priceOld,d.currency);
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
     showResult(d);
     toast(api.photosRead ? `✓ Texte écrit après avoir regardé ${api.photosRead} photos` : '⚠ Aucune photo regardée : texte écrit d\'après la page seule');
@@ -1388,73 +1388,6 @@ RÈGLES DE FORMATAGE CRITIQUES :
 3. Les points forts doivent être UNIQUEMENT des mots-clés ou groupes de mots concis. AUCUNE phrase descriptive.
 
 Réponds UNIQUEMENT avec un JSON valide, sans backticks.`;
-}
-
-// Relit une page publiée par le générateur, champ par champ, sans Claude. Les cases de
-// détails se reconnaissent à leur libellé, dans les trois langues : les pages anciennes
-// n'ont ni les mêmes cases, ni le même ordre.
-const DETAIL_LABELS = [
-  ['beds', /^(chambres|bedrooms|recámaras|recamaras|habitaciones)/i],
-  ['baths', /^(salles de bain|bathrooms|baños)/i],
-  ['year', /^(année|year|año)/i],
-  ['construction', /^(constru|living area|surface habitable|superficie habitable|área habitable)/i],
-  ['lot', /^(terrain|lot|terreno)/i],
-  ['predial', /(taxe|tax|predial)/i],
-  ['hoa', /(frais mensuels|hoa|mantenimiento|maintenance|cuota)/i],
-];
-
-// pageUrl sert aux pages anciennes, qui nomment leurs photos « ../photos/1.jpg ».
-// d.notes dit ce que le générateur ne sait pas refaire et qui disparaîtrait à la publication.
-function parsePublished(html, pageUrl) {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const text = el => el ? el.textContent.trim() : '';
-  const list = re => { const m = html.match(re); return m ? [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(x => JSON.parse('"' + x[1] + '"')) : []; };
-  const notes = [];
-  const h1 = doc.querySelector('h1');
-  const sub = h1 && h1.nextElementSibling;
-  // Le libellé lui-même, pas le cadre qui l'entoure et dont le texte est le même
-  const label = re => [...doc.querySelectorAll('div')].find(d => !d.children.length && re.test(text(d)));
-  const priceLabel = label(/^(PRIX|PRICE|PRECIO)$/i);
-  const splitPrice = s => { const m = s.match(/^(.*?)\s+([A-Z]{3})$/); return m ? [m[1], m[2]] : [s, '']; };
-  const [price, currency] = splitPrice(text(priceLabel && priceLabel.nextElementSibling));
-  // Une description écrite à la main en paragraphes : le texte se garde, pas le gras
-  let description = text(doc.querySelector('.whitespace-pre-line'));
-  if (!description) {
-    const head = label(/^(DESCRIPTION|DESCRIPCIÓN)$/i);
-    const box = head && head.parentElement.nextElementSibling;
-    if (box) {
-      box.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
-      const paras = [...box.querySelectorAll('p')];
-      description = (paras.length ? paras.map(p => p.textContent.trim()).join('\n\n') : box.textContent).replace(/[ \t]*\n[ \t]*/g, '\n').trim();
-      if (box.querySelector('strong, b, em, a')) notes.push('La description perd sa mise en forme (gras, liens) : seul le texte est repris.');
-    }
-  }
-  const d = {
-    title: text(h1),
-    preview: (html.match(/og:image" content="([^"]*\/apercu-[^"]*)"/) || [])[1] || '',
-    subtitle: sub && sub.tagName === 'P' ? text(sub) : '',
-    location: text(h1 && h1.previousElementSibling),
-    price, currency: currency || 'USD',
-    priceOld: splitPrice(text(doc.querySelector('.line-through')))[0],
-    description,
-    highlights: list(/(?:\bhighlights\s*:|const highlights\s*=)\s*\[([\s\S]*?)\]\s*[,;]/),
-    images: publishedPhotos(html, pageUrl || location.href),
-    labels: {}, // le libellé de chaque case tel qu'il est écrit sur cette page : le report s'en sert pour la retrouver
-  };
-  for (const cell of doc.querySelectorAll('.bg-neutral-50')) {
-    if (cell.children.length !== 2) continue;
-    const label = text(cell.children[0]), value = text(cell.children[1]);
-    const hit = DETAIL_LABELS.find(([k, re]) => re.test(label) && d[k] === undefined);
-    if (hit) { d[hit[0]] = value; d.labels[hit[0]] = label; }
-    // Le prix au m² se recalcule ; le garage a été retiré du générateur
-    else if (/\/\s*(m²|sq ft)/i.test(label)) d.labels.perArea = label;
-    else if (value && !/^garage/i.test(label)) notes.push(`La case « ${label} : ${value} » n'existe pas dans le générateur : elle disparaîtra.`);
-  }
-  for (const [k] of DETAIL_LABELS) if (d[k] === undefined) d[k] = '';
-  const ll = html.match(/maps\.google\.com\/maps\?ll=(-?[\d.]+),\s*(-?[\d.]+)/);
-  d.lat = ll ? ll[1] : ''; d.lng = ll ? ll[2] : '';
-  d.notes = notes;
-  return d;
 }
 
 // La page publiée garde les photos dans l'ordre choisi et les coordonnées de la carte :
@@ -1524,7 +1457,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
     if(kept.images.length) d.images=kept.images; else if(Array.isArray(api.images)) d.images=api.images;
     if(kept.lat && kept.lng) { d.lat=kept.lat; d.lng=kept.lng; }
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
-    d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial); d.price=priceAmount(d.price); d.priceOld=priceAmount(d.priceOld);
+    d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial); d.price=priceAmount(d.price,d.currency); d.priceOld=priceAmount(d.priceOld,d.currency);
     d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1538,8 +1471,6 @@ const TEXT_FIELDS = ['subtitle','location','beds','baths','year','construction',
 // La localisation s'écrit partout « Ville, Riviera Maya » (sa décision du 06/11/2026). Rien ne le
 // fixait : Claude recopiait le site d'origine, Mexico ici, Quintana Roo là. Ces noms ne se traduisent pas.
 const isStandardLocation = s => /, Riviera Maya$/.test(s || '');
-// L'année est une année, ou une case vide (sa règle du 06/11/2026) : « Ready to deliver » n'y a pas sa place
-const yearOnly = y => (String(y || '').match(/\b(?:1[89]|20)\d{2}\b/) || [''])[0];
 function standardLocation(location) {
   const town = (location || '').split(',')[0].replace(/\.$/, '').trim();
   return `${/^(riviera maya|quintana roo|m[eé]xi(co|que)|)$/i.test(town) ? 'Puerto Aventuras' : town}, Riviera Maya`;
@@ -1581,8 +1512,8 @@ function showResult(data) {
   document.getElementById('e-subtitle').value = data.subtitle||'';
   document.getElementById('e-location').value = data.location||'';
   document.getElementById('e-currency').value = data.currency||'USD';
-  document.getElementById('e-price').value = priceAmount(data.price);
-  document.getElementById('e-price-old').value = priceAmount(data.priceOld);
+  document.getElementById('e-price').value = priceAmount(data.price, data.currency);
+  document.getElementById('e-price-old').value = priceAmount(data.priceOld, data.currency);
   document.getElementById('e-beds').value = data.beds||'';
   document.getElementById('e-baths').value = data.baths||'';
   document.getElementById('e-year').value = data.year||'';
@@ -1643,7 +1574,7 @@ function formFields() {
   const lines = id => value(id).split('\n').map(s=>s.trim()).filter(Boolean);
   const fields = {
     title: value('e-title'), subtitle: value('e-subtitle'), location: value('e-location'),
-    currency: value('e-currency'), price: priceAmount(value('e-price')), priceOld: priceAmount(value('e-price-old')),
+    currency: value('e-currency'), price: priceAmount(value('e-price'), value('e-currency')), priceOld: priceAmount(value('e-price-old'), value('e-currency')),
     beds: value('e-beds'), baths: value('e-baths'), year: value('e-year'),
     construction: value('e-construction'), lot: value('e-lot'), hoa: feeAmount(value('e-hoa')), predial: feeAmount(value('e-predial')),
     description: value('e-description'), highlights: lines('e-highlights'), lat: value('e-lat'), lng: value('e-lng'),
