@@ -566,7 +566,8 @@ function setMode(mode) {
 // ── Photo compression & upload ────────────────────────────────────
 let uploadItems = []; // « Mes propres photos », dans l'ordre du listing : { name, preview, file, done }
 
-function compressImage(file) {
+// limit, en octets : la qualité descend jusqu'à passer dessous
+function compressImage(file, max = 1920, limit = Infinity) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -574,18 +575,19 @@ function compressImage(file) {
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Format illisible par le navigateur')); };
     img.onload = () => {
       URL.revokeObjectURL(url);
-      const MAX = 1920;
       let w = img.width, h = img.height;
-      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      if (w > max) { h = Math.round(h * max / w); w = max; }
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      canvas.toBlob(blob => {
+      const encode = quality => canvas.toBlob(blob => {
         if (!blob) { reject(new Error('Photo trop grande pour le navigateur')); return; }
+        if (blob.size > limit && quality > 0.5) { encode(quality - 0.05); return; }
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]); // base64 only
         reader.readAsDataURL(blob);
-      }, 'image/jpeg', 0.80);
+      }, 'image/jpeg', quality);
+      encode(0.80);
     };
     img.src = url;
   });
@@ -966,6 +968,7 @@ function pricePerAreaOf(data, lang) {
 
 function buildTemplate(data) {
   const images = data.images || [];
+  const preview = data.preview || images[0] || ''; // l'aperçu de lien, voir lightPreview()
   const imagesJSON = JSON.stringify(images, null, 6);
   const highlightsJSON = JSON.stringify(data.highlights || [], null, 6);
   const lat = data.lat || '20.496833';
@@ -992,12 +995,12 @@ function buildTemplate(data) {
   <meta property="og:url" content="${data.publicUrl||''}" />
   <meta property="og:title" content="Signature ˢᶜ | ${escHtml(data.title)}" />
   <meta property="og:description" content="${escHtml(data.location)} · ${data.price||''} ${data.currency||'USD'}" />
-  <meta property="og:image" content="${images[0]||''}" />
+  <meta property="og:image" content="${preview}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="${lang==='en'?'en_US':lang==='es'?'es_MX':'fr_FR'}" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="${images[0]||''}" />
+  <meta name="twitter:image" content="${preview}" />
   <title>Signature ˢᶜ | ${escHtml(data.title)}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1354,7 +1357,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
     showStatus('loading','Construction du listing…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error("Claude n'a rien trouvé à extraire sur cette page. Vérifie le lien, ou colle celui de la même annonce sur le site de l'agence.");
-    const d=JSON.parse(m[0]);
+    const d=parseClaudeJson(m[0]);
     if(Array.isArray(api.images)) d.images=api.images;
     d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial);
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
@@ -1434,6 +1437,7 @@ function parsePublished(html, pageUrl) {
   }
   const d = {
     title: text(h1),
+    preview: (html.match(/og:image" content="([^"]*\/apercu-[^"]*)"/) || [])[1] || '',
     subtitle: sub && sub.tagName === 'P' ? text(sub) : '',
     location: text(h1 && h1.previousElementSibling),
     price, currency: currency || 'USD',
@@ -1524,7 +1528,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
     showStatus('loading','Construction du listing traduit…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
-    const d=JSON.parse(m[0]);
+    const d=parseClaudeJson(m[0]);
     if(kept.images.length) d.images=kept.images; else if(Array.isArray(api.images)) d.images=api.images;
     if(kept.lat && kept.lng) { d.lat=kept.lat; d.lng=kept.lng; }
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
@@ -1563,6 +1567,14 @@ function standardLocation(location) {
   return `${/^(riviera maya|quintana roo|m[eé]xi(co|que)|)$/i.test(town) ? 'Puerto Aventuras' : town}, Riviera Maya`;
 }
 
+// Claude laisse parfois un vrai retour à la ligne dans un texte, ce que JSON interdit (« Bad control
+// character in string literal ») : on le remet sous la forme permise, le texte reste le même.
+function parseClaudeJson(text) {
+  try { return JSON.parse(text); } catch (e) {
+    return JSON.parse(text.replace(/"(?:[^"\\]|\\[\s\S])*"/g, s => s.replace(/[\u0000-\u001f]/g, c => ({ '\n': '\\n', '\r': '\\r', '\t': '\\t' })[c] || '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))));
+  }
+}
+
 async function translateTexts(texts, targetLang) {
   const sys = translationRules(targetLang) + `
 Tu reçois le listing en JSON. Rends le même JSON, avec les mêmes clés et les valeurs traduites. Une valeur vide reste vide.`;
@@ -1571,7 +1583,7 @@ Tu reçois le listing en JSON. Rends le même JSON, avec les mêmes clés et les
   const api = await res.json();
   let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
   const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Aucun JSON trouvé.');
-  return JSON.parse(m[0]);
+  return parseClaudeJson(m[0]);
 }
 
 async function translateData(src, targetLang) {
@@ -1730,6 +1742,7 @@ async function publishToGitHub() {
     let html = generatedCode;
     if (rewrite) {
       await copyPhotos();
+      await lightPreview();
       html = generatedCode;
       await publishPage(path, html, message);
     } else if (shared.length) {
@@ -1913,7 +1926,41 @@ async function copyPhotosApi(body) {
 // Pendant qu'un déploiement bascule, la route peut répondre 404 quelques secondes
 async function commitPhotos(slug, files) {
   const commit = { action:'commit', slug, files };
-  await copyPhotosApi(commit).catch(async () => { await new Promise(r => setTimeout(r, 8000)); return copyPhotosApi(commit); });
+  const data = await copyPhotosApi(commit).catch(async () => { await new Promise(r => setTimeout(r, 8000)); return copyPhotosApi(commit); });
+  if (data.commit) photoCommit = data.commit;
+}
+
+// ── L'image de l'aperçu de lien ───────────────────────────────────
+// WhatsApp abandonne une image trop lourde : Casa Noy (1 059 Ko) n'avait aucun aperçu, Casa Rapha
+// (420 Ko) en avait un. Si la première photo pèse trop, la galerie la garde et l'aperçu pointe sur
+// une copie légère, apercu-….jpg, rangée à côté d'elle. Les photos qu'on vient de ranger ne sont pas
+// encore sur le site : on les lit chez GitHub, au commit qui les contient. Un échec ici ne bloque
+// jamais la publication, la page garde alors sa première photo.
+const RAW_SITE = 'https://raw.githubusercontent.com/sabrinahomeplaya-cyber/signature-listings/';
+const PREVIEW_MAX = 300 * 1024;
+let photoCommit = 'main';
+
+async function lightPreview() {
+  const folder = `${OWN_SITE}for-sale/${currentSlug}/photos/`;
+  const first = (listingData.images || [])[0] || '';
+  const photo = decodeURIComponent(first.slice(folder.length).split('?')[0]);
+  const copy = `apercu-${photo.replace(/\.\w+$/, '').replace(/[^\w-]+/g, '-')}.jpg`;
+  // La copie d'une ancienne première photo ne vaut plus ; la bonne reste, sans rien demander à GitHub
+  if (listingData.preview && listingData.preview !== folder + copy) { listingData.preview = ''; generatedCode = buildTemplate(listingData); }
+  if (listingData.preview || !first.startsWith(folder)) return;
+  const raw = name => `${RAW_SITE}${photoCommit}/for-sale/${currentSlug}/photos/${encodeURIComponent(name)}`;
+  try {
+    if (!(await fetch(raw(copy), { method: 'HEAD' })).ok) {
+      const res = await fetch(raw(photo));
+      const blob = await res.blob();
+      if (!res.ok || blob.size <= PREVIEW_MAX) return;
+      setPublishBar('loading', "Préparation de l'aperçu de lien…");
+      const { sha } = await copyPhotosApi({ action:'blob', content: await compressImage(blob, 1200, PREVIEW_MAX) });
+      await commitPhotos(currentSlug, [{ name: copy, sha }]);
+    }
+    listingData.preview = folder + copy;
+    generatedCode = buildTemplate(listingData);
+  } catch (err) { console.warn('Aperçu de lien non préparé :', err.message); }
 }
 
 async function copyPhotos() {

@@ -41,8 +41,7 @@ export default async function handler(req, res) {
     if (action === 'commit') {
       const valid = Array.isArray(files) && files.length && files.every(f => /^[\w-]+\.(jpg|png|webp)$/.test(f.name) && /^[0-9a-f]{40}$/.test(f.sha));
       if (!valid || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug || '')) return res.status(400).json({ error: 'Bad slug or files' });
-      await commitPhotos(slug, files, token);
-      return res.status(200).json({ success: true });
+      return res.status(200).json({ success: true, commit: await commitPhotos(slug, files, token) });
     }
     return res.status(400).json({ error: 'Unknown action' });
   } catch (err) {
@@ -98,7 +97,7 @@ async function commitPhotos(slug, files, token) {
     const commit = await github('/git/commits', token, { method: 'POST', body: { message: `Copy photos: ${slug} (${files.length})`, tree: next.sha, parents: [head] } });
     try {
       await github(`/git/refs/heads/${BRANCH}`, token, { method: 'PATCH', body: { sha: commit.sha } });
-      return;
+      return commit.sha;
     } catch (err) {
       // Une autre publication est passée entre-temps : on repart du nouveau sommet
       if (err.status !== 422 || attempt >= 2) throw err;
