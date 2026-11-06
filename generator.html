@@ -382,8 +382,8 @@
           <div class="field-group"><label class="field-label">Année</label><input id="e-year" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Construction</label><input id="e-construction" class="field-input" type="text" /></div>
           <div class="field-group"><label class="field-label">Terrain / Terrasse</label><input id="e-lot" class="field-input" type="text" /></div>
-          <div class="field-group"><label class="field-label">HOA</label><input id="e-hoa" class="field-input" type="text" placeholder="ex: $1,600 MXN per month." /></div>
-          <div class="field-group"><label class="field-label">Predial</label><input id="e-predial" class="field-input" type="text" placeholder="ex: $11,000 MXN per year." /></div>
+          <div class="field-group"><label class="field-label">HOA</label><input id="e-hoa" class="field-input" type="text" placeholder="ex: $1,600 MXN" /></div>
+          <div class="field-group"><label class="field-label">Predial</label><input id="e-predial" class="field-input" type="text" placeholder="ex: $11,000 MXN" /></div>
         </div>
       </div>
 
@@ -546,6 +546,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('e-photo-path').addEventListener('input', updatePathPreview);
   document.getElementById('e-photo-files').addEventListener('input', updatePathPreview);
   document.getElementById('e-photo-files').addEventListener('change', uploadGridFromNames);
+
+  // HOA et Predial : le champ montre tout de suite ce qui sera publié
+  for (const id of ['e-hoa', 'e-predial']) document.getElementById(id).addEventListener('change', e => { e.target.value = feeAmount(e.target.value); });
 });
 
 // ── Mode toggle ───────────────────────────────────────────────────
@@ -1326,7 +1329,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error("Claude n'a rien trouvé à extraire sur cette page. Vérifie le lien, ou colle celui de la même annonce sur le site de l'agence.");
     const d=JSON.parse(m[0]);
     if(Array.isArray(api.images)) d.images=api.images;
-    d.location=standardLocation(d.location); d.year=yearOnly(d.year);
+    d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial);
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
     showResult(d);
     toast(api.photosRead ? `✓ Texte écrit après avoir regardé ${api.photosRead} photos` : '⚠ Aucune photo regardée : texte écrit d\'après la page seule');
@@ -1457,7 +1460,8 @@ async function openListing() {
     currentSlug = slug; currentLang = lang; sourceLang = null;
     d.slug = slug; d.lang = lang; d.publicUrl = publicUrl;
     showResult(d);
-    openedFields = formFields();
+    // La page telle qu'elle est écrite : un 1385 montré $1,385 MXN dans le formulaire est un changement à publier
+    openedFields = { ...formFields(), hoa: d.hoa, predial: d.predial };
     showSyncBox();
     if (d.notes.length) setPublishBar('warn', 'À vérifier si tu changes le texte, les photos ou la carte : ' + d.notes.join(' '), false);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1497,7 +1501,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
     if(kept.images.length) d.images=kept.images; else if(Array.isArray(api.images)) d.images=api.images;
     if(kept.lat && kept.lng) { d.lat=kept.lat; d.lng=kept.lng; }
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
-    d.location=standardLocation(d.location); d.year=yearOnly(d.year);
+    d.location=standardLocation(d.location); d.year=yearOnly(d.year); d.hoa=feeAmount(d.hoa); d.predial=feeAmount(d.predial);
     d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1513,6 +1517,20 @@ const TEXT_FIELDS = ['subtitle','location','beds','baths','year','construction',
 const isStandardLocation = s => /, Riviera Maya$/.test(s || '');
 // L'année est une année, ou une case vide (sa règle du 06/11/2026) : « Ready to deliver » n'y a pas sa place
 const yearOnly = y => (String(y || '').match(/\b(?:1[89]|20)\d{2}\b/) || [''])[0];
+// Les frais s'écrivent comme sur tous les listings : $1,385 MXN (sa règle du 06/11/2026). Seul l'exemple gris
+// du champ le disait : 1385 tapé, ou lu sur le site d'origine, restait 1385. Sans devise, c'est du MXN. La
+// période se retire, le libellé de la case la dit dans la bonne langue. Ce qui n'est pas un simple
+// montant (N/A, $1,600 MXN + water) reste tel qu'il est écrit : on ne devine pas.
+const FEE_PERIOD = /^[\s/.,-]*(?:(?:per|par|por|al|au|a)\s+)?(?:month(?:ly)?|year(?:ly)?|annual(?:ly)?|mo|yr|mois|mensuel(?:le)?|an(?:née)?|annuel(?:le)?|mes|mensual|año|anual)?[\s.]*$/i;
+function feeAmount(value) {
+  const text = String(value || '').trim();
+  const m = text.match(/^(?:\$|(MXN|USD|CAD)\s*\$?)?\s*(\d[\d ,.]*\d|\d)\s*(MXN|USD|CAD|pesos?)?(.*)$/i);
+  if (!m || !FEE_PERIOD.test(m[4])) return text;
+  const [, before, number, after] = m;
+  const [, whole, cents = ''] = number.replace(/ /g, '').match(/^(.*?)(?:[.,](\d{1,2}))?$/);
+  const amount = Number(whole.replace(/[.,]/g, '')).toLocaleString('en-US') + (/[1-9]/.test(cents) ? '.' + cents.padEnd(2, '0') : '');
+  return `$${amount} ${/^peso/i.test(after || '') ? 'MXN' : (after || before || 'MXN').toUpperCase()}`;
+}
 function standardLocation(location) {
   const town = (location || '').split(',')[0].replace(/\.$/, '').trim();
   return `${/^(riviera maya|quintana roo|m[eé]xi(co|que)|)$/i.test(town) ? 'Puerto Aventuras' : town}, Riviera Maya`;
@@ -1534,6 +1552,7 @@ async function translateData(src, targetLang) {
   const t = await translateTexts(texts, targetLang);
   const d = { ...src };
   for (const k of TEXT_FIELDS) if (typeof t[k] === typeof texts[k]) d[k] = t[k];
+  d.hoa = feeAmount(d.hoa); d.predial = feeAmount(d.predial);
   if (isStandardLocation(src.location)) d.location = src.location;
   if (targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
   d.lang = targetLang;
@@ -1560,8 +1579,8 @@ function showResult(data) {
   document.getElementById('e-year').value = data.year||'';
   document.getElementById('e-construction').value = data.construction||'';
   document.getElementById('e-lot').value = data.lot||'';
-  document.getElementById('e-hoa').value = data.hoa||'';
-  document.getElementById('e-predial').value = data.predial||'';
+  document.getElementById('e-hoa').value = feeAmount(data.hoa);
+  document.getElementById('e-predial').value = feeAmount(data.predial);
   document.getElementById('e-description').value = data.description||'';
   document.getElementById('e-highlights').value = (data.highlights||[]).join('\n');
   document.getElementById('e-lat').value = data.lat||'';
@@ -1617,7 +1636,7 @@ function formFields() {
     title: value('e-title'), subtitle: value('e-subtitle'), location: value('e-location'),
     currency: value('e-currency'), price: value('e-price'), priceOld: value('e-price-old'),
     beds: value('e-beds'), baths: value('e-baths'), year: value('e-year'),
-    construction: value('e-construction'), lot: value('e-lot'), hoa: value('e-hoa'), predial: value('e-predial'),
+    construction: value('e-construction'), lot: value('e-lot'), hoa: feeAmount(value('e-hoa')), predial: feeAmount(value('e-predial')),
     description: value('e-description'), highlights: lines('e-highlights'), lat: value('e-lat'), lng: value('e-lng'),
   };
   if (photosMode === 'source') fields.images = getSelectedSourcePhotos();
