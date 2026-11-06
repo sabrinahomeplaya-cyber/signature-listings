@@ -347,7 +347,7 @@
           <div class="edit-grid-2">
             <div class="field-group">
               <label class="field-label">Localisation</label>
-              <input id="e-location" class="field-input" type="text" placeholder="Puerto Aventuras, Mexique" />
+              <input id="e-location" class="field-input" type="text" placeholder="Puerto Aventuras, Riviera Maya" />
             </div>
             <div class="field-group">
               <label class="field-label">Devise</label>
@@ -1280,6 +1280,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error("Claude n'a rien trouvé à extraire sur cette page. Vérifie le lien, ou colle celui de la même annonce sur le site de l'agence.");
     const d=JSON.parse(m[0]);
     if(Array.isArray(api.images)) d.images=api.images;
+    d.location=standardLocation(d.location);
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1449,6 +1450,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
     if(kept.images.length) d.images=kept.images; else if(Array.isArray(api.images)) d.images=api.images;
     if(kept.lat && kept.lng) { d.lat=kept.lat; d.lng=kept.lng; }
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
+    d.location=standardLocation(d.location);
     d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1458,6 +1460,14 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
 // traduit pas ; les photos et leur ordre, la carte, le prix et le dossier restent
 // ceux du listing publié.
 const TEXT_FIELDS = ['subtitle','location','beds','baths','year','construction','lot','hoa','predial','description','highlights'];
+
+// La localisation s'écrit partout « Ville, Riviera Maya » (sa décision du 06/11/2026). Rien ne le
+// fixait : Claude recopiait le site d'origine, Mexico ici, Quintana Roo là. Ces noms ne se traduisent pas.
+const isStandardLocation = s => /, Riviera Maya$/.test(s || '');
+function standardLocation(location) {
+  const town = (location || '').split(',')[0].replace(/\.$/, '').trim();
+  return `${/^(riviera maya|quintana roo|m[eé]xi(co|que)|)$/i.test(town) ? 'Puerto Aventuras' : town}, Riviera Maya`;
+}
 
 async function translateTexts(texts, targetLang) {
   const sys = translationRules(targetLang) + `
@@ -1475,6 +1485,7 @@ async function translateData(src, targetLang) {
   const t = await translateTexts(texts, targetLang);
   const d = { ...src };
   for (const k of TEXT_FIELDS) if (typeof t[k] === typeof texts[k]) d[k] = t[k];
+  if (isStandardLocation(src.location)) d.location = src.location;
   if (targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
   d.lang = targetLang;
   d.publicUrl = `https://listing.signature-sc.com/for-sale/${src.slug}/${targetLang}/`;
@@ -1744,7 +1755,7 @@ async function readPage(slug, lang) {
 }
 
 async function translateChanges(changes, lang) {
-  const texts = Object.fromEntries(SHARED_WORDS.filter(k => changes[k] && hasWords(changes[k])).map(k => [k, changes[k]]));
+  const texts = Object.fromEntries(SHARED_WORDS.filter(k => changes[k] && hasWords(changes[k]) && !(k === 'location' && isStandardLocation(changes[k]))).map(k => [k, changes[k]]));
   if (!Object.keys(texts).length) return changes;
   const t = await translateTexts(texts, lang);
   const out = { ...changes };
