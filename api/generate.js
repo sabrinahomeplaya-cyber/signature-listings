@@ -279,6 +279,7 @@ function isValidPhoto(url) {
   const lower = url.toLowerCase();
   const exclude = ['logo', 'icon', 'favicon', 'avatar', 'badge', 'pixel', 'tracking',
                    'placeholder', 'blank', 'spacer', '1x1', 'sprite', 'flag',
-                   'shortpixel', 'profile', 'agent', 'team'];
+                   'shortpixel', 'profile', 'agent', 'team',
+                   'apercu-']; // la copie légère de l'aperçu de lien n'est pas une photo du listing
   return !exclude.some(word => lower.includes(word));
 }

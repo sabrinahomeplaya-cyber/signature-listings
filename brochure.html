@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="/auth.js"></script>
+  <script src="/listing-tools.js"></script>
   <style>
     :root { --navy:#223256; --teal:#61BDCC; --cream:#faf9f6; --light:#f0f4f8; }
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -547,6 +548,13 @@ const L = {
       role:'Fundadora & CEO · Asesora Inmobiliaria'}
 };
 
+async function listingPhotos(url) {
+  try {
+    const res = await fetch(new URL(url).pathname+'?v='+Date.now(),{cache:'no-store'});
+    return res.ok ? publishedPhotos(await res.text(),url) : [];
+  } catch(e) { return []; }
+}
+
 async function loadListing() {
   const url = el('s-url').value.trim();
   const lang = el('s-lang').value;
@@ -590,23 +598,26 @@ Inclure TOUTES les URLs d'images dans le tableau "images".
 Réponds UNIQUEMENT avec un JSON valide sans backticks.
 JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","constrLabel":"","lot":"","lotLabel":"","hoa":"","predial":"","description":"4 paragraphes Luxe Discret en ${langLabel}","highlights":["..."],"images":[""],"publicUrl":"${url}"}
 Note: constrLabel = le label exact du champ surface principale (ex: "Construction", "Living area", "Surface habitable"), lotLabel = le label exact du 2e champ surface (ex: "Terrain", "Balcony", "Terrace", "Balcon").`;
+    // Le modèle et la longueur sont ceux de la route : un modèle écrit ici a survécu cinq mois à son retrait
     const res = await apiFetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:sys,
-        messages:[{role:'user',content:'URL du listing: '+url}]})});
-    if (!res.ok) throw new Error('API '+res.status);
+      body:JSON.stringify({system:sys,messages:[{role:'user',content:'URL du listing: '+url}]})});
+    if (!res.ok) throw await apiError(res);
     const api = await res.json();
     showStatus('loading','Construction de la brochure…');
     let raw=''; for(const b of api.content||[]) if(b.type==='text') raw+=b.text;
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('Données introuvables.');
-    const d=JSON.parse(m[0]);
+    const d=parseClaudeJson(m[0]);
     d.publicUrl=d.publicUrl||url;
 
-    // 1. D'abord les photos extraites par Claude (toujours disponibles)
-    allPhotos=(d.images||[]).filter(u=>u&&u.startsWith('http'));
+    // 1. Nos listings : les photos de la page, dans l'ordre choisi. Le dossier GitHub les rangeait par nom,
+    // et une photo copiée porte un nom tiré au hasard : la couverture l'était aussi.
+    allPhotos=isSignature?await listingPhotos(url):[];
+    // 2. Sinon celles que la route a relevées sur la page d'origine : Claude ne les recopie plus
+    if(!allPhotos.length) allPhotos=(api.images||d.images||[]).filter(u=>u&&u.startsWith('http'));
 
-    // 2. Essayer GitHub pour les listings avec album photos (les nôtres)
+    // 3. En dernier recours, l'album GitHub
     const slugMatch = url.match(/for-sale\/([^\/]+)\//);
-    if (slugMatch && slugMatch[1]) {
+    if (!allPhotos.length && slugMatch && slugMatch[1]) {
       try {
         showStatus('loading','Chargement des photos…');
         const slug = slugMatch[1];
@@ -638,7 +649,7 @@ Note: constrLabel = le label exact du champ surface principale (ex: "Constructio
 function fillPanel(d) {
   const lb=L[currentLang]||L.fr;
   el('p-title').value=d.title||''; el('p-subtitle').value=d.subtitle||'';
-  el('p-price').value=d.price||''; el('p-currency').value=d.currency||'USD';
+  el('p-price').value=priceAmount(d.price); el('p-currency').value=d.currency||'USD';
   el('p-location').value=d.location||''; el('p-url').value=d.publicUrl||'';
   el('p-desc').value=d.description||'';
   el('p-hl').value=(d.highlights||[]).join('\n');
@@ -647,9 +658,9 @@ function fillPanel(d) {
   el('p-construction').value=d.construction||''; el('p-lot').value=d.lot||'';
   el('p-constr-label').value=d.constrLabel||lb.constr; el('p-lot-label').value=d.lotLabel||lb.lot;
   // Fiche Client fields
-  el('p-hoa').value=d.hoa||''; el('p-predial').value=d.predial||'';
+  el('p-hoa').value=feeAmount(d.hoa); el('p-predial').value=feeAmount(d.predial);
   el('p-ppa').value=''; // auto-calculated on render
-  el('p-price-old').value=d.priceOld||'';
+  el('p-price-old').value=priceAmount(d.priceOld);
   el('lbl-beds').textContent=lb.beds; el('lbl-baths').textContent=lb.baths;
   el('lbl-constr').textContent=lb.constr; el('lbl-lot').textContent=lb.lot;
   el('lbl-ppa').textContent=lb.ppa;
