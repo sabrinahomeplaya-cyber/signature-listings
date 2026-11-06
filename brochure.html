@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="/auth.js"></script>
   <style>
     :root { --navy:#223256; --teal:#61BDCC; --cream:#faf9f6; --light:#f0f4f8; }
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -589,7 +590,7 @@ Inclure TOUTES les URLs d'images dans le tableau "images".
 Réponds UNIQUEMENT avec un JSON valide sans backticks.
 JSON: {"title":"","subtitle":"","price":"","priceOld":"","currency":"USD","location":"","beds":"","baths":"","garage":"","year":"","construction":"","constrLabel":"","lot":"","lotLabel":"","hoa":"","predial":"","description":"4 paragraphes Luxe Discret en ${langLabel}","highlights":["..."],"images":[""],"publicUrl":"${url}"}
 Note: constrLabel = le label exact du champ surface principale (ex: "Construction", "Living area", "Surface habitable"), lotLabel = le label exact du 2e champ surface (ex: "Terrain", "Balcony", "Terrace", "Balcon").`;
-    const res = await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res = await apiFetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:sys,
         messages:[{role:'user',content:'URL du listing: '+url}]})});
     if (!res.ok) throw new Error('API '+res.status);
@@ -609,7 +610,7 @@ Note: constrLabel = le label exact du champ surface principale (ex: "Constructio
       try {
         showStatus('loading','Chargement des photos…');
         const slug = slugMatch[1];
-        const ghRes = await fetch('/api/github-photos?path=for-sale/'+slug+'/photos');
+        const ghRes = await apiFetch('/api/github-photos?path=for-sale/'+slug+'/photos');
         if (ghRes.ok) {
           const ghData = await ghRes.json();
           if (ghData.photos && ghData.photos.length > 0) {

@@ -1,3 +1,5 @@
+import { locked } from './_auth.js';
+
 // Copie les photos d'un listing sur le site : un autre site peut les bloquer (Casa Rapha, 403
 // dès que la demande vient d'ailleurs), les retirer ou tomber en panne, et le listing reste vide.
 // Deux appels du générateur : « fetch » dépose quelques photos chez GitHub sans rien publier,
@@ -17,6 +19,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+  if (locked(req, res)) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const token = process.env.GITHUB_TOKEN;
