@@ -36,7 +36,8 @@ export default async function handler(req, res) {
     const data = await response.json();
     const photos = Array.isArray(data)
       ? data
-          .filter(f => f.type === 'file' && /\.(jpg|jpeg|png|webp)$/i.test(f.name))
+          // apercu-… : la copie légère de l'aperçu de lien, pas une photo du listing
+          .filter(f => f.type === 'file' && /\.(jpg|jpeg|png|webp)$/i.test(f.name) && !f.name.startsWith('apercu-'))
           .map(f => f.name)
           .sort((a, b) => {
             // Tri numérique si les noms commencent par un chiffre
