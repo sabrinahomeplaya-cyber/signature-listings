@@ -1261,18 +1261,29 @@ ${LOC_EVERYWHERE}
 
 STRUCTURE OBLIGATOIRE DU TEXTE :
 TITRE : Invente un titre évocateur en anglais basé sur la caractéristique principale (ex: The Horizon Residence, The Canopy Estate, The Palm Grove Pavilion). N'utilise pas systématiquement "Sanctuary" ou "Fairway", varie.
-SOUS-TITRE : 4 à 8 mots, clairs et concrets, qui disent ce qu'est le bien et son atout principal (ex : "Villa en bord de marina avec ponton privé"). Aucune métaphore, aucun superlatif.
+SOUS-TITRE : 4 à 8 mots, clairs et concrets, qui disent ce qu'est le bien et son atout principal, matériaux, style ou cadre naturel compris (ex : "Villa en bord de marina avec ponton privé", "Villa Art Déco de brique et de pierre"). Aucune métaphore, aucun superlatif.
 DESCRIPTION (champ description) : 4 paragraphes narratifs séparés par deux sauts de ligne. On finit de parler de la propriété avant de parler de Puerto Aventuras, de la communauté et de la région : les paragraphes 1 à 3 ne parlent que du bien, le paragraphe 4 ne parle plus du bien.
 - Paragraphe 1 (L'Atmosphère) : 3 à 4 phrases pour planter le décor immédiat du bien (canal, mer, jardin, vue) et l'émotion. La communauté, la région et leurs atouts se gardent pour le paragraphe 4.
 - Paragraphe 2 (La Résidence / L'Architecture Intérieure / L'Essence du Lieu) : fluidité des intérieurs, lumière, matériaux, chambres, finitions.
 - Paragraphe 3 (L'Harmonie Extérieure / Le Refuge Tropical / L'Oasis Privée) : piscine, jardins, terrasses, ponton, et TOUS les équipements techniques et d'autonomie (panneaux solaires, générateur, purification d'eau, ouvertures anti ouragan).
-- Paragraphe 4 (Le Style de Vie) : Puerto Aventuras, communauté sécurisée, marina, plage, golf, distances, région, valeur investissement.
+- Paragraphe 4 (Le Style de Vie) : Puerto Aventuras, communauté sécurisée, marina, plage, golf de 9 trous, nature de la région (jungle maya, cenotes, mer des Caraïbes, barrière de corail), distances, valeur investissement.
 
-POINTS FORTS : liste de 10 à 12 mots-clés ou groupes de mots concis. AUCUNE phrase descriptive (ex: "Piscine chauffée" OUI. "Une belle piscine chauffée" NON). Ordre : intérieur, extérieur, communauté.
+POINTS FORTS : liste de 10 à 12 mots-clés ou groupes de mots concis. AUCUNE phrase descriptive (ex: "Piscine chauffée" OUI. "Une belle piscine chauffée" NON). Ordre : intérieur, extérieur, communauté. Deux ou trois d'entre eux nomment les matériaux ou le style du bien.
+
+PHOTOS : si tu reçois des photos du bien, regarde-les avant d'écrire : c'est ce qui rend ce texte propre à ce bien.
+- Nomme le style quand il se voit (contemporain, Art Déco, colonial, tropical) et les matériaux réellement visibles : bois, pierre, brique, béton, marbre, acier, verre, terre cuite.
+- Décris ce qui distingue ce bien des autres : un escalier, une voûte, une façade, un sol, la végétation, la vue. Laisse de côté le mobilier et les objets de décoration, sauf si la page dit que le bien est vendu meublé.
+- Si la page ne précise pas l'essence d'un bois ou le nom d'une pierre, écris "bois tropical" ou "pierre naturelle". Aucun nom deviné.
+- Rien de ce que tu écris ne doit manquer à la fois sur la page et sur les photos.
+
+FAITS À RESPECTER :
+- Le parcours de golf de Puerto Aventuras a 9 trous, jamais 18.
+- N'ajoute aucun chiffre absent de la page.
+- Le champ "year" contient une année sur 4 chiffres, ou reste vide si elle n'est pas connue : jamais "Prête à livrer" ni une autre mention.
 
 Réponds UNIQUEMENT avec un JSON valide, sans backticks. La rédaction doit être en ${langLabel}.
 JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,XXX","priceOld":"","currency":"USD","beds":"","baths":"","year":"","construction":"","lot":"","hoa":"","predial":"","description":"4 paragraphes narratifs Luxe Discret en ${langLabel}","highlights":["..."],"images":["url1"],"lat":"","lng":""}`;
-    const res = await apiFetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,messages:[{role:'user',content:'URL: '+url}]})});
+    const res = await apiFetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-5',max_tokens:8000,system:sys,readPhotos:true,messages:[{role:'user',content:'URL: '+url}]})});
     if(!res.ok) throw await apiError(res);
     const api = await res.json();
     showStatus('loading','Construction du listing…');
@@ -1280,9 +1291,10 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"$X,XXX,
     const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error("Claude n'a rien trouvé à extraire sur cette page. Vérifie le lien, ou colle celui de la même annonce sur le site de l'agence.");
     const d=JSON.parse(m[0]);
     if(Array.isArray(api.images)) d.images=api.images;
-    d.location=standardLocation(d.location);
+    d.location=standardLocation(d.location); d.year=yearOnly(d.year);
     d.publicUrl=publicUrl; d.lang=lang; d.slug=slug;
     showResult(d);
+    toast(api.photosRead ? `✓ Texte écrit après avoir regardé ${api.photosRead} photos` : '⚠ Aucune photo regardée : texte écrit d\'après la page seule');
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
 }
 
@@ -1450,7 +1462,7 @@ JSON attendu: {"title":"","subtitle":"","location":"","area":"","price":"","pric
     if(kept.images.length) d.images=kept.images; else if(Array.isArray(api.images)) d.images=api.images;
     if(kept.lat && kept.lng) { d.lat=kept.lat; d.lng=kept.lng; }
     if(targetLang==='en') { d.construction=convertSurface(d.construction,'en'); d.lot=convertSurface(d.lot,'en'); }
-    d.location=standardLocation(d.location);
+    d.location=standardLocation(d.location); d.year=yearOnly(d.year);
     d.publicUrl=publicUrl; d.lang=targetLang; d.slug=slug;
     showResult(d);
   } catch(err) { showStatus('error',err.message); document.getElementById('btn-generate').disabled=false; }
@@ -1464,6 +1476,8 @@ const TEXT_FIELDS = ['subtitle','location','beds','baths','year','construction',
 // La localisation s'écrit partout « Ville, Riviera Maya » (sa décision du 06/11/2026). Rien ne le
 // fixait : Claude recopiait le site d'origine, Mexico ici, Quintana Roo là. Ces noms ne se traduisent pas.
 const isStandardLocation = s => /, Riviera Maya$/.test(s || '');
+// L'année est une année, ou une case vide (sa règle du 06/11/2026) : « Ready to deliver » n'y a pas sa place
+const yearOnly = y => (String(y || '').match(/\b(?:1[89]|20)\d{2}\b/) || [''])[0];
 function standardLocation(location) {
   const town = (location || '').split(',')[0].replace(/\.$/, '').trim();
   return `${/^(riviera maya|quintana roo|m[eé]xi(co|que)|)$/i.test(town) ? 'Puerto Aventuras' : town}, Riviera Maya`;
@@ -1725,7 +1739,8 @@ function patchPage(html, lang, changes, pageUrl) {
     }
     for (const k of ['beds','baths','year','hoa','predial']) {
       if (now[k] === was[k]) continue;
-      if (was.labels[k]) out = now[k] ? setCell(out, was.labels[k], now[k]) : removeCell(out, was.labels[k]);
+      // Seules les lignes de frais disparaissent : une case de détail reste, vide
+      if (was.labels[k]) out = now[k] || (k !== 'hoa' && k !== 'predial') ? setCell(out, was.labels[k], now[k]) : removeCell(out, was.labels[k]);
       else if (k === 'hoa' || k === 'predial') out = addFee(out, lang, k, now[k], was.labels);
     }
     if (now.location !== was.location) {

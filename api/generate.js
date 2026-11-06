@@ -1,7 +1,7 @@
 import { locked } from './_auth.js';
 
 export const config = {
-  maxDuration: 60
+  maxDuration: 120
 };
 
 export default async function handler(req, res) {
@@ -147,12 +147,17 @@ export default async function handler(req, res) {
       return res.status(422).json({ error: { unreadable: true, message: `Ce site (${site}) ne laisse pas lire ses pages automatiquement. Cherche la même annonce sur le site de l'agence et colle ce lien-là.` } });
     }
 
-    const enhancedMessages = [{
-      role: 'user',
-      content: pageContent
+    const userText = pageContent
         ? `Voici le contenu de la page (URL: ${listingUrl}):\n\n${pageContent}\n\n---\n\nExtrait les informations et retourne le JSON.\n- Laisse le champ "images" vide ([]) : les photos sont ajoutées par le serveur.\n- Si une section "HIGHLIGHTS OBLIGATOIRES" est présente, tu DOIS reprendre ces highlights un par un dans le champ "highlights" du JSON, dans le même ordre, sans en ajouter, en retirer ni en reformuler aucun. S'ils ne sont pas dans la langue demandée, traduis-les fidèlement.`
-        : (body.messages?.[0]?.content || '')
-    }];
+        : (body.messages?.[0]?.content || '');
+
+    // Claude regarde quelques photos avant d'écrire : l'annonce d'origine ne dit souvent rien des
+    // matériaux ni du style, et c'est ce qui distingue un bien d'un autre (Casa Noy, Casa Viva).
+    const seen = body.readPhotos && photos ? await photosToRead(photos) : [];
+    const textOnly = [{ role: 'user', content: userText }];
+    const enhancedMessages = seen.length
+      ? [{ role: 'user', content: [...seen, { type: 'text', text: userText }] }]
+      : textOnly;
 
     const claudeBody = {
       model: body.model || 'claude-sonnet-5',
@@ -161,19 +166,29 @@ export default async function handler(req, res) {
       messages: enhancedMessages
     };
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const ask = messages => fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01'
       },
-      body: JSON.stringify(claudeBody)
+      body: JSON.stringify({ ...claudeBody, messages })
     });
+
+    let response = await ask(enhancedMessages);
+    let photosRead = seen.length;
+    // Une photo refusée ne doit pas priver du listing : on repart sur le texte seul
+    if (seen.length && (response.status === 400 || response.status === 413)) {
+      console.error('Photos refusées par Claude :', response.status);
+      response = await ask(textOnly);
+      photosRead = 0;
+    }
 
     const data = await response.json();
     if (!response.ok) return res.status(response.status).json(data);
     if (photos) data.images = photos;
+    data.photosRead = photosRead;
     return res.status(200).json(data);
 
   } catch (err) {
@@ -217,6 +232,41 @@ function onePerPhoto(urls) {
     if (sized[0] && (longSide(sized[0]) >= 1200 || !original)) return sized[0];
     return original || pool[0];
   }).filter(Boolean);
+}
+
+// Huit photos réparties sur l'annonce, pour voir la façade, les pièces et le jardin plutôt que les
+// huit premières d'un même salon. Une photo illisible ou trop lourde est simplement laissée de côté.
+const PHOTOS_TO_READ = 8;
+const MAX_READ_BYTES = 3.5 * 1024 * 1024; // 5 Mo une fois encodée, la limite de l'API
+
+async function photosToRead(photos) {
+  const step = Math.max(1, (photos.length - 1) / (PHOTOS_TO_READ - 1));
+  const picks = [...new Set(Array.from({ length: Math.min(PHOTOS_TO_READ, photos.length) }, (_, i) => photos[Math.round(i * step)]))];
+  const read = await Promise.all(picks.map(async url => {
+    try {
+      const smaller = url.replace(/([?&]format=)\d+w/i, (m, a) => `${a}1000w`);
+      const res = await fetch(smaller, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', 'Accept': 'image/jpeg,image/png;q=0.9,*/*;q=0.8' },
+        signal: AbortSignal.timeout(8000)
+      });
+      if (!res.ok) return null;
+      const bytes = Buffer.from(await res.arrayBuffer());
+      const media_type = imageType(bytes);
+      if (!media_type || bytes.length > MAX_READ_BYTES) return null;
+      return { type: 'image', source: { type: 'base64', media_type, data: bytes.toString('base64') } };
+    } catch {
+      return null;
+    }
+  }));
+  return read.filter(Boolean);
+}
+
+// Le type annoncé doit être le vrai : un fichier .jpg peut arriver en WebP, et Claude refuserait
+function imageType(b) {
+  if (b[0] === 0xFF && b[1] === 0xD8) return 'image/jpeg';
+  if (b[0] === 0x89 && b[1] === 0x50) return 'image/png';
+  if (b.toString('latin1', 0, 4) === 'RIFF' && b.toString('latin1', 8, 12) === 'WEBP') return 'image/webp';
+  return null;
 }
 
 function isValidPhoto(url) {
