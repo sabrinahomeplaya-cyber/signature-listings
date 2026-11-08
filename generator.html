@@ -1636,9 +1636,12 @@ async function publishToGitHub() {
   const differs = k => JSON.stringify(fields[k]) !== JSON.stringify(openedFields[k]);
   const shared = openedFields ? SHARED_FIELDS.filter(differs) : [];
   const changes = Object.fromEntries(shared.map(k => [k, fields[k]]));
-  textChanged = !!openedFields && Object.keys(fields).some(k => !SHARED_FIELDS.includes(k) && differs(k));
+  // Une photo n'a pas de langue : elle part avec le report, et changer les photos ne demande aucune traduction
+  // (07/11/2026, Villa Elegancia : ses photos changées en EN restaient les anciennes en FR et en ES)
+  const photosChanged = !!openedFields && differs('images');
+  textChanged = !!openedFields && Object.keys(fields).some(k => !SHARED_FIELDS.includes(k) && k !== 'images' && differs(k));
   // Hors du texte et des photos, la page ne se refait pas : on remplace la valeur, et rien d'autre ne bouge
-  const rewrite = !openedFields || textChanged || fields.images.some(u => !u.startsWith(OWN_SITE));
+  const rewrite = !openedFields || textChanged || photosChanged || fields.images.some(u => !u.startsWith(OWN_SITE));
   try {
     let html = generatedCode;
     if (rewrite) {
@@ -1654,8 +1657,10 @@ async function publishToGitHub() {
       html = patched.html;
       if (html !== current) await publishPage(path, html, message); // au nouvel essai après une panne, elle est déjà à jour
     }
+    // Les photos telles qu'elles sont publiées : copiées sur le site, avec l'aperçu de lien de la première
+    if (photosChanged) Object.assign(changes, { images: listingData.images, preview: listingData.preview || '' });
     const nothing = !rewrite && !shared.length;
-    const report = shared.length && document.getElementById('e-sync').checked ? await syncOtherLangs(changes) : { pages: [], problems: [], failed: [] };
+    const report = (shared.length || photosChanged) && document.getElementById('e-sync').checked ? await syncOtherLangs(changes) : { pages: [], problems: [], failed: [] };
     syncFailed = report.failed;
     if (!report.problems.length) openedFields = openedFields && fields;
     if (!nothing) toast('✓ Publié sur listing.signature-sc.com/'+path);
@@ -1750,6 +1755,12 @@ function patchPage(html, lang, changes, pageUrl) {
       const tag = s => s.toUpperCase().split(',')[0].trim();
       if (tag(was.location) && tag(now.location)) out = out.split(`>${tag(was.location)}<`).join(`>${tag(now.location)}<`);
     }
+    // Les photos : la liste de la page et l'image de l'aperçu du lien, les deux seuls endroits où une page les nomme
+    if (changes.images) {
+      out = out.replace(/(\bimages\s*:|const photos\s*=)(\s*)\[[\s\S]*?\]/, (m, a, b) => a + b + JSON.stringify(now.images, null, 6));
+      const cover = (now.preview || now.images[0] || '').replace(/"/g, '&quot;');
+      out = out.replace(/(og:image" content=")[^"]*/, (m, a) => a + cover).replace(/(twitter:image" content=")[^"]*/, (m, a) => a + cover);
+    }
   }
   // Relue, la page doit dire ce qu'on attend, et rien d'autre ne doit avoir bougé
   const after = parsePublished(out, pageUrl);
@@ -1757,7 +1768,9 @@ function patchPage(html, lang, changes, pageUrl) {
   const failed = SHARED_FIELDS.filter(k => after[k] !== now[k]);
   for (const k of ['title','subtitle','description','construction','lot']) if (after[k] !== swapPrice(was[k])) failed.push(k);
   if (!same(after.highlights, was.highlights.map(swapPrice))) failed.push('highlights');
-  if (!same(after.images, was.images)) failed.push('images');
+  if (!same(after.images, now.images)) failed.push('photos');
+  const cover = (out.match(/og:image" content="([^"]*)"/) || [])[1];
+  if (changes.images && cover !== undefined && cover !== (now.preview || now.images[0] || '').replace(/"/g, '&quot;')) failed.push('aperçu du lien');
   return { html: out, failed };
 }
 
@@ -1806,7 +1819,7 @@ async function showSyncBox() {
   const langs = others.filter((l, i) => exists[i]).map(l => l.toUpperCase());
   if (!langs.length || slug !== currentSlug || lang !== currentLang) return;
   document.getElementById('e-sync').checked = true;
-  document.getElementById('sync-text').textContent = `Reporter aussi en ${langs.join(' et ')} : prix, chambres, salles de bain, année, HOA, predial et localisation.`;
+  document.getElementById('sync-text').textContent = `Reporter aussi en ${langs.join(' et ')} : prix, chambres, salles de bain, année, HOA, predial, localisation et photos.`;
   document.getElementById('sync-box').style.display = 'flex';
 }
 
