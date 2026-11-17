@@ -1656,6 +1656,7 @@ async function publishToGitHub() {
       if (patched.failed.length) throw new Error(`${currentLang.toUpperCase()} non publiée : ${patched.failed.join(', ')} introuvable sur la page.`);
       html = patched.html;
       if (html !== current) await publishPage(path, html, message); // au nouvel essai après une panne, elle est déjà à jour
+      else await publishData(path, html);
     }
     // Les photos telles qu'elles sont publiées : copiées sur le site, avec l'aperçu de lien de la première
     if (photosChanged) Object.assign(changes, { images: listingData.images, preview: listingData.preview || '' });
@@ -1805,6 +1806,7 @@ async function syncOtherLangs(changes) {
       // Les photos copiées depuis la page ouverte valent aussi pour les autres langues
       const page = [...copiedPhotos].reduce((s, [from, to]) => s.split(from).join(to), patched.html);
       if (page !== html) await publishPage(`for-sale/${currentSlug}/${lang}/index.html`, page, `Sync listing: ${currentSlug} (${lang})`);
+      else await publishData(`for-sale/${currentSlug}/${lang}/index.html`, page);
       pages.push({ lang, url, html: page, live: page === html, synced: true });
     } catch (err) { problems.push(`${name} non publiée : ${err.message}.`); failed.push(lang); }
   }
@@ -1918,6 +1920,34 @@ async function publishPage(path, content, message) {
   const res = await apiFetch('/api/github-publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path,content,message})});
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error||'Erreur GitHub');
+  await publishData(path, content);
+}
+
+// ── Les données du listing, pour le site ──────────────────────────
+// Le site de Signature lit chaque listing dans for-sale/<bien>/<langue>/data.json (17/11/2026 : « rien ne doit
+// être écrit en dur et doit prendre les infos des listings »). Elles sont lues sur la page qu'on vient de publier,
+// par le lecteur de « Modifier » : elles ne peuvent pas dire autre chose que la page.
+// ⚠️ Le fichier existant se FOND : une clé que la page ne porte pas (les chapitres, demain) reste.
+// Appelée aussi quand la page n'a pas changé : un fichier en retard se rattrape à la publication suivante.
+const GENERATOR_ONLY = ['notes', 'labels'];
+async function publishData(pagePath, html) {
+  const m = pagePath.match(/^for-sale\/([\w-]+)\/(fr|en|es)\/index\.html$/);
+  if (!m) return;
+  const [, slug, lang] = m;
+  const failed = why => new Error(`La page ${lang.toUpperCase()} est publiée, mais pas ses données pour le site (${why}) : publie une seconde fois`);
+  const d = parsePublished(html, `${OWN_SITE}for-sale/${slug}/${lang}/`);
+  GENERATOR_ONLY.forEach(k => delete d[k]);
+  const r = await apiFetch(`/api/github-page?slug=${encodeURIComponent(slug)}&lang=${lang}&file=data`);
+  const got = await r.json().catch(() => ({}));
+  if (!r.ok || got.data === undefined) throw failed(got.error || `erreur ${r.status}`);
+  let before = {};
+  try { before = got.data ? JSON.parse(got.data) : {}; } catch (e) { before = {}; }
+  const content = JSON.stringify({ ...before, slug, lang, ...d }, null, 2) + '\n';
+  if (got.data === content) return;
+  const res = await apiFetch('/api/github-publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: `for-sale/${slug}/${lang}/data.json`, content, message: `Listing data: ${slug} (${lang})` }) });
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok) throw failed(out.error || 'erreur GitHub');
 }
 
 // ── Lien du listing publié ────────────────────────────────────────
