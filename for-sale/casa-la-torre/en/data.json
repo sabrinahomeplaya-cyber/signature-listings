@@ -183,7 +183,9 @@
       "cap": "On the marina of Puerto Aventuras"
     },
     "amenities": [
+      "furnished",
       "equipped_kitchen",
+      "ensuite_bathrooms",
       "walk_in_shower",
       "whirlpool_tub",
       "private_pool",
@@ -194,6 +196,9 @@
       "rooftop",
       "palapa",
       "outdoor_kitchen",
+      "bbq_area",
+      "outdoor_shower",
+      "garden",
       "marina_view",
       "canal_view",
       "ocean_view",
@@ -205,7 +210,9 @@
       "water_softener",
       "marina_access",
       "gated_community",
-      "security_24_7"
+      "security_24_7",
+      "beach_club",
+      "golf_access"
     ],
     "alts": {
       "1.jpg": "Casa La Torre from the air, on the marina of Puerto Aventuras",

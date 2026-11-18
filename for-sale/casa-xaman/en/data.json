@@ -154,6 +154,7 @@
       "marina_view",
       "canal_view",
       "private_dock",
+      "garage",
       "solar_panels",
       "custom::services::SONOS audio, indoor and outdoor",
       "marina_access",
