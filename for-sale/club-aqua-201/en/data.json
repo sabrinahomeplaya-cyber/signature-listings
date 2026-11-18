@@ -61,5 +61,137 @@
   "predial": "N/A",
   "lot": "",
   "lat": "20.501338",
-  "lng": "-87.230362"
+  "lng": "-87.230362",
+  "site": {
+    "tagline": "A new residence on the marina, completed in 2024, in a building conceived as a private club.",
+    "hero": "1.jpg",
+    "keys": [
+      {
+        "n": "2",
+        "t": "Parking spaces"
+      },
+      {
+        "n": "45",
+        "u": "sq ft",
+        "t": "Private storage"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands in the heart of Puerto Aventuras, on the marina, a few steps from the crystal-clear water of the Caribbean and the marina's boutiques.",
+      "text": "Completed in 2024, Club Aqua 201 offers 1,410 sq ft with three bedrooms and two bathrooms, in a secure building with controlled access, a reception and an exclusive lobby."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Vast bay windows bring in the light while protecting your privacy: their anti-UV film, mirrored from outside, forms a thermal and visual shield. The living space revolves around a fully equipped kitchen with high-end finishes.",
+        "points": [
+          "UV-resistant mirror-effect glazing",
+          "A fully equipped kitchen",
+          "High-end finishes"
+        ],
+        "photos": [
+          "6.jpg",
+          "7.jpg",
+          "8.jpg",
+          "29.jpg"
+        ]
+      },
+      {
+        "title": "Three bedrooms,|*two bathrooms*",
+        "text": "Three spacious bedrooms and two bathrooms with a sleek design.",
+        "points": [
+          "Three spacious bedrooms",
+          "Two bathrooms",
+          "Two parking spaces, one underground with elevator access",
+          "A 45 sq ft private storage unit"
+        ],
+        "photos": [
+          "11.jpg",
+          "9.jpg",
+          "14.jpg",
+          "13.jpg"
+        ]
+      },
+      {
+        "title": "A private|*club*",
+        "text": "Common areas conceived as a true private club: a spectacular pool with marina views, relaxation areas with outdoor fireplaces, an event room with a BBQ area, and boat slips.",
+        "points": [
+          "A swimming pool with a swim-up bar",
+          "A children's pool",
+          "Lounges with outdoor fireplaces",
+          "An event room with a BBQ area"
+        ],
+        "photos": [
+          "4.jpg",
+          "24.jpg",
+          "21.jpg",
+          "3.jpg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "19.jpg",
+      "label": "The view",
+      "title": "The pool,|*on the marina.*"
+    },
+    "walk": [
+      "12.jpg",
+      "5.jpg",
+      "16.jpg",
+      "17.jpg",
+      "25.jpg",
+      "27.jpg"
+    ],
+    "aerial": {
+      "photo": "31.jpg",
+      "cap": "Club Aqua, in Puerto Aventuras"
+    },
+    "amenities": [
+      "equipped_kitchen",
+      "storage",
+      "shared_pool",
+      "bbq_area",
+      "fire_pit",
+      "parking",
+      "covered_parking",
+      "elevator",
+      "marina_access",
+      "gated_community",
+      "security_24_7"
+    ],
+    "alts": {
+      "1.jpg": "The pool, facing the canal",
+      "2.jpg": "The pool and the gardens",
+      "3.jpg": "The steps into the pool",
+      "4.jpg": "The pool, above the canal",
+      "5.jpg": "The terrace, above the pool",
+      "6.jpg": "The living room and its bay windows",
+      "7.jpg": "The dining room and the kitchen",
+      "8.jpg": "The fully equipped kitchen",
+      "9.jpg": "A bedroom",
+      "10.jpg": "A bathroom",
+      "11.jpg": "The main bedroom",
+      "12.jpg": "The balcony, above the pool",
+      "13.jpg": "A bedroom",
+      "14.jpg": "A bathroom",
+      "15.jpg": "A bedroom",
+      "16.jpg": "The pool and the marina",
+      "17.jpg": "The pool and its loungers",
+      "18.jpg": "The pool, at the water's edge",
+      "19.jpg": "The pool and the yachts of the marina",
+      "20.jpg": "The pool and the building",
+      "21.jpg": "The event room",
+      "22.jpg": "The gardens and the pool",
+      "23.jpg": "The pool",
+      "24.jpg": "A lounge with an outdoor fireplace",
+      "25.jpg": "The boat slips",
+      "26.jpg": "The marina",
+      "27.jpg": "The building and the pool",
+      "28.jpg": "The building and its gardens",
+      "29.jpg": "The living room",
+      "30.jpg": "The entrance drive",
+      "31.jpg": "The Club Aqua building"
+    }
+  }
 }

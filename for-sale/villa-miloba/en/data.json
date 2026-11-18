@@ -72,5 +72,137 @@
   "hoa": "$1,500 MXN",
   "predial": "$24,000 MXN",
   "lat": "20.501727",
-  "lng": "-87.224799"
+  "lng": "-87.224799",
+  "site": {
+    "tagline": "A Mexican contemporary residence on the golf course, with its own independent guesthouse.",
+    "hero": "1.jpg",
+    "keys": [
+      {
+        "n": "1",
+        "t": "Independent guesthouse"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands within the lush greenery of Puerto Aventuras, on the golf course, in a 24/7 gated community.",
+      "text": "Built in 2014, Villa Miloba offers 4,628 sq ft of living space on a 5,704 sq ft lot: a celebration of organic architecture that fuses clean lines with traditional craftsmanship."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Absolute fluidity, marked by a spectacular helical staircase and vast arched panoramic windows. The open living spaces integrate a pristine modern kitchen and extend naturally toward the garden.",
+        "points": [
+          "A sculptural helical staircase",
+          "Arched panoramic windows",
+          "Open-plan living areas",
+          "A pristine modern kitchen"
+        ],
+        "photos": [
+          "6.jpg",
+          "9.jpg",
+          "14.jpg",
+          "11.jpg"
+        ]
+      },
+      {
+        "title": "Tropical|*immersion*",
+        "text": "A swimming pool with a minimalist design and sharp lines fits into the mature landscaping. Surrounded by palm trees and dense vegetation, the private garden offers total intimacy under the Caribbean sky.",
+        "points": [
+          "A minimalist design pool",
+          "Tropical landscaping",
+          "Golf course frontage"
+        ],
+        "photos": [
+          "3.jpg",
+          "4.jpg",
+          "5.jpg"
+        ]
+      },
+      {
+        "title": "Under the|*cupola*",
+        "text": "Upstairs, a masterful exposed brick cupola crowns the gallery, while the bathrooms offer a sensory minimalism with natural stucco finishes and noble wood accents.",
+        "points": [
+          "A handcrafted brick cupola ceiling",
+          "Natural stucco and wood finishes",
+          "Five bedrooms and five bathrooms",
+          "An independent private guesthouse"
+        ],
+        "photos": [
+          "27.jpg",
+          "15.jpg",
+          "19.jpg",
+          "18.jpg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "2.jpg",
+      "label": "The view",
+      "title": "The pool,|*facing the greens.*"
+    },
+    "walk": [
+      "10.jpg",
+      "28.jpg",
+      "21.jpg",
+      "20.jpg",
+      "34.jpg",
+      "35.jpg"
+    ],
+    "aerial": {
+      "photo": "36.jpg",
+      "cap": "In the gated community of Puerto Aventuras"
+    },
+    "amenities": [
+      "private_pool",
+      "garden",
+      "golf_view",
+      "custom::exterior::Independent guesthouse",
+      "garage",
+      "parking",
+      "gated_community",
+      "security_24_7",
+      "marina_access",
+      "beach_access",
+      "golf_access"
+    ],
+    "alts": {
+      "1.jpg": "The pool and the palms",
+      "2.jpg": "The pool and the garden",
+      "3.jpg": "The garden, from the terrace",
+      "4.jpg": "A hammock in the garden",
+      "5.jpg": "The covered terrace and its dining table",
+      "6.jpg": "The helical staircase and the living spaces",
+      "7.jpg": "The dining room and the staircase",
+      "8.jpg": "The living room",
+      "9.jpg": "The living room and its arched windows",
+      "10.jpg": "The dining table and the kitchen",
+      "11.jpg": "The open living spaces",
+      "12.jpg": "The kitchen",
+      "13.jpg": "The kitchen",
+      "14.jpg": "The kitchen and its arched windows",
+      "15.jpg": "A bedroom",
+      "16.jpg": "A bedroom",
+      "17.jpg": "A bedroom",
+      "18.jpg": "A dressing room",
+      "19.jpg": "A bathroom",
+      "20.jpg": "A bathroom in stone",
+      "21.jpg": "A study corner",
+      "22.jpg": "A bedroom",
+      "23.jpg": "A bedroom and its wardrobe",
+      "24.jpg": "A bathroom",
+      "25.jpg": "A bathroom",
+      "26.jpg": "A bathroom",
+      "27.jpg": "The gallery under the brick cupola",
+      "28.jpg": "A reading corner",
+      "29.jpg": "A bedroom",
+      "30.jpg": "A bathroom",
+      "31.jpg": "A bathroom with two basins",
+      "32.jpg": "A child's bedroom",
+      "33.jpg": "A terrace",
+      "34.jpg": "The rooftop",
+      "35.jpg": "The rooftop and its loungers",
+      "36.jpg": "The view from the rooftop",
+      "37.jpg": "The rooftop at dusk"
+    }
+  }
 }

@@ -58,5 +58,131 @@
   "predial": "$32,808 MXN",
   "lot": "",
   "lat": "20.503725",
-  "lng": "-87.217809"
+  "lng": "-87.217809",
+  "site": {
+    "name": "Quinta Luna|*Penthouse*",
+    "hero": "4.jpeg",
+    "keys": [
+      {
+        "n": "1,249",
+        "u": "sq ft",
+        "t": "Wrap-around terrace"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "In Puerto Aventuras, a secure gated community on the Riviera Maya, the Caribbean Sea stretches endlessly beyond its panoramic terrace.",
+      "text": "Built in 2012 and entirely reimagined, this four-bedroom penthouse offers 3,487 sq ft, one of the largest private terraces in the complex, and the largest private beach in Puerto Aventuras."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "The fluid volumes of an open-concept design move between an epicurean kitchen, outfitted with state-of-the-art appliances and custom cabinetry, and a masterful living space that extends onto the terrace.",
+        "points": [
+          "An epicurean kitchen with custom cabinetry",
+          "State-of-the-art appliances",
+          "Open-concept living facing the ocean"
+        ],
+        "photos": [
+          "7.jpeg",
+          "10.jpeg",
+          "8.jpeg",
+          "9.jpeg"
+        ]
+      },
+      {
+        "title": "The master|*suite*",
+        "text": "A true sanctuary, with direct access to the terrace where the whisper of the waves wakes you each morning. Three more bedrooms include an independent junior suite with its own private entrance.",
+        "points": [
+          "Dual showers, dual sinks and a huge bathtub",
+          "Solid wood walk-in closets",
+          "A detached guest suite with private access",
+          "A private garage for a golf cart or a small car"
+        ],
+        "photos": [
+          "12.jpeg",
+          "14.jpeg",
+          "13.jpeg",
+          "22.jpeg"
+        ]
+      },
+      {
+        "title": "Beyond|*the penthouse*",
+        "text": "The largest private beach in Puerto Aventuras, an infinity pool, a fitness center, a backup generator for the entire building and a dedicated on-site team. Property taxes and condominium fees are fully paid through 2027.",
+        "points": [
+          "A private beach and an infinity pool",
+          "A gym",
+          "On-site staff: manager, concierge, gardeners, housekeeping",
+          "A reserve fund exceeding $100,000 USD"
+        ],
+        "photos": [
+          "38.jpeg",
+          "42.jpeg",
+          "40.jpeg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "16.jpeg",
+      "label": "The view",
+      "title": "The Caribbean,|*endlessly.*"
+    },
+    "walk": [
+      "5.jpeg",
+      "24.jpeg",
+      "6.jpeg",
+      "28.jpeg",
+      "26.jpeg",
+      "30.jpeg"
+    ],
+    "aerial": {
+      "photo": "44.jpeg",
+      "cap": "On the beach of Puerto Aventuras"
+    },
+    "amenities": [
+      "equipped_kitchen",
+      "walk_in_closet",
+      "bathtub",
+      "terrace",
+      "palapa",
+      "ocean_view",
+      "panoramic_view",
+      "infinity_pool",
+      "beach_access",
+      "garage",
+      "water_softener",
+      "backup_generator",
+      "concierge",
+      "gym",
+      "gated_community"
+    ],
+    "alts": {
+      "4.jpeg": "The beach and the Caribbean, from the terrace",
+      "5.jpeg": "The terrace and the sea",
+      "6.jpeg": "The terrace and its palapa",
+      "7.jpeg": "The living room, facing the ocean",
+      "8.jpeg": "The dining room and the living room",
+      "9.jpeg": "The dining room",
+      "10.jpeg": "The kitchen",
+      "11.jpeg": "The kitchen",
+      "12.jpeg": "The master suite",
+      "13.jpeg": "The master bathroom",
+      "14.jpeg": "The master bathroom and its bathtub",
+      "15.jpeg": "A bedroom, open onto the terrace",
+      "16.jpeg": "The Caribbean, from the terrace",
+      "22.jpeg": "A bedroom",
+      "24.jpeg": "The dining palapa",
+      "26.jpeg": "The terrace at dusk",
+      "28.jpeg": "The entrance hall",
+      "29.jpeg": "A bedroom",
+      "30.jpeg": "A bedroom",
+      "31.jpeg": "A bathroom",
+      "34.jpeg": "The guest suite",
+      "36.jpeg": "A bathroom",
+      "38.jpeg": "The infinity pool",
+      "40.jpeg": "The pool and the palapas",
+      "42.jpeg": "The infinity pool, facing the sea",
+      "44.jpeg": "The residence and the beach, from the air"
+    }
+  }
 }

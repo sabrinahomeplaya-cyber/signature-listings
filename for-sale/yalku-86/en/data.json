@@ -69,5 +69,152 @@
   "hoa": "$835 MXN",
   "predial": "$9,400 MXN",
   "lat": "20.503218",
-  "lng": "-87.225993"
+  "lng": "-87.225993",
+  "site": {
+    "tagline": "A contemporary residence facing the golf course, in the Caleta Yalku area of Puerto Aventuras.",
+    "hero": "1.jpeg",
+    "keys": [
+      {
+        "n": "2",
+        "t": "Central AC units"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It faces the golf course in the highly sought-after Caleta Yalku area of Puerto Aventuras, where contemporary architecture meets absolute energy efficiency.",
+      "text": "Built in 2020, Casa Yalku offers 4,844 sq ft of remarkably insulated interior on a 5,167 sq ft lot, and is offered fully furnished."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "An intelligent layout around a vast living room, a luminous dining area and a high-end fitted kitchen, with a private office, a game room and a television lounge.",
+        "points": [
+          "A chef's kitchen",
+          "A private office",
+          "A game room and a television lounge",
+          "Two central AC units"
+        ],
+        "photos": [
+          "3.jpeg",
+          "15.jpg",
+          "6.jpeg",
+          "7.jpg"
+        ]
+      },
+      {
+        "title": "An oasis|*of privacy*",
+        "text": "The exterior is conceived as an immersive reception space: a large swimming pool, a Jacuzzi and a superbly integrated outdoor kitchen.",
+        "points": [
+          "A large private pool",
+          "A Jacuzzi",
+          "An outdoor kitchen"
+        ],
+        "photos": [
+          "9.jpg",
+          "11.jpeg",
+          "10.jpeg",
+          "34.jpg"
+        ]
+      },
+      {
+        "title": "Four bedrooms,|*upstairs*",
+        "text": "The upper level reserves four spacious bedrooms and luxurious bathrooms to welcome guests in complete comfort.",
+        "points": [
+          "Four spacious bedrooms",
+          "Luxurious bathrooms",
+          "A playroom"
+        ],
+        "photos": [
+          "17.jpg",
+          "18.jpg",
+          "20.jpg",
+          "26.jpg"
+        ]
+      },
+      {
+        "title": "Invisible|*engineering*",
+        "text": "Raised more than four feet above the ground to eliminate humidity, the house has double-block walls with thermal insulation, large hurricane-protection windows, solar panels and an advanced water purification system.",
+        "points": [
+          "Hurricane-protection windows",
+          "A solar panel system",
+          "A water purification system",
+          "Fiber optic connectivity"
+        ],
+        "photos": []
+      }
+    ],
+    "view": {
+      "photo": "13.jpeg",
+      "label": "The view",
+      "title": "Under the|*Riviera Maya sun.*"
+    },
+    "walk": [
+      "14.jpeg",
+      "23.jpg",
+      "24.jpeg",
+      "19.jpeg",
+      "32.jpeg",
+      "29.jpg"
+    ],
+    "aerial": {
+      "photo": "2.jpeg",
+      "cap": "In Caleta Yalku, Puerto Aventuras"
+    },
+    "amenities": [
+      "furnished",
+      "equipped_kitchen",
+      "home_office",
+      "custom::interior::Game room",
+      "private_pool",
+      "jacuzzi",
+      "outdoor_kitchen",
+      "golf_view",
+      "air_conditioning",
+      "solar_panels",
+      "water_purification",
+      "custom::services::Hurricane-protection windows",
+      "fiber_internet",
+      "gated_community",
+      "marina_access",
+      "beach_access",
+      "golf_access"
+    ],
+    "alts": {
+      "1.jpeg": "The pool and the house",
+      "2.jpeg": "The house, from the street",
+      "3.jpeg": "The double-height living room and the kitchen",
+      "4.jpg": "A sideboard",
+      "5.jpg": "A sitting area",
+      "6.jpeg": "The dining area",
+      "7.jpg": "The television lounge and the kitchen",
+      "8.jpg": "A sitting area, open onto the pool",
+      "9.jpg": "The pool and the garden",
+      "10.jpeg": "The pool, the Jacuzzi and the terrace",
+      "11.jpeg": "The outdoor kitchen and its dining table",
+      "12.jpg": "The garden",
+      "13.jpeg": "The garden, the pool and the house",
+      "14.jpeg": "The living room, the kitchen and the staircase",
+      "15.jpg": "The kitchen",
+      "16.jpg": "The range",
+      "17.jpg": "The main bedroom",
+      "18.jpg": "The main bathroom",
+      "19.jpeg": "The dressing room",
+      "20.jpg": "A bedroom",
+      "21.jpeg": "A bedroom",
+      "22.jpg": "A bathroom",
+      "23.jpg": "The staircase",
+      "24.jpeg": "The private office",
+      "25.jpeg": "A bathroom",
+      "26.jpg": "A bedroom",
+      "27.jpg": "A bedroom",
+      "28.jpg": "A bathroom",
+      "29.jpg": "The playroom",
+      "30.jpeg": "The playroom",
+      "31.jpeg": "The upstairs hallway",
+      "32.jpeg": "The balcony, above the pool",
+      "33.jpg": "The garden and the pool",
+      "34.jpg": "The terrace and the Jacuzzi",
+      "35.jpg": "The garden, the pool and the house"
+    }
+  }
 }

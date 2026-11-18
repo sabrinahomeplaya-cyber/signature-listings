@@ -58,5 +58,133 @@
   "predial": "",
   "lot": "",
   "lat": "20.498289",
-  "lng": "-87.230020"
+  "lng": "-87.230020",
+  "site": {
+    "name": "Quinta *del Sol*",
+    "tagline": "An oceanfront residence with direct beach access, in a gated community of only 30 homes.",
+    "hero": "1.jpeg",
+    "keys": [
+      {
+        "n": "30",
+        "t": "Residences only"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands on the pristine shore of Puerto Aventuras, in one of the Riviera Maya's most coveted gated communities, where crystal-clear water meets white sand.",
+      "text": "Built in 2005, this oceanfront residence offers 2,153 sq ft with three bedrooms and two bathrooms, direct beach access and panoramic ocean views from its private terrace."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Sophisticated living space with a modern fitted kitchen, air conditioning throughout and a convenient laundry room: comfort and functionality in every detail.",
+        "points": [
+          "A modern fitted kitchen",
+          "Air conditioning throughout",
+          "A laundry room"
+        ],
+        "photos": [
+          "12.jpg",
+          "9.jpg",
+          "13.jpg",
+          "10.jpg"
+        ]
+      },
+      {
+        "title": "Three bedrooms,|*two bathrooms*",
+        "text": "Three bedrooms and two bathrooms, with elevator access and handicap accessibility: every convenience has been thoughtfully considered.",
+        "points": [
+          "Three bedrooms",
+          "Two bathrooms",
+          "Elevator access",
+          "Handicap accessibility"
+        ],
+        "photos": [
+          "16.jpg",
+          "30.jpg",
+          "20.jpg",
+          "32.jpg"
+        ]
+      },
+      {
+        "title": "On the|*beach*",
+        "text": "Direct access to the beach, in a prestigious development of only 30 homes: privacy and exclusivity, with the warmth of a close-knit community.",
+        "points": [
+          "Direct beach access",
+          "Only 30 residences",
+          "24-hour security",
+          "A pet-friendly residence"
+        ],
+        "photos": [
+          "2.jpg",
+          "47.jpg",
+          "40.jpg",
+          "44.jpg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "17.jpg",
+      "label": "The view",
+      "title": "The Caribbean,|*from your terrace.*"
+    },
+    "walk": [
+      "18.jpg",
+      "22.jpg",
+      "8.jpg",
+      "19.jpg",
+      "45.jpg",
+      "49.jpg"
+    ],
+    "aerial": {
+      "photo": "46.jpg",
+      "cap": "On the beach of Puerto Aventuras"
+    },
+    "amenities": [
+      "equipped_kitchen",
+      "laundry_room",
+      "terrace",
+      "ocean_view",
+      "panoramic_view",
+      "beach_access",
+      "parking",
+      "custom::services::Air conditioning throughout",
+      "elevator",
+      "custom::services::Wheelchair accessible",
+      "pet_friendly",
+      "gated_community",
+      "security_24_7"
+    ],
+    "alts": {
+      "1.jpeg": "The residence, its pools and the beach, from the air",
+      "2.jpg": "The pool, the lawn and the beach",
+      "3.jpg": "The beach and the residence",
+      "8.jpg": "The terrace, above the pool and the sea",
+      "9.jpg": "The living room",
+      "10.jpg": "The entrance hall",
+      "12.jpg": "The living and dining room",
+      "13.jpg": "The kitchen",
+      "16.jpg": "The main bedroom",
+      "17.jpg": "The terrace, facing the Caribbean",
+      "18.jpg": "The beach and its jetty",
+      "19.jpg": "A bedroom",
+      "20.jpg": "A bathroom",
+      "22.jpg": "A bathroom",
+      "26.jpg": "The entrance hall",
+      "28.jpg": "The hallway",
+      "30.jpg": "A bedroom",
+      "32.jpg": "A bedroom",
+      "34.jpg": "A bathroom",
+      "35.jpg": "A bedroom",
+      "36.jpg": "A bedroom",
+      "40.jpg": "The pool of the residence",
+      "41.jpg": "The pools and the gardens",
+      "44.jpg": "The pool and the lawn, facing the sea",
+      "45.jpg": "The palms and the sea",
+      "46.jpg": "The beach and the residence",
+      "47.jpg": "The beach and its jetty",
+      "48.jpg": "The beach",
+      "49.jpg": "The beach"
+    }
+  }
 }

@@ -55,5 +55,111 @@
   "hoa": "$4,000 MXN",
   "predial": "",
   "lat": "20.501189",
-  "lng": "-87.224003"
+  "lng": "-87.224003",
+  "site": {
+    "tagline": "A ground-floor residence on the marina waterfront, in a building of just seven homes.",
+    "hero": "1.jpeg",
+    "keys": [
+      {
+        "n": "7",
+        "t": "Residences in the building"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands along the marina waterfront of Puerto Aventuras, where turquoise water meets manicured gardens and the yachts rock gently at their moorings.",
+      "text": "Built in 2020, The Marina Terrace offers 1,410 sq ft on the ground floor, a few steps from the pool and the landscaped gardens, with its own parking space."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "An open floor plan where natural light plays across microcement finishes, and a fully equipped kitchen that flows into the living and dining spaces.",
+        "points": [
+          "Open-concept living and dining",
+          "Microcement finishes",
+          "A fully equipped kitchen"
+        ],
+        "photos": [
+          "3.jpeg",
+          "7.jpeg",
+          "5.jpeg",
+          "23.jpeg"
+        ]
+      },
+      {
+        "title": "Two bedrooms,|*two bathrooms*",
+        "text": "Two generous bedrooms as private retreats, and two full bathrooms of contemporary comfort.",
+        "points": [
+          "Two spacious bedrooms",
+          "Two full bathrooms",
+          "Thoughtful contemporary design"
+        ],
+        "photos": [
+          "10.jpeg",
+          "17.jpeg",
+          "15.jpeg",
+          "13.jpeg"
+        ]
+      },
+      {
+        "title": "A complete|*way of life*",
+        "text": "From your doorstep, pristine beaches and protected coves, the championship golf course and the tennis courts, the marina, schools, boutiques and waterfront dining.",
+        "points": [
+          "Beaches and protected coves",
+          "A championship golf course",
+          "Tennis courts",
+          "The marina, its boutiques and restaurants"
+        ],
+        "photos": []
+      }
+    ],
+    "view": {
+      "photo": "22.jpeg",
+      "label": "The view",
+      "title": "The pool,|*beyond the glass.*"
+    },
+    "walk": [
+      "2.jpeg",
+      "4.jpeg",
+      "14.jpeg",
+      "12.jpeg",
+      "16.jpeg",
+      "6.jpeg"
+    ],
+    "amenities": [
+      "equipped_kitchen",
+      "shared_pool",
+      "garden_shared",
+      "parking",
+      "marina_access",
+      "beach_access",
+      "golf_access",
+      "tennis_court"
+    ],
+    "alts": {
+      "1.jpeg": "The garden and the pool",
+      "2.jpeg": "The living room, open onto the garden",
+      "3.jpeg": "The living room and the kitchen",
+      "4.jpeg": "The open-plan living and dining room",
+      "5.jpeg": "The dining table and the kitchen",
+      "6.jpeg": "The kitchen counter",
+      "7.jpeg": "The kitchen and its island",
+      "8.jpeg": "The fully equipped kitchen",
+      "9.jpeg": "The hallway",
+      "10.jpeg": "The main bedroom",
+      "11.jpeg": "The main bedroom and its wardrobes",
+      "12.jpeg": "A bedroom detail",
+      "13.jpeg": "A bedroom",
+      "14.jpeg": "A bedroom",
+      "15.jpeg": "A bathroom with a stone basin",
+      "16.jpeg": "A shower",
+      "17.jpeg": "The second bedroom",
+      "18.jpeg": "The second bedroom",
+      "19.jpeg": "The second bedroom",
+      "20.jpeg": "The second bedroom",
+      "21.jpeg": "The second bathroom",
+      "22.jpeg": "The dining room, facing the pool",
+      "23.jpeg": "The living room and the dining table"
+    }
+  }
 }

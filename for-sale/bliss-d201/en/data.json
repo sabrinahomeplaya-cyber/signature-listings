@@ -48,5 +48,115 @@
   "predial": "$8,184 MXN",
   "lot": "",
   "lat": "20.497448",
-  "lng": "-87.237405"
+  "lng": "-87.237405",
+  "site": {
+    "hero": "8.jpg",
+    "keys": [
+      {
+        "n": "1",
+        "t": "Private staircase to the pool"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands in an exclusive gated community of Puerto Aventuras, above winding swimming pools and manicured tropical gardens.",
+      "text": "Built in 2022, this second-floor residence offers 1,111 sq ft of turnkey living, sold fully furnished, reached by elevator from its assigned parking space."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Every corner styled as if lifted from the pages of a luxury design catalog: custom warm wood cabinetry, organic textures and curated pieces, with full-length glass walls opening onto a generous covered terrace.",
+        "points": [
+          "Curated catalog-style decor",
+          "An open kitchen with a granite breakfast bar",
+          "High-end stainless steel appliances",
+          "Full-length sliding glass walls"
+        ],
+        "photos": [
+          "12.jpg",
+          "14.jpg",
+          "16.jpg",
+          "18.jpg"
+        ]
+      },
+      {
+        "title": "Two bedrooms,|*two retreats*",
+        "text": "A primary suite with a textured headboard and direct access to the terrace overlooking the water; a second bedroom with two beds and live-edge headboards of local solid hardwood.",
+        "points": [
+          "A primary suite opening onto the terrace",
+          "Custom live-edge hardwood headboards",
+          "Two bathrooms"
+        ],
+        "photos": [
+          "20.jpg",
+          "26.jpg",
+          "24.jpg",
+          "30.jpg"
+        ]
+      },
+      {
+        "title": "The pool,|*one staircase away*",
+        "text": "From the balcony, a private exterior staircase leads straight down to the pools and gardens, within the 24/7 gated environment of Puerto Aventuras.",
+        "points": [
+          "A private staircase from the balcony to the pool",
+          "Panoramic pool and garden views",
+          "An assigned parking space and an elevator",
+          "24-hour security"
+        ],
+        "photos": [
+          "38.jpg",
+          "36.jpg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "10.jpg",
+      "label": "The view",
+      "title": "The pools,|*from your terrace.*"
+    },
+    "walk": [
+      "20260403_14554.jpg",
+      "22.jpg",
+      "28.jpg",
+      "34.jpg",
+      "32.jpg"
+    ],
+    "aerial": {
+      "photo": "40.jpg",
+      "cap": "Bliss, in Puerto Aventuras"
+    },
+    "amenities": [
+      "furnished",
+      "equipped_kitchen",
+      "terrace",
+      "balcony",
+      "shared_pool",
+      "garden_shared",
+      "parking",
+      "elevator",
+      "beach_access",
+      "gated_community",
+      "security_24_7"
+    ],
+    "alts": {
+      "8.jpg": "The pools and the tropical gardens",
+      "10.jpg": "The covered terrace, above the pools",
+      "12.jpg": "The living room, open onto the terrace",
+      "14.jpg": "The kitchen and its granite breakfast bar",
+      "16.jpg": "The breakfast bar and the dining table",
+      "18.jpg": "The kitchen, the living room and the terrace",
+      "20.jpg": "The primary suite",
+      "22.jpg": "The primary suite and its textured headboard",
+      "24.jpg": "A bathroom",
+      "26.jpg": "The second bedroom and its live-edge headboards",
+      "28.jpg": "The live-edge hardwood headboards",
+      "30.jpg": "The second bedroom",
+      "32.jpg": "The second bathroom",
+      "34.jpg": "A bathroom detail",
+      "36.jpg": "The pool, below the residence",
+      "38.jpg": "The pool, from the private staircase",
+      "40.jpg": "The Bliss building",
+      "20260403_14554.jpg": "The terrace, from the living room"
+    }
+  }
 }

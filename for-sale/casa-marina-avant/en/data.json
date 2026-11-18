@@ -58,5 +58,127 @@
   "hoa": "",
   "predial": "$12,342 MXN",
   "lat": "20.496469",
-  "lng": "-87.236719"
+  "lng": "-87.236719",
+  "site": {
+    "tagline": "A tropical modern villa on the marina, with its own pool and private dock.",
+    "hero": "4.jpeg",
+    "keys": [
+      {
+        "n": "1",
+        "t": "Private dock"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands on the marina of Puerto Aventuras, where the boundary between indoors and outdoors dissolves into the water.",
+      "text": "Built in 2017, Casa Marina Avant offers 5,447 sq ft of living space on an 8,073 sq ft lot, with a pool overlooking the marina and a private dock with direct access to the Caribbean Sea."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Majestic volumes and immense floor-to-ceiling windows draw the eye toward the pool and the canal. The living space centers on a kitchen of minimalist elegance, with an immaculate center island and seamlessly integrated appliances.",
+        "points": [
+          "Massive floor-to-ceiling windows",
+          "A minimalist kitchen with a center island",
+          "Seamlessly integrated appliances"
+        ],
+        "photos": [
+          "8.jpeg",
+          "12.jpeg",
+          "14.jpeg",
+          "16.jpeg"
+        ]
+      },
+      {
+        "title": "Five suites,|*full of light*",
+        "text": "Vast, sun-drenched suites, adorned with custom warm wood cabinetry that subtly balances the purity of the modern architecture.",
+        "points": [
+          "Five expansive suites",
+          "Custom wood cabinetry",
+          "Six bathrooms"
+        ],
+        "photos": [
+          "30.jpeg",
+          "34.jpeg",
+          "36.jpeg",
+          "42.jpeg"
+        ]
+      },
+      {
+        "title": "Your boat|*awaits*",
+        "text": "Outside, the shaded terrace and the pool extend naturally toward your private dock, ready to set sail for the Caribbean Sea in a matter of minutes.",
+        "points": [
+          "A pool overlooking the marina",
+          "A shaded terrace",
+          "A private dock with direct access to the Caribbean Sea"
+        ],
+        "photos": [
+          "1.jpeg",
+          "6.jpeg",
+          "54.jpeg",
+          "58.jpeg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "56.jpeg",
+      "label": "The view",
+      "title": "The marina,|*beyond the pool.*"
+    },
+    "walk": [
+      "10.jpeg",
+      "28.jpeg",
+      "24.jpeg",
+      "18.jpeg",
+      "50.jpeg",
+      "52.jpeg"
+    ],
+    "aerial": {
+      "photo": "60.jpeg",
+      "cap": "On the marina of Puerto Aventuras"
+    },
+    "amenities": [
+      "equipped_kitchen",
+      "ensuite_bathrooms",
+      "built_in_wardrobes",
+      "private_pool",
+      "terrace",
+      "marina_view",
+      "canal_view",
+      "private_dock",
+      "marina_access"
+    ],
+    "alts": {
+      "1.jpeg": "The pool, on the canal",
+      "4.jpeg": "The pool and the house",
+      "6.jpeg": "The terrace, beside the pool",
+      "8.jpeg": "The living spaces and the kitchen",
+      "10.jpeg": "The kitchen and its center island",
+      "12.jpeg": "The kitchen",
+      "14.jpeg": "The dining room, open onto the pool",
+      "16.jpeg": "The living room",
+      "18.jpeg": "The entrance and its indoor garden",
+      "20.jpeg": "The living room",
+      "22.jpeg": "The game room",
+      "24.jpeg": "The living room and the game room",
+      "26.jpeg": "The entrance hall and the staircase",
+      "28.jpeg": "The staircase",
+      "30.jpeg": "The main suite",
+      "32.jpeg": "A suite and its glass shower",
+      "34.jpeg": "A suite bathroom",
+      "36.jpeg": "A suite",
+      "38.jpeg": "An upstairs terrace",
+      "40.jpeg": "The upstairs hallway",
+      "42.jpeg": "A suite",
+      "44.jpeg": "A suite",
+      "46.jpeg": "A suite",
+      "48.jpeg": "A suite",
+      "50.jpeg": "An upstairs terrace",
+      "52.jpeg": "The dining room",
+      "54.jpeg": "The shaded terrace",
+      "56.jpeg": "The pool and the marina",
+      "58.jpeg": "The pool and the house",
+      "60.jpeg": "The pool, above the water"
+    }
+  }
 }

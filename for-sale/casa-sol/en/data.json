@@ -61,5 +61,130 @@
   "hoa": "$1,355 MXN",
   "predial": "$7,404 MXN",
   "lat": "20.507056",
-  "lng": "-87.223305"
+  "lng": "-87.223305",
+  "site": {
+    "tagline": "A golf-front residence whose private grounds open onto the greens of Puerto Aventuras.",
+    "hero": "1.jpeg",
+    "keys": [
+      {
+        "n": "30",
+        "t": "Solar panels"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands quietly against the sweeping greens of Puerto Aventuras, the Riviera Maya's premier marina community, where its property lines blend into the golf course.",
+      "text": "Built in 2012, Casa Sol offers 4,995 sq ft of living space on a 5,167 sq ft lot that opens onto the course, for 5,812 sq ft of usable land."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Open, inviting spaces balanced with absolute privacy: a layout of organic flow, where every room feels like a natural extension of its tropical surroundings.",
+        "points": [
+          "Open, inviting living spaces",
+          "Space and natural light",
+          "Absolute privacy"
+        ],
+        "photos": [
+          "6.jpeg",
+          "9.jpeg",
+          "7.jpeg",
+          "10.jpeg"
+        ]
+      },
+      {
+        "title": "The heart,|*outdoors*",
+        "text": "The outdoors is the true heart of the home: a private pool and a custom-built grill area, crafted for warm, intimate gatherings under the Caribbean sky.",
+        "points": [
+          "A private pool",
+          "A custom grill area",
+          "A 30-panel solar system",
+          "A two-car garage and parking for three more vehicles"
+        ],
+        "photos": [
+          "3.jpeg",
+          "5.jpeg",
+          "32.jpeg",
+          "4.jpeg"
+        ]
+      },
+      {
+        "title": "Five bedrooms,|*four and a half baths*",
+        "text": "Five serene bedrooms, three of them with expansive walk-in closets, and four and a half refined bathrooms.",
+        "points": [
+          "Five serene bedrooms",
+          "Walk-in closets in three bedrooms",
+          "Four and a half refined bathrooms"
+        ],
+        "photos": [
+          "13.jpeg",
+          "25.jpeg",
+          "21.jpeg",
+          "19.jpeg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "2.jpeg",
+      "label": "The view",
+      "title": "Inside and out,|*as one.*"
+    },
+    "walk": [
+      "14.jpeg",
+      "11.jpeg",
+      "8.jpeg",
+      "17.jpeg",
+      "12.jpeg",
+      "28.jpeg"
+    ],
+    "aerial": {
+      "photo": "15.jpeg",
+      "cap": "On the golf course of Puerto Aventuras"
+    },
+    "amenities": [
+      "walk_in_closet",
+      "private_pool",
+      "bbq_area",
+      "garden",
+      "golf_view",
+      "garage",
+      "parking",
+      "solar_panels",
+      "golf_access"
+    ],
+    "alts": {
+      "1.jpeg": "The pool and the pergola, facing the greens",
+      "2.jpeg": "The house, the terrace and the garden",
+      "3.jpeg": "The pool and the outdoor dining area",
+      "4.jpeg": "The pool and the house",
+      "5.jpeg": "The pool and the pergola",
+      "6.jpeg": "The living room",
+      "7.jpeg": "The dining room and the kitchen",
+      "8.jpeg": "The dining room",
+      "9.jpeg": "The kitchen",
+      "10.jpeg": "The bar",
+      "11.jpeg": "The staircase",
+      "12.jpeg": "The upstairs living room",
+      "13.jpeg": "A bedroom",
+      "14.jpeg": "The upstairs terrace",
+      "15.jpeg": "The pool, from above",
+      "16.jpeg": "A bedroom",
+      "17.jpeg": "A bedroom",
+      "18.jpeg": "A dressing area",
+      "19.jpeg": "A bathroom",
+      "20.jpeg": "A bathroom",
+      "21.jpeg": "A bedroom",
+      "22.jpeg": "A bedroom",
+      "23.jpeg": "A bathroom",
+      "24.jpeg": "A shower",
+      "25.jpeg": "A bedroom",
+      "26.jpeg": "A bedroom",
+      "27.jpeg": "A bathroom",
+      "28.jpeg": "A bedroom",
+      "29.jpeg": "A bedroom",
+      "30.jpeg": "A bathroom",
+      "31.jpeg": "The hallway",
+      "32.jpeg": "The pool and the grill area"
+    }
+  }
 }

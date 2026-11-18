@@ -75,5 +75,157 @@
   "hoa": "$1,385 MXN",
   "predial": "$55,848 MXN",
   "lat": "20.5040312",
-  "lng": "-87.2193542"
+  "lng": "-87.2193542",
+  "site": {
+    "tagline": "A five-suite villa with a private pool and its own waterslide, in a lushly planted garden.",
+    "hero": "DSC00043.jpg",
+    "keys": [
+      {
+        "n": "5",
+        "t": "Covered parking spaces"
+      }
+    ],
+    "story": {
+      "label": "The light",
+      "lead": "The Riviera Maya sun does not simply pass through the windows here: it settles in, unhurried, as though it had always belonged.",
+      "text": "Villa Elegancia offers 7,448 sq ft of living space on a 10,236 sq ft lot, with five bedrooms, each with its own private bathroom, set within a lushly planted garden."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "A cascade of light falls across the double-height living room and its marble floors. A wrought iron staircase curves down to a light wood kitchen, where a central island invites long breakfasts.",
+        "points": [
+          "A double-height living room",
+          "Marble flooring throughout",
+          "A light wood kitchen with an island",
+          "A wrought iron staircase"
+        ],
+        "photos": [
+          "DSC00053-Edit.jpg",
+          "DSC00064-Edit.jpg",
+          "DSC00058.jpg",
+          "DSC00055-Edit.jpg"
+        ]
+      },
+      {
+        "title": "Five suites,|*under one roof*",
+        "text": "Five bedrooms, each with its own private bathroom, offer a rare measure of independence, whether for family, guests, or the quiet pleasure of simply having room to breathe.",
+        "points": [
+          "Five en-suite bedrooms",
+          "Five and a half bathrooms",
+          "Marble floors and considered finishes"
+        ],
+        "photos": [
+          "DSC00172-Edit.jpg",
+          "DSC00180.jpg",
+          "DSC00129-Edit.jpg",
+          "DSC00104.jpg"
+        ]
+      },
+      {
+        "title": "The soul,|*outdoors*",
+        "text": "The private pool, a vivid blue beneath the Caribbean sun, is anchored by its own white waterslide. A palapa with a traditional thatched roof offers shade for long afternoons, and the hot tub comes into its own as dusk turns the sky amber.",
+        "points": [
+          "A private pool with a waterslide",
+          "A palapa lounge area",
+          "A private hot tub",
+          "A BBQ area"
+        ],
+        "photos": [
+          "DSC00034.jpg",
+          "DSC00025-Edit.jpg",
+          "DSC00046-Edit.jpg",
+          "DSC00042.jpg"
+        ]
+      },
+      {
+        "title": "Life,|*nearby*",
+        "text": "Puerto Aventuras offers a gated community secured 24 hours a day, with its marina and some thirty restaurants a ten-minute walk away. The untouched shores of Bahia Xcacel lie close by, and Playa del Carmen is just 23 kilometers away.",
+        "points": [
+          "The marina, a ten-minute walk away",
+          "Some thirty restaurants",
+          "Bahia Xcacel, close by",
+          "Playa del Carmen, 23 kilometers away"
+        ],
+        "photos": []
+      }
+    ],
+    "view": {
+      "photo": "DSC00078.jpg",
+      "label": "The view",
+      "title": "The pool,|*and its waterslide.*"
+    },
+    "walk": [
+      "DSC00052.jpg",
+      "DSC00069.jpg",
+      "DSC00049.jpg",
+      "DSC00089.jpg",
+      "DSC00082.jpg",
+      "DSC00137-Edit.jpg"
+    ],
+    "aerial": {
+      "photo": "1.jpg",
+      "cap": "Puerto Aventuras, on the Riviera Maya"
+    },
+    "amenities": [
+      "ensuite_bathrooms",
+      "double_height",
+      "marble_floors",
+      "private_pool",
+      "jacuzzi",
+      "custom::exterior::Waterslide",
+      "palapa",
+      "bbq_area",
+      "garden",
+      "covered_parking",
+      "cctv",
+      "gated_community",
+      "security_24_7",
+      "marina_access"
+    ],
+    "alts": {
+      "DSC00043.jpg": "The pool, the palapa and the villa",
+      "DSC00034.jpg": "The pool and the villa",
+      "DSC00030-Edit.jpg": "The garden and the villa",
+      "DSC00053-Edit.jpg": "The double-height living room",
+      "DSC00052.jpg": "The living room and the gallery",
+      "DSC00064-Edit.jpg": "The light wood kitchen and its island",
+      "DSC00058.jpg": "The dining room, open onto the garden",
+      "DSC00059-Edit.jpg": "The living room",
+      "DSC00049.jpg": "The television lounge",
+      "DSC00166.jpg": "A suite",
+      "DSC00172-Edit.jpg": "A suite",
+      "DSC00180.jpg": "A suite bathroom",
+      "DSC00173.jpg": "A dressing room",
+      "DSC00055-Edit.jpg": "The wrought iron staircase",
+      "DSC00072-Edit.jpg": "A suite",
+      "DSC00078.jpg": "The pool and its waterslide, from above",
+      "DSC00086.jpg": "A bathroom",
+      "DSC00089.jpg": "A shower",
+      "DSC00069.jpg": "The gallery",
+      "DSC00093.jpg": "A suite",
+      "DSC00082.jpg": "The balcony, above the pool",
+      "DSC00095-Edit.jpg": "A suite",
+      "DSC00096.jpg": "A bathroom",
+      "DSC00098-Edit.jpg": "A bathroom",
+      "DSC00099.jpg": "A bathroom",
+      "DSC00104.jpg": "A suite",
+      "DSC00114.jpg": "The balcony and the palms",
+      "DSC00107.jpg": "A suite",
+      "DSC00119.jpg": "A bathroom",
+      "DSC00123-Edit.jpg": "A shower",
+      "DSC00126.jpg": "A suite",
+      "DSC00129-Edit.jpg": "A suite",
+      "DSC00132-Edit.jpg": "A bathroom and its dressing room",
+      "DSC00137-Edit.jpg": "A walk-in shower",
+      "DSC00138-Edit.jpg": "A bathroom",
+      "DSC00143.jpg": "A bathroom",
+      "DSC00133-Edit.jpg": "A suite",
+      "DSC00027-Edit.jpg": "The garden and the villa",
+      "DSC00025-Edit.jpg": "The palapa lounge",
+      "DSC00046-Edit.jpg": "The pool and the hot tub",
+      "DSC00042.jpg": "The pool, the palapa and the villa",
+      "1.jpg": "Puerto Aventuras, from the air"
+    }
+  }
 }
