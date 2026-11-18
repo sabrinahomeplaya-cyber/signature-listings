@@ -58,5 +58,142 @@
   "predial": "",
   "hoa": "",
   "lat": "20.4968",
-  "lng": "-87.2364"
+  "lng": "-87.2364",
+  "site": {
+    "tagline": "A contemporary residence on the marina, with its own private dock.",
+    "hero": "1.jpg",
+    "keys": [
+      {
+        "n": "2",
+        "t": "Levels"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands in Phase 4 of Puerto Aventuras, on the water of the marina, among cenotes, with La Caleta, a natural and private beach, just steps away.",
+      "text": "Built in 2020 on two levels, Casa Xaman Ek offers 6,500 sq ft of construction on an 8,073 sq ft lot, with direct access to the marina from its own private dock."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "Contemporary architecture that makes the most of natural light and space: rooms as beautiful to live in as they are for hosting guests.",
+        "points": [
+          "Sold fully furnished and equipped",
+          "A professional-grade kitchen with high-end appliances",
+          "An indoor and outdoor SONOS audio system",
+          "Integrated home automation"
+        ],
+        "photos": [
+          "11.jpg",
+          "12.jpg",
+          "10.jpg",
+          "5.jpg"
+        ]
+      },
+      {
+        "title": "On the water",
+        "text": "From your private dock, set sail at any moment. The pool, the lush garden and the outdoor living spaces complete a life made for yachting, golf and pristine nature.",
+        "points": [
+          "A private dock with direct access to the marina",
+          "A pool in a lush garden",
+          "A terrace with a BBQ area",
+          "La Caleta, a natural and private beach, a short walk away"
+        ],
+        "photos": [
+          "3.jpg",
+          "6.jpg",
+          "4.jpg",
+          "31.jpg"
+        ]
+      },
+      {
+        "title": "Five suites,|*on two levels*",
+        "text": "Five en-suite bedrooms across two levels, each with a bathroom of its own.",
+        "points": [
+          "A master suite with a panoramic balcony overlooking the canal",
+          "Indoor and outdoor showers and a steam room in the master suite",
+          "Four more bedrooms, each with its own bathroom"
+        ],
+        "photos": [
+          "19.jpg",
+          "16.jpg",
+          "21.jpg",
+          "24.jpg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "2.jpg",
+      "label": "The view",
+      "title": "The water,|*at the garden's edge.*"
+    },
+    "walk": [
+      "8.jpg",
+      "7.jpg",
+      "18.jpg",
+      "23.jpg",
+      "15.jpg",
+      "29.jpg"
+    ],
+    "aerial": {
+      "photo": "30.jpg",
+      "cap": "On the marina of Puerto Aventuras"
+    },
+    "amenities": [
+      "furnished",
+      "equipped_kitchen",
+      "ensuite_bathrooms",
+      "steam_room",
+      "smart_home",
+      "private_pool",
+      "terrace",
+      "balcony",
+      "bbq_area",
+      "outdoor_shower",
+      "garden",
+      "marina_view",
+      "canal_view",
+      "private_dock",
+      "solar_panels",
+      "custom::services::SONOS audio, indoor and outdoor",
+      "marina_access",
+      "gated_community",
+      "security_24_7",
+      "beach_club",
+      "golf_access"
+    ],
+    "alts": {
+      "1.jpg": "The pool and the house, from the garden",
+      "2.jpg": "The garden and its hammock, on the marina",
+      "3.jpg": "Lunch by the pool, facing the marina",
+      "4.jpg": "The covered terrace and its long table",
+      "5.jpg": "The dining room, open to the garden",
+      "6.jpg": "A curtained daybed facing the water",
+      "7.jpg": "The lounge, between linen curtains",
+      "8.jpg": "The kitchen island in solid wood",
+      "9.jpg": "The living room, open to the terrace",
+      "10.jpg": "The living room and the stairs",
+      "11.jpg": "The kitchen and the living room, toward the marina",
+      "12.jpg": "The kitchen",
+      "13.jpg": "The kitchen table",
+      "14.jpg": "The pantry in warm wood",
+      "15.jpg": "The study",
+      "16.jpg": "A bedroom and its balcony",
+      "17.jpg": "A dressing area",
+      "18.jpg": "A bedroom opening onto a terrace",
+      "19.jpg": "The master suite, facing the canal",
+      "20.jpg": "The outdoor shower",
+      "21.jpg": "The garden of the outdoor shower",
+      "22.jpg": "The outdoor shower, among the palms",
+      "23.jpg": "A bathroom in wood and stone",
+      "24.jpg": "A vanity facing the marina",
+      "25.jpg": "A double vanity",
+      "26.jpg": "A shower with a window",
+      "27.jpg": "A bedroom with two beds",
+      "28.jpg": "A bathroom",
+      "29.jpg": "The entrance and the garage",
+      "30.jpg": "Casa Xaman Ek from the air, on the marina",
+      "31.jpg": "The house and the canals, seen from above"
+    }
+  }
 }

@@ -99,5 +99,181 @@
   "hoa": "$1,807 MXN",
   "predial": "$25,656 MXN",
   "lat": "20.496646",
-  "lng": "-87.233268"
+  "lng": "-87.233268",
+  "site": {
+    "tagline": "An exceptional waterfront villa at the most strategic point of the marina.",
+    "renovated": "2022",
+    "hero": "3.jpg",
+    "keys": [
+      {
+        "n": "150",
+        "u": "ft",
+        "t": "Private dock on the canal"
+      }
+    ],
+    "story": {
+      "label": "The location",
+      "lead": "It stands where the Caribbean slips into the calm of the canals, at the most strategic point of the marina. Across the water there is only a shore of preserved tropical green, and a panorama no other property here can match.",
+      "text": "Built in 2003 and masterfully renovated in 2022, Casa La Torre joins the charm of the coast to contemporary comfort: 7,535 sq ft of living space on an 8,944 sq ft lot, with 150 feet of private waterfront."
+    },
+    "chapters": [
+      {
+        "title": "Inside",
+        "text": "An open living and dining room of 1,250 sq ft, in contemporary furniture and solid wood. The large windows slide away, until the room and the covered terrace are one.",
+        "points": [
+          "Two master suites on the main floor, with deep canal views and a wide balcony",
+          "Four more bedrooms, each with an identity of its own",
+          "Four bathrooms with walk-in showers, whirlpool tubs and natural materials",
+          "A chef's kitchen in solid granite, around a central island"
+        ],
+        "photos": [
+          "10.jpg",
+          "4.jpg",
+          "29.jpg",
+          "8.jpg"
+        ]
+      },
+      {
+        "title": "On the water",
+        "text": "What sets this house apart is not its size. It is every detail that was drawn for people who love the sea.",
+        "points": [
+          "150 ft of canal frontage, with a private dock",
+          "A 381 sq ft climate-controlled pool, with a water feature and a sun terrace",
+          "A 452 sq ft palapa, with a summer kitchen and a lounge",
+          "A nautical garage for two jet skis, paddleboards and gear"
+        ],
+        "photos": [
+          "72.jpg",
+          "21.jpg",
+          "43.jpg",
+          "74.jpg"
+        ]
+      },
+      {
+        "title": "Above,|*and beyond*",
+        "text": "A home or a strategic asset: the pleasure of the sea, with what makes a house easy to own for many years.",
+        "points": [
+          "A 3,035 sq ft rooftop with ocean views",
+          "A 36-panel solar energy system",
+          "A whole-house water softening system",
+          "A 1,345 sq ft double garage, and two private parking spaces"
+        ],
+        "photos": [
+          "91.jpg",
+          "76.jpg",
+          "78.jpg"
+        ]
+      }
+    ],
+    "view": {
+      "photo": "90.jpg",
+      "label": "The view",
+      "title": "270°|*of water.*"
+    },
+    "walk": [
+      "12.jpg",
+      "28.jpg",
+      "5.jpg",
+      "19.jpg",
+      "41.jpg",
+      "2.jpg"
+    ],
+    "aerial": {
+      "photo": "1.jpg",
+      "cap": "On the marina of Puerto Aventuras"
+    },
+    "amenities": [
+      "equipped_kitchen",
+      "walk_in_shower",
+      "whirlpool_tub",
+      "private_pool",
+      "heated_pool",
+      "fountain",
+      "terrace",
+      "balcony",
+      "rooftop",
+      "palapa",
+      "outdoor_kitchen",
+      "marina_view",
+      "canal_view",
+      "ocean_view",
+      "panoramic_view",
+      "private_dock",
+      "garage",
+      "parking",
+      "solar_panels",
+      "water_softener",
+      "marina_access",
+      "gated_community",
+      "security_24_7"
+    ],
+    "alts": {
+      "1.jpg": "Casa La Torre from the air, on the marina of Puerto Aventuras",
+      "2.jpg": "The lounge on the dock",
+      "3.jpg": "The pool and the terraces on the marina",
+      "4.jpg": "A master suite facing the canal",
+      "5.jpg": "The second master suite",
+      "7.jpg": "A vanity in stone and wood",
+      "8.jpg": "A bathroom in wood and stone",
+      "10.jpg": "The living and dining room, open to the terrace",
+      "11.jpg": "The dining table",
+      "12.jpg": "The lounge",
+      "13.jpg": "The media wall",
+      "14.jpg": "The lounge, from the side",
+      "15.jpg": "A reading corner",
+      "16.jpg": "The breakfast bar",
+      "18.jpg": "The breakfast table facing the mangrove",
+      "19.jpg": "The summer kitchen",
+      "20.jpg": "The palapa and its grill",
+      "21.jpg": "Lunch under the palapa",
+      "24.jpg": "The palapa terrace",
+      "26.jpg": "The lounge deck by the water",
+      "27.jpg": "The great room",
+      "28.jpg": "The dining room",
+      "29.jpg": "The kitchen and its granite island",
+      "30.jpg": "The kitchen",
+      "31.jpg": "The kitchen cabinetry",
+      "32.jpg": "The kitchen, toward the pantry",
+      "34.jpg": "A bedroom",
+      "35.jpg": "A bedroom, toward the hall",
+      "36.jpg": "A bathroom with a whirlpool tub",
+      "37.jpg": "The whirlpool tub",
+      "38.jpg": "A bedroom with a balcony",
+      "39.jpg": "A bedroom, the bed",
+      "40.jpg": "A bedroom opening onto the balcony",
+      "41.jpg": "The balcony over the canal",
+      "42.jpg": "The balcony and the canal",
+      "43.jpg": "The daybed on the dock",
+      "44.jpg": "The pool, from above",
+      "45.jpg": "The dock lounge",
+      "47.jpg": "A bedroom in soft tones",
+      "48.jpg": "A bedroom in soft tones, the bed",
+      "50.jpg": "The hammock terrace",
+      "51.jpg": "The pool bar",
+      "52.jpg": "Drinks at the pool bar",
+      "53.jpg": "The sun terrace",
+      "54.jpg": "The pool and the house",
+      "56.jpg": "The facade seen from the pool",
+      "57.jpg": "A bedroom",
+      "58.jpg": "A bedroom, the bed",
+      "61.jpg": "A bathroom with two basins",
+      "64.jpg": "The twin bedroom",
+      "65.jpg": "The twin bedroom, from the door",
+      "66.jpg": "A bathroom",
+      "67.jpg": "A walk-in shower",
+      "71.jpg": "The steps down to the dock",
+      "72.jpg": "The sun terrace and the pool, level with the canal",
+      "73.jpg": "The pool and the facade",
+      "74.jpg": "The nautical garage",
+      "75.jpg": "The street entrance",
+      "76.jpg": "The entrance",
+      "77.jpg": "The tower and the entrance stairs",
+      "78.jpg": "The rooftop and its solar panels",
+      "79.jpg": "The front garden",
+      "80.jpg": "The double garage",
+      "90.jpg": "The canal at dusk, seen from the house",
+      "91.jpg": "The pool at night",
+      "92.jpg": "The pool at night, from above"
+    }
+  }
 }
