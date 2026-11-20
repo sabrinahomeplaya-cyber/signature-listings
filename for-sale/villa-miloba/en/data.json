@@ -153,8 +153,10 @@
       "cap": "In the gated community of Puerto Aventuras"
     },
     "amenities": [
+      "walk_in_closet",
       "private_pool",
       "garden",
+      "rooftop",
       "golf_view",
       "custom::exterior::Independent guesthouse",
       "garage",
