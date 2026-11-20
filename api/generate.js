@@ -1,7 +1,7 @@
 import { locked } from './_auth.js';
 
 export const config = {
-  maxDuration: 120
+  maxDuration: 300
 };
 
 export default async function handler(req, res) {
@@ -159,11 +159,15 @@ export default async function handler(req, res) {
       ? [{ role: 'user', content: [...seen, { type: 'text', text: userText }] }]
       : textOnly;
 
+    // output_config (la forme JSON de la réponse) et fallbacks (un autre modèle si celui-ci refuse) : seule
+    // « Préparer la fiche » les envoie (site-fiche.js, 19/11/2026) ; les autres boutons n'en changent pas.
     const claudeBody = {
       model: body.model || 'claude-sonnet-5',
       max_tokens: body.max_tokens || 8000,
       system: body.system || '',
-      messages: enhancedMessages
+      messages: enhancedMessages,
+      ...(body.output_config ? { output_config: body.output_config } : {}),
+      ...(body.fallbacks ? { fallbacks: body.fallbacks } : {})
     };
 
     const ask = messages => fetch('https://api.anthropic.com/v1/messages', {
@@ -171,7 +175,8 @@ export default async function handler(req, res) {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        ...(body.fallbacks ? { 'anthropic-beta': 'server-side-fallback-2026-07-01' } : {})
       },
       body: JSON.stringify({ ...claudeBody, messages })
     });

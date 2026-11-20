@@ -1,23 +1,24 @@
 /*
  * La fiche du site dans le générateur (étape 9, 19/11/2026).
  *
- * Le site signature-sc.com montre chaque bien à vendre avec ce que dit son listing, et avec la clé « site » du data.json
+ * Le site signature-sc.com montre chaque bien à vendre avec ce que dit son listing, et avec la clé « site » du data.json
  * ANGLAIS pour ce que seul le site dit : l'accroche, l'histoire, les chapitres, la photo de chaque bloc, les équipements,
  * les légendes des photos. Cette section l'écrit, dans le listing EN seulement (le site est en anglais).
  *
- * ⚠️ Deux portes pour les mêmes mots, et aucune n'efface l'autre (ses mots du 19/11/2026 : « Les 2 fonctionnent et se
- * synchronisent ») :
- *   1. sur le site, le mode « Modifier » range une correction dans la base de l'App, f|<bien>|<place> = { v, base },
+ * ⚠️ Deux portes pour les mêmes mots, et aucune n'efface l'autre (ses mots du 19/11/2026 : « Les 2 fonctionnent et se
+ * synchronisent ») :
+ *   1. sur le site, le mode « Modifier » range une correction dans la base de l'App, f|<bien>|<place> = { v, base },
  *      base étant ce que le listing disait à cet endroit ;
  *   2. ici, à l'ouverture, une correction dont la base est encore ce que dit le listing est reprise dans son champ (ses
  *      points forts aussi, en mode Modifier) ; à la publication elle s'écrit dans le listing, et le site cesse de
  *      l'appliquer d'elle-même. Le dernier qui écrit gagne.
  *
  * ⚠️ Une fiche qui n'a pas pu être lue ne s'écrit jamais : la clé du data.json reste telle quelle (ready faux).
- * Les photos se choisissent parmi celles du listing et s'écrivent par leur NOM de fichier (« 10.jpg ») ; une photo
+ * Les photos se choisissent parmi celles du listing et s'écrivent par leur NOM de fichier (« 10.jpg ») ; une photo
  * copiée d'un autre site à la publication prend son nouveau nom (copiedPhotos du générateur).
  * Lu par generator.html : Fiche.load(data) dans showResult, Fiche.read() dans publishData, Fiche.changed() et
  * Fiche.saved() dans publishToGitHub.
+ * « Préparer la fiche avec Claude » (20/11/2026) remplit toute la section d'après le listing et ses photos : prepare().
  */
 (function () {
   var CONTENU = 'https://property.management.signature-sc.com/partage/contenu?js=1'
@@ -104,12 +105,12 @@
   function guess(d) {
     var t = [d.title, d.subtitle, d.description].concat(d.highlights || []).join(' \n ').toLowerCase()
     var out = GUESS.filter(function (g) { return g[1].test(t) }).map(function (g) { return g[0] })
-    /* Une piscine dans un condo est celle de la résidence ; « private pool » dit le contraire */
+    /* Une piscine dans un condo est celle de la résidence ; « private pool » dit le contraire */
     if (/\bpool\b/.test(t) && out.indexOf('infinity_pool') < 0) out.push(/private (swimming )?pool/.test(t) || !/condo|apartment|penthouse|residence of \d+|units/.test(t) ? 'private_pool' : 'shared_pool')
     return out
   }
 
-  /* ---------- Les corrections faites sur le site (le mode « Modifier » de signature-sc.com) ---------- */
+  /* ---------- Les corrections faites sur le site (le mode « Modifier » de signature-sc.com) ---------- */
   function readEdits() {
     return new Promise(function (done) {
       var s = document.createElement('script'), t = null
@@ -124,7 +125,7 @@
   /* ---------- Ouvrir ---------- */
   async function load(d) {
     var my = ++turn
-    st = null; ready = false; baseline = ''; notes = []; lang = d.lang || ''; slug = d.slug || ''
+    st = null; ready = false; baseline = ''; notes = []; lang = d.lang || ''; slug = d.slug || ''; busy = false; prev = null; say = ''
     render()
     if (lang !== 'en' || !slug) return
     try {
@@ -184,6 +185,10 @@
     + '#fiche-section .sf-alt{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center;margin-top:8px}'
     + '#fiche-section .sf-alt img{width:72px;height:54px;object-fit:cover;border-radius:6px}'
     + '#fiche-section details summary{cursor:pointer;font-size:.78rem;font-weight:700}'
+    + '#fiche-section .sf-claude{display:flex;flex-direction:column;gap:8px;margin:0 0 22px;padding:14px 16px;border-radius:12px;background:rgba(97,189,204,.1)}'
+    + '#fiche-section .sf-claude-row{display:flex;flex-wrap:wrap;gap:8px}#fiche-section .sf-claude .info-box{margin:4px 0 0}'
+    + '#fiche-section .sf-claude button[disabled]{opacity:.75;cursor:wait}'
+    + '#fiche-section .sf-busy{opacity:.45;pointer-events:none}'
     + '.sf-modal{position:fixed;inset:0;z-index:300;background:rgba(15,22,40,.82);display:flex;align-items:center;justify-content:center;padding:16px}'
     + '.sf-modal-in{background:#fff;border-radius:16px;width:min(900px,100%);max-height:88vh;display:flex;flex-direction:column;padding:20px}'
     + '.sf-modal-in .sf-mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;overflow:auto;padding:2px;margin:14px 0}'
@@ -214,8 +219,15 @@
     var info = notes.map(function (t) { return '<div class="info-box" style="margin-bottom:12px">' + esc(t) + '</div>' }).join('')
     if (!st) { el.innerHTML = head + (info || '<div class="sf-help">Lecture de la fiche…</div>'); return }
     var list = imgs()
-    var h = head + '<div class="sf-help" style="margin-bottom:16px">Ce que le site signature-sc.com montre en plus du listing. Les mots s’y corrigent aussi, en mode « Modifier » : '
+    var h = head + '<div class="sf-help" style="margin-bottom:16px">Ce que le site signature-sc.com montre en plus du listing. Les mots s’y corrigent aussi, en mode « Modifier » : '
       + 'le dernier qui écrit gagne. Dans un titre, <b>*italique*</b> et <b>|</b> pour changer de ligne.</div>' + info
+    var n = sentPhotos(list).length
+    h += '<div class="sf-claude"><div class="sf-claude-row"><button type="button" class="btn-sm btn-teal" data-a="claude"' + (busy ? ' disabled' : '') + '>'
+      + (busy ? 'Claude regarde ' + n + ' photos et écrit la fiche… une à deux minutes' : '✨ Préparer la fiche avec Claude') + '</button>'
+      + (prev && !busy ? '<button type="button" class="btn-sm btn-outline" data-a="undo-claude">↩ Revenir à avant la proposition</button>' : '') + '</div>'
+      + '<span class="sf-help">Il lit le texte du listing, regarde ses photos, écrit tous les blocs ci-dessous en anglais et choisit leurs photos. '
+      + 'Rien ne part avant « Publier ».</span>' + (say ? '<div class="info-box">' + esc(say) + '</div>' : '') + '</div>'
+    h += '<div' + (busy ? ' class="sf-busy"' : '') + '>'
     h += '<div style="display:flex;flex-direction:column;gap:14px">'
       + '<div class="edit-grid-2">' + field('Accroche, sous le nom', 'tagline', st.tagline, { ph: 'Vide : le sous-titre du listing' })
       + field('Nom sur le site', 'name', st.name, { ph: 'Vide : le premier mot droit, le reste en italique' }) + '</div>'
@@ -271,6 +283,7 @@
 
     h += '<div class="sf-sub">Légendes des photos</div><details><summary>Pour les lecteurs d’écran et Google, en anglais (' + list.filter(function (u) { return norm(st.alts[u]) }).length + ' / ' + list.length + ')</summary>'
       + list.map(function (u) { return '<div class="sf-alt"><img src="' + esc(u) + '" alt="" loading="lazy"><input class="field-input" data-alt="' + esc(u) + '" value="' + esc(st.alts[u] || '') + '" placeholder="ex. The pool, facing the marina"></div>' }).join('') + '</details>'
+    h += '</div>'
     el.innerHTML = h
   }
 
@@ -288,7 +301,10 @@
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-a]'), el = box(); if (!st || !b || !el || !el.contains(b)) return
     var a = b.getAttribute('data-a'), i = Number(b.getAttribute('data-i'))
-    if (a === 'add-key') st.keys.push({ n: '', u: '', t: '' })
+    if (busy) return
+    if (a === 'claude') return prepare()
+    if (a === 'undo-claude') { if (prev) st = prev; prev = null; say = 'La section est revenue à ce qui était écrit avant la proposition.' }
+    else if (a === 'add-key') st.keys.push({ n: '', u: '', t: '' })
     else if (a === 'del-key') st.keys.splice(i, 1)
     else if (a === 'add-chap') st.chapters.push({ title: '', text: '', points: '', photos: [] })
     else if (a === 'del-chap') { if (!confirm('Retirer le chapitre ' + (i + 1) + ' ?')) return; st.chapters.splice(i, 1) }
@@ -327,6 +343,158 @@
       if (act === 'ok' || act === 'cancel' || e.target === m) m.remove()
     })
     draw(); document.body.appendChild(m)
+  }
+
+  /* ---------- Préparer la fiche avec Claude (20/11/2026, son « excellente ! ») ----------
+   * Claude lit le texte du listing, regarde ses photos et rend toute la section remplie, comme les dix fiches écrites le
+   * 18/11/2026. Rien ne part avant « Publier », et « Revenir à avant la proposition » rend ce qui était écrit.
+   * ⚠️ Les photos passent RÉDUITES par l'App (/_next/image, 828 px) : ses originaux vont jusqu'à 4 000 px, et au-delà de
+   * 20 images l'API refuse toute photo de plus de 3 000 px. Celles d'un listing pas encore publié (le site de l'agence)
+   * ne passent pas par l'App : 20 au plus, réparties sur le listing.
+   * ⚠️ Claude désigne une photo par son NUMÉRO dans la demande, jamais par son nom : deux agences nomment pareil. */
+  var MODEL = 'claude-opus-5-5', busy = false, prev = null, say = ''
+  var SMALL = 'https://property.management.signature-sc.com/_next/image?w=828&q=75&url='
+  var OURS = /^https:\/\/listing\.signature-sc\.com\/for-sale\//
+  var EXAMPLES = JSON.stringify([
+    { tagline: 'An exceptional waterfront villa at the most strategic point of the marina.', renovated: '2022',
+      keys: [{ n: '150', u: 'ft', t: 'Private dock on the canal' }],
+      story: { label: 'The location', lead: 'It stands where the Caribbean slips into the calm of the canals, at the most strategic point of the marina. Across the water there is only a shore of preserved tropical green, and a panorama no other property here can match.',
+        text: 'Built in 2003 and masterfully renovated in 2022, Casa La Torre joins the charm of the coast to contemporary comfort: 7,535 sq ft of living space on an 8,944 sq ft lot, with 150 feet of private waterfront.' },
+      chapters: [{ title: 'On the water', text: 'What sets this house apart is not its size. It is every detail that was drawn for people who love the sea.',
+        points: ['150 ft of canal frontage, with a private dock', 'A 381 sq ft climate-controlled pool, with a water feature and a sun terrace', 'A 452 sq ft palapa, with a summer kitchen and a lounge'] },
+        { title: 'Above,|*and beyond*', text: 'A home or a strategic asset: the pleasure of the sea, with what makes a house easy to own for many years.',
+        points: ['A 3,035 sq ft rooftop with ocean views', 'A 36-panel solar energy system', 'A whole-house water softening system'] }],
+      view: { label: 'The view', title: '270°|*of water.*' }, aerial: { cap: 'On the marina of Puerto Aventuras' },
+      alts: ['The lounge on the dock', 'A master suite facing the canal'] },
+    { tagline: 'A golf-front residence whose private grounds open onto the greens of Puerto Aventuras.',
+      keys: [{ n: '30', t: 'Solar panels' }],
+      chapters: [{ title: 'The heart,|*outdoors*', text: 'The outdoors is the true heart of the home: a private pool and a custom-built grill area, crafted for warm, intimate gatherings under the Caribbean sky.',
+        points: ['A private pool', 'A custom grill area', 'A two-car garage and parking for three more vehicles'] }],
+      view: { label: 'The view', title: 'Inside and out,|*as one.*' }, alts: ['The pool and the pergola, facing the greens'] }
+  ], null, 1)
+  var SYSTEM = [
+    'You write the website page of a property for sale, for Signature Real Estate in Puerto Aventuras, Riviera Maya, Mexico. The page already shows what the listing says (price, bedrooms, bathrooms, living area, lot, description, highlights, photos); you write the blocks that only the website shows. The website is in American English.',
+    '',
+    'Facts come only from the listing text and from what the photos clearly show. Never invent a figure, a year, a size, a material, a brand, a view or an amenity. When the listing gives little for a block, keep the block short rather than fill it.',
+    '',
+    'Style: elegant and restrained, concrete, short sentences, no exclamation marks, no superlative the listing does not use. American spelling (color, neighbor, center). Never use the em dash character (U+2014) nor a spaced en dash: use a comma or a colon instead. Points are short phrases without a final period. In titles and in the name, *words* between asterisks are set in italics and | starts a new line, for instance "Five suites,|*on two levels*".',
+    '',
+    'The photos are numbered in the request: refer to a photo only by its number. Use each photo at most once across hero, chapters, view, walk and aerial.',
+    '',
+    'Fields:',
+    '- name: the property\'s own name, the part after the first word in italics, like "Casa *La Torre*" or "Quinta Luna|*Penthouse*". Empty when the listing gives the property no proper name.',
+    '- tagline: one sentence under the name, what makes this property itself.',
+    '- renovated: the year of the last renovation, only if the listing states it, else empty.',
+    '- hero: the opening photo, the most striking image of the property as a whole.',
+    '- keys: at most 3 figures stated in the listing that bedrooms, bathrooms, living area and lot do not already give (a dock length, solar panels, parking spaces, AC units). n is the number only, u an optional unit, t the label. An empty list when there is none.',
+    '- story: label (usually "The location"), lead (one or two sentences on where the property stands), text (when it was built, its sizes and what the place offers, from the listing).',
+    '- chapters: three chapters, a fourth only when the listing has enough distinct matter. Each one: a short title, one to three sentences, 3 to 5 points, and up to 4 photos that show what the chapter tells (none when no photo fits).',
+    '- view: one wide photo of the view, the pool, the garden or the water, a label (usually "The view") and a short title.',
+    '- walk: up to 6 photos of other rooms and spaces, in a natural visiting order.',
+    '- aerial: a photo taken from a drone or from above, only if there is one (else ""), and a short caption of where the property stands, like "On the marina of Puerto Aventuras".',
+    '- amenities: the keys of the catalogue below that the listing text or the photos show. For an important feature missing from the catalogue: "custom::<group>::<English words>", group being interior, exterior, services or community.',
+    '- alts: one caption for every photo, factual, a few words, no final period, like "The pool, facing the marina".',
+    '',
+    'Two published pages, for the tone and the format (their photos left out):',
+    EXAMPLES,
+    '',
+    'Answer with the JSON object only.'
+  ].join('\n')
+
+  function catalogue() {
+    return '\n\nAmenity catalogue, key (label):\n' + (window.AMENITY_GROUPS || []).map(function (g) {
+      return g.key + ': ' + g.items.map(function (it) { return it.k + ' (' + it.en + ')' }).join(', ')
+    }).join('\n')
+  }
+  function sentPhotos(list) {
+    if (list.every(function (u) { return OURS.test(u) })) return list.slice(0, 100)
+    var out = [], step = Math.max(1, (list.length - 1) / 19)
+    for (var i = 0; i < Math.min(20, list.length); i++) { var u = list[Math.round(i * step)]; if (out.indexOf(u) < 0) out.push(u) }
+    return out
+  }
+  function listingText(d) {
+    var line = function (k, v) { return norm(v) ? k + ': ' + norm(v) + '\n' : '' }
+    return 'THE LISTING, the only source of facts\n\n' + line('Title', d.title) + line('Subtitle', d.subtitle) + line('Location', d.location)
+      + line('Bedrooms', d.beds) + line('Bathrooms', d.baths) + line('Year built', d.year) + line('Living area', d.construction) + line('Lot', d.lot)
+      + '\nDescription:\n' + (d.description || '') + '\n\nHighlights:\n' + (d.highlights || []).map(function (h) { return '- ' + h }).join('\n')
+  }
+  function schema(n) {
+    var ids = []; for (var i = 1; i <= n; i++) ids.push(String(i))
+    var S = { type: 'string' }, id = { type: 'string', enum: ids }, idOrNone = { type: 'string', enum: [''].concat(ids) }
+    var obj = function (p) { return { type: 'object', additionalProperties: false, required: Object.keys(p), properties: p } }
+    var arr = function (it) { return { type: 'array', items: it } }
+    return obj({
+      name: S, tagline: S, renovated: S, hero: id, keys: arr(obj({ n: S, u: S, t: S })),
+      story: obj({ label: S, lead: S, text: S }),
+      chapters: arr(obj({ title: S, text: S, points: arr(S), photos: arr(id) })),
+      view: obj({ photo: idOrNone, label: S, title: S }), walk: arr(id), aerial: obj({ photo: idOrNone, cap: S }),
+      amenities: arr(S), alts: arr(obj({ photo: id, alt: S }))
+    })
+  }
+  /* La réponse de Claude -> la section. Ce qui ne tient pas (une photo inconnue, une clé hors catalogue) tombe sans bruit */
+  function fromClaude(j, sent, old) {
+    var u = function (id) { return sent[Number(id) - 1] || '' }
+    var us = function (a, max) { var out = []; (a || []).forEach(function (id) { var x = u(id); if (x && out.indexOf(x) < 0 && out.length < max) out.push(x) }); return out }
+    var c = function (s) { return norm(String(s == null ? '' : s).replace(/\s*\u2014\s*/g, ', ').replace(/ \u2013 /g, ', ')) }
+    var known = {}; (window.AMENITY_GROUPS || []).forEach(function (g) { g.items.forEach(function (it) { known[it.k] = 1 }) })
+    var amen = []; (j.amenities || []).forEach(function (k) { k = norm(k); if ((known[k] || /^custom::(interior|exterior|services|community)::\S/.test(k)) && amen.indexOf(k) < 0) amen.push(k) })
+    var alts = Object.assign({}, old.alts); (j.alts || []).forEach(function (a) { var x = u(a && a.photo); if (x && c(a.alt)) alts[x] = c(a.alt) })
+    var sv = j.story || {}, vw = j.view || {}, ae = j.aerial || {}
+    return {
+      name: c(j.name), tagline: c(j.tagline), renovated: (/\b(19|20)\d\d\b/.exec(String(j.renovated || '')) || [''])[0], hero: u(j.hero), walk: us(j.walk, 6),
+      keys: (j.keys || []).filter(function (k) { return k && c(k.n) }).slice(0, 3).map(function (k) { return { n: c(k.n), u: c(k.u), t: c(k.t) } }),
+      story: { label: c(sv.label), lead: c(sv.lead), text: c(sv.text) },
+      chapters: (j.chapters || []).slice(0, 5).map(function (ch) {
+        return { title: c(ch.title), text: c(ch.text), points: (ch.points || []).map(c).filter(Boolean).join('\n'), photos: us(ch.photos, 4) }
+      }),
+      view: { photo: u(vw.photo), label: c(vw.label), title: c(vw.title) }, aerial: { photo: u(ae.photo), cap: c(ae.cap) },
+      amenities: amen, alts: alts, hadAmenities: true
+    }
+  }
+  function parse(text) {
+    try { return JSON.parse(text) } catch (e) { }
+    var a = text.indexOf('{'), b = text.lastIndexOf('}')
+    try { return a >= 0 && b > a ? JSON.parse(text.slice(a, b + 1)) : null } catch (e) { return null }
+  }
+  async function ask(body) {
+    var r = await apiFetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    return { ok: r.ok, status: r.status, d: await r.json().catch(function () { return {} }) }
+  }
+  async function prepare() {
+    var list = imgs()
+    if (!list.length) { say = 'Le listing n’a encore aucune photo : choisis-les dans la section Photos, puis relance.'; render(); return }
+    if (toSite(st, list) && !confirm('La section a déjà du contenu. La remplacer par la proposition de Claude ?\n\nRien ne part avant « Publier », et « Revenir à avant la proposition » rend ce qui est écrit maintenant.')) return
+    var my = turn, d = typeof formFields === 'function' ? formFields() : {}, sent = sentPhotos(list), content = []
+    sent.forEach(function (x, i) {
+      content.push({ type: 'text', text: 'Photo ' + (i + 1) })
+      content.push({ type: 'image', source: { type: 'url', url: OURS.test(x) ? SMALL + encodeURIComponent(x) : x } })
+    })
+    content.push({ type: 'text', text: listingText(d) })
+    var base = { model: MODEL, max_tokens: 16000, noFetch: true, system: SYSTEM + catalogue(), messages: [{ role: 'user', content: content }] }
+    busy = true; say = ''; render()
+    try {
+      var res = await ask(Object.assign({ output_config: { format: { type: 'json_schema', schema: schema(sent.length) } }, fallbacks: 'default' }, base))
+      /* Une option que l'API refuserait (la forme de la réponse, le repli) ne doit pas priver de la proposition */
+      if (res.status === 400) res = await ask(base)
+      if (my !== turn) return
+      if (!res.ok) {
+        var e = res.d.error
+        throw new Error(res.status === 504 ? 'le serveur a mis trop de temps à répondre, relance dans un moment.' : ((e && (e.message || e)) || 'erreur ' + res.status) + '.')
+      }
+      var m = res.d
+      if (m.stop_reason === 'refusal') throw new Error('Claude a refusé d’écrire cette fiche.')
+      if (m.stop_reason === 'max_tokens') throw new Error('la réponse de Claude a été coupée avant la fin, relance.')
+      var j = parse((m.content || []).filter(function (b) { return b.type === 'text' }).map(function (b) { return b.text }).join(''))
+      if (!j || typeof j !== 'object') throw new Error('la réponse de Claude ne contient pas de fiche lisible, relance.')
+      prev = JSON.parse(JSON.stringify(st))
+      st = fromClaude(j, sent, st)
+      say = 'Proposition de Claude, d’après le texte du listing et ' + sent.length + ' photos : relis chaque bloc, corrige ce qu’il faut, puis « Publier ».'
+        + (sent.length < list.length ? ' Il a regardé ' + sent.length + ' photos sur ' + list.length + ' : publie d’abord le listing, rouvre-le avec « Modifier mon listing » et relance pour qu’il les voie toutes.' : '')
+    } catch (err) {
+      if (my !== turn) return
+      say = 'La fiche n’a pas pu être préparée : ' + err.message + ' Rien n’a changé dans la section.'
+    }
+    busy = false; render()
   }
 
   window.Fiche = {
