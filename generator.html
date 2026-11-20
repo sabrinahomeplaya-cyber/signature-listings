@@ -10,6 +10,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/auth.js"></script>
   <script src="/listing-tools.js"></script>
+  <script src="/amenities.js"></script>
+  <script src="/site-fiche.js"></script>
   <style>
     :root { --navy: #223256; --teal: #61BDCC; --cream: #faf9f6; }
     * { box-sizing: border-box; }
@@ -470,6 +472,9 @@
           </div>
         </div>
       </div>
+
+      <!-- La fiche du site signature-sc.com (clé « site » du data.json anglais), dessinée par site-fiche.js -->
+      <div class="edit-section" id="fiche-section"></div>
 
       <!-- Bouton appliquer -->
       <div style="text-align:center;padding:8px 0 32px">
@@ -1550,6 +1555,7 @@ function showResult(data) {
   hideStatus();
   document.getElementById('btn-generate').disabled = false;
   checkLive();
+  if (window.Fiche) Fiche.load(data);
 }
 
 // ── Le vrai lien du listing ───────────────────────────────────────
@@ -1642,6 +1648,7 @@ async function publishToGitHub() {
   textChanged = !!openedFields && Object.keys(fields).some(k => !SHARED_FIELDS.includes(k) && k !== 'images' && differs(k));
   // Hors du texte et des photos, la page ne se refait pas : on remplace la valeur, et rien d'autre ne bouge
   const rewrite = !openedFields || textChanged || photosChanged || fields.images.some(u => !u.startsWith(OWN_SITE));
+  const ficheChanged = !!window.Fiche && Fiche.changed();
   try {
     let html = generatedCode;
     if (rewrite) {
@@ -1657,10 +1664,15 @@ async function publishToGitHub() {
       html = patched.html;
       if (html !== current) await publishPage(path, html, message); // au nouvel essai après une panne, elle est déjà à jour
       else await publishData(path, html);
+    } else if (ficheChanged) {
+      setPublishBar('loading', 'Publication de la fiche du site…');
+      html = await readPage(currentSlug, currentLang);
+      await publishData(path, html);
     }
     // Les photos telles qu'elles sont publiées : copiées sur le site, avec l'aperçu de lien de la première
     if (photosChanged) Object.assign(changes, { images: listingData.images, preview: listingData.preview || '' });
-    const nothing = !rewrite && !shared.length;
+    const nothing = !rewrite && !shared.length && !ficheChanged;
+    if (window.Fiche) Fiche.saved();
     const report = (shared.length || photosChanged) && document.getElementById('e-sync').checked ? await syncOtherLangs(changes) : { pages: [], problems: [], failed: [] };
     syncFailed = report.failed;
     if (!report.problems.length) openedFields = openedFields && fields;
@@ -1942,7 +1954,11 @@ async function publishData(pagePath, html) {
   if (!r.ok || got.data === undefined) throw failed(got.error || `erreur ${r.status}`);
   let before = {};
   try { before = got.data ? JSON.parse(got.data) : {}; } catch (e) { before = {}; }
-  const content = JSON.stringify({ ...before, slug, lang, ...d }, null, 2) + '\n';
+  const merged = { ...before, slug, lang, ...d };
+  // La fiche du site (site-fiche.js), dans le listing anglais du bien ouvert seulement ; non lue, elle reste telle quelle
+  const fiche = lang === 'en' && slug === currentSlug && window.Fiche ? Fiche.read() : null;
+  if (fiche) { if (fiche.site) merged.site = fiche.site; else delete merged.site; }
+  const content = JSON.stringify(merged, null, 2) + '\n';
   if (got.data === content) return;
   const res = await apiFetch('/api/github-publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path: `for-sale/${slug}/${lang}/data.json`, content, message: `Listing data: ${slug} (${lang})` }) });
