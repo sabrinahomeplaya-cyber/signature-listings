@@ -9,7 +9,8 @@
  *
  * Requirements:
  *   npm install googleapis @anthropic-ai/sdk pdf-parse
- *   credentials.json (service account) in the same directory
+ *   the service account key at C:/Users/win10/.keys/service-account.json
+ *   (override with GOOGLE_SA_KEYFILE)
  */
 
 import { google } from 'googleapis';
@@ -20,9 +21,15 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────────
-const CREDENTIALS_PATH   = path.join(__dirname, 'credentials.json');
+// The key lives OUTSIDE OneDrive, under a stable name: a rotation touches
+// one file, and no private key sits in a synced folder.
+const CREDENTIALS_PATH   = process.env.GOOGLE_SA_KEYFILE
+  || 'C:/Users/win10/.keys/service-account.json';
 const SHEET_ID           = '1tHk8rZ4dZb9NsVxVQrVTdxKFwNy6BUeGf-rsPUZ_BmM';
 const SHEET_NAME         = 'For Sale';
+const NIGHT              = process.argv.includes('--nuit');
+// --essai: says what the run would do, row by row, without any Claude call and without writing to the sheet
+const DRY                = process.argv.includes('--essai');
 const DATA_START_ROW     = 5;   // 1-based, rows 1-4 are headers
 const DRIVE_FOLDER_PATH    = ['1. Puerto Aventuras', '1. For Sale'];
 const DRIVE_ROOT_FOLDER_ID = '1sQpqCmvJD6vR3T5LUTWiCoCW2oFQyxYm';
@@ -102,13 +109,27 @@ const COL = {
 const TOTAL_MANAGED_COLS = 30; // A–AD (includes AB=27 which is preserved)
 const TOTAL_COLS         = 31; // A–AE (to read Phone too)
 
+// Price per m² (H) and per sq ft (L) are FORMULAS, not numbers (her request of 08/11/2026): the sheet
+// recomputes them when a price or an area changes, also on Verified rows and rows typed by hand.
+// Same rule as the generator: price / construction, m² first for H, sq ft first for L (1 m² = 10.764 sq ft).
+// The same text works on every row thanks to ROW(). No decimal is written, and the separator follows
+// the sheet's locale (set in main): the API reads a formula in that locale, fr_FR wants ';'.
+const PRICE_PER_AREA_FORMULA = {
+  M2:   '=LET(p;INDEX(F:F;ROW());m;INDEX(I:I;ROW());s;INDEX(M:M;ROW());IF(N(p)=0;"";IF(N(m)>0;ROUND(p/m);IF(N(s)>0;ROUND(p*10764/(s*1000));""))))',
+  SQFT: '=LET(p;INDEX(F:F;ROW());m;INDEX(I:I;ROW());s;INDEX(M:M;ROW());IF(N(p)=0;"";IF(N(s)>0;ROUND(p/s);IF(N(m)>0;ROUND(p*1000/(m*10764));""))))',
+};
+let formulaSeparator = ';';
+const priceFormula = kind => PRICE_PER_AREA_FORMULA[kind].replace(/;/g, formulaSeparator);
+
 // ─── GOOGLE AUTH ───────────────────────────────────────────────────────────────
 function getAuth() {
   const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf8'));
   return new google.auth.GoogleAuth({
     credentials,
     scopes: [
-      'https://www.googleapis.com/auth/drive.readonly',
+      // Not readonly since 17/11/2026: the price of column F goes into the folder's name (syncPrice). The key can only
+      // rename the folders shared with it as Editor; everything else in Drive stays read only in this script.
+      'https://www.googleapis.com/auth/drive',
       'https://www.googleapis.com/auth/spreadsheets',
     ],
   });
@@ -292,7 +313,19 @@ function matchLocalListing(folderName, localListingMap) {
 }
 
 // ─── FETCH SIGNATURE SC LISTING ────────────────────────────────────────────────
+// Try /fr/ first (displays m² natively), fall back to the original URL (/en/ or /es/)
 async function fetchSignatureListing(url) {
+  const frUrl = url.replace(/\/(en|es)\/$/, '/fr/');
+  const urlsToTry = frUrl !== url ? [frUrl, url] : [url];
+
+  for (const tryUrl of urlsToTry) {
+    const result = await _fetchAndParse(tryUrl);
+    if (result) return result;
+  }
+  return null;
+}
+
+async function _fetchAndParse(url) {
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'text/html' },
@@ -312,18 +345,18 @@ async function fetchSignatureListing(url) {
     for (const [, label, value] of divCells) {
       const l = label.trim().toLowerCase();
       const v = value.replace(/<[^>]+>/g, '').trim();
-      if (v) allLabels.push(l); // only track labels with an actual value
+      if (v) allLabels.push(l);
       if (!v) continue;
-      if (l.includes('bedroom'))                                                result.beds          = result.beds          || v;
-      if (l.includes('bathroom'))                                               result.baths         = result.baths         || v;
+      if (l.includes('bedroom') || l.includes('chambre'))                      result.beds          = result.beds          || v;
+      if (l.includes('bathroom') || l.includes('salle'))                       result.baths         = result.baths         || v;
       if (l.includes('construction') || l.includes('living area'))             result.construction  = result.construction  || v;
-      if (l.includes('lot') || l.includes('balcony') || l.includes('terrace') || l.includes('terrasse') || l.includes('balcon') || l.includes('terrain')) result.lot = result.lot || v;
+      if (l.includes('parking') || l.includes('lot') || l.includes('balcony') || l.includes('terrace') || l.includes('terrasse') || l.includes('balcon') || l.includes('terrain')) result.lot = result.lot || v;
       if (l.includes('year') || l.includes('built') || l.includes('année'))    result.year_built    = result.year_built    || v;
       if (l.includes('price') && (l.includes('sq') || l.includes('m²') || l.includes('m2'))) result.price_per_sqft = result.price_per_sqft || v;
     }
     // Infer property type from detail grid labels
     const hasLot      = allLabels.some(l => l.includes('lot') || l.includes('land') || l.includes('terrain'));
-    const hasBalcony  = allLabels.some(l => l.includes('balcony') || l.includes('balcon') || l.includes('terrasse') || l.includes('terrace'));
+    const hasBalcony  = allLabels.some(l => l.includes('balcony') || l.includes('balcon') || l.includes('terrasse') || l.includes('terrace') || l.includes('parking'));
     if      (hasLot && !hasBalcony) result.property_type = 'House';
     else if (hasBalcony && !hasLot) result.property_type = 'Condo';
     else if (hasLot  &&  hasBalcony) result.property_type = 'House';
@@ -337,9 +370,9 @@ async function fetchSignatureListing(url) {
       const l = label.trim().toLowerCase();
       const v = value.trim();
       if (!v) continue;
-      if (l.includes('hoa') || l.includes('mantenimiento') || l.includes('maintenance'))
+      if (l.includes('hoa') || l.includes('mantenimiento') || l.includes('maintenance') || l.includes('frais'))
         result.hoa     = result.hoa     || v;
-      if (l.includes('tax') || l.includes('predial') || l.includes('impuesto'))
+      if (l.includes('tax') || l.includes('predial') || l.includes('impuesto') || l.includes('taxe'))
         result.predial = result.predial || v;
     }
 
@@ -439,7 +472,7 @@ async function extractWithClaude(fileContent, fileName) {
   await new Promise(r => setTimeout(r, 300));
 
   const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001', // cheaper model — extraction task doesn't need Sonnet
+    model: 'claude-haiku-4-5', // cheaper model — extraction task doesn't need Sonnet
     max_tokens: 2048,
     messages: [{
       role: 'user',
@@ -537,12 +570,9 @@ function buildRow(extracted, driveFile, opts = {}) {
   row[COL.TOTAL_M2]   = (isCondo && m2   && lot_m2)   ? m2   + lot_m2   : '';
   row[COL.TOTAL_SQFT] = (isCondo && sqft && lot_sqft) ? sqft + lot_sqft : '';
 
-  // ── Price per area ─────────────────────────────────────────────────────────
-  const ppsqft_listing = parseNum(L.price_per_sqft);
-  const price_per_sqft = ppsqft_listing ?? (price_usd && sqft ? Math.round(price_usd / sqft) : null);
-  const price_per_m2   = price_usd && m2 ? Math.round(price_usd / m2) : null;
-  row[COL.PRICE_PER_SQFT] = price_per_sqft ?? '';
-  row[COL.PRICE_PER_M2]   = price_per_m2   ?? '';
+  // ── Price per area: formulas, see PRICE_PER_AREA_FORMULA ───────────────────
+  row[COL.PRICE_PER_SQFT] = priceFormula('SQFT');
+  row[COL.PRICE_PER_M2]   = priceFormula('M2');
 
   // ── Financials (listing page first, Claude PDF extraction as fallback) ────
   row[COL.HOA]         = parseNum(L.hoa)     ?? d.hoa         ?? '';
@@ -632,6 +662,10 @@ async function main() {
   const drive = google.drive({ version: 'v3', auth });
   const sheets = google.sheets({ version: 'v4', auth });
 
+  // Formula separator: ';' where the sheet's locale writes 1,5 (fr_FR, es_ES), ',' where it writes 1.5 (en_US, es_MX)
+  const sheetLocale = (await sheets.spreadsheets.get({ spreadsheetId: SHEET_ID, fields: 'properties.locale' })).data.properties?.locale || 'fr_FR';
+  formulaSeparator = new Intl.NumberFormat(sheetLocale.replace('_', '-')).format(1.5).includes(',') ? ';' : ',';
+
   // 1a. Debug: list immediate children of root folder
   console.log(`🔍 Listing subfolders inside root ID ${DRIVE_ROOT_FOLDER_ID}…`);
   const debugRes = await drive.files.list({
@@ -667,8 +701,14 @@ async function main() {
   // We are already inside "1. For Sale" — no need to filter by _S/_R suffix here.
   // Only exclude folders without a price pattern (utility folders).
   // Optional CLI filter: node sync-listings.js "Casa Maya" → only matching folders
-  const filterArg = process.argv[2] ? process.argv[2].toLowerCase() : null;
+  // --nuit: the run of the scheduled task (her decision of 17/11/2026). It only ADDS: a new Drive folder or a listing
+  // not yet in the sheet becomes a row in "New". A row already there is never rewritten, even in "New", so her
+  // corrections stay until she sets it "Verified", and the night costs no Claude call for the rows she is checking.
+  // The launch by hand (Sync Listings.bat) keeps doing everything, as before.
+  const filterRaw = process.argv.slice(2).find(a => !a.startsWith('--'));
+  const filterArg = filterRaw ? filterRaw.toLowerCase() : null;
   if (filterArg) console.log(`🔎 Filter active: only folders containing "${filterArg}"\n`);
+  if (NIGHT) console.log('🌙 Night run: new folders only, existing rows untouched\n');
 
   const propertyFolders = items.filter(i => {
     if (i.mimeType !== FOLDER_MIME || !isPropertyFolder(i.name)) return false;
@@ -700,6 +740,91 @@ async function main() {
     });
   });
   console.log(`   ${existingRows.length} existing row(s) in sheet\n`);
+
+  // A row may also be known by its LISTING, found before any Claude call (17/11/2026): a row born from the listing
+  // that has no Drive link yet (Casa Blanca), or a second folder made for the same home (Villa Elegancia, folders of
+  // 31/03 and 07/11). Without this, both became a second row. Whole words only: « Casa Solimán » must never take the
+  // row of « casa-sol ». An override of listing-overrides.json is trusted as it is.
+  function rowByListing(folderName) {
+    const override = matchOverride(folderName, listingOverrides);
+    const url = override || matchLocalListing(folderName, localListingMap);
+    if (!url) return null;
+    const slug  = (url.match(/for-sale\/([^/]+)/) || [])[1] || '';
+    const words = ' ' + folderName.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+    const whole = slug.split('-').filter(w => w.length > 2).every(w => words.includes(' ' + w + ' '));
+    return (override || whole) ? (sigLinkToRow.get(url) || null) : null;
+  }
+
+  // ── The price, between the folder's name and column F ─────────────────────────────────────────────────────────
+  // Her question of 17/11/2026: « parfois je change d'un côté et j'oublie de le faire de l'autre ». Each side's last
+  // seen price is kept in %LOCALAPPDATA%\Signature Sync\price-memory.json (outside this repository). Only the side
+  // that moved is copied to the other; both moved: nothing is touched, and it is said at each run until she sets them
+  // equal; a folder seen for the first time is only noted. Done on the rows this run does not rewrite (Verified and
+  // Off Market, and every row at night), for the folder of column Y only. The site reads its price in F (the App,
+  // lib/annonces.ts): one cell is enough everywhere. F is read UNFORMATTED: formatted in her locale, « 1 295 000,00 $ »
+  // would not read as a number. A rename needs the folder shared as Editor with the key: until then it is said.
+  const PRICE_DIR    = path.join(process.env.LOCALAPPDATA || __dirname, 'Signature Sync');
+  const PRICE_MEMORY = path.join(PRICE_DIR, 'price-memory.json');
+  let priceMemory = {};
+  try { priceMemory = JSON.parse(fs.readFileSync(PRICE_MEMORY, 'utf8')); } catch { /* the first run */ }
+  const priceF = ((await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${SHEET_NAME}!F${DATA_START_ROW}:F`, valueRenderOption: 'UNFORMATTED_VALUE' })).data.values || []).map(r => r[0]);
+  const priceSaid = [];
+  const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+
+  // The old price (column AJ « Ancien prix USD », the struck price of the site), her rules of 17/11/2026: when the price
+  // goes DOWN, the price it had goes to AJ; only into an empty AJ, so a second change keeps the very first price, and
+  // a value she typed herself (an error she corrected) is never written over. Column AJ is outside A to AD: the rows
+  // this script rewrites never touch it.
+  const OLD_PRICE_COL = 'AJ';
+  const priceAJ = ((await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${SHEET_NAME}!${OLD_PRICE_COL}${DATA_START_ROW}:${OLD_PRICE_COL}`, valueRenderOption: 'UNFORMATTED_VALUE' })).data.values || []).map(r => r[0]);
+  async function oldPrice(row, before) {
+    const i = row - DATA_START_ROW, cur = priceAJ[i];
+    if (cur !== undefined && cur !== null && String(cur).trim() !== '') return;
+    console.log(`   💲 Old price ${usd(before)} → column ${OLD_PRICE_COL}`);
+    if (DRY) return;
+    await sheets.spreadsheets.values.update({ spreadsheetId: SHEET_ID, range: `${SHEET_NAME}!${OLD_PRICE_COL}${row}`, valueInputOption: 'RAW', requestBody: { values: [[before]] } });
+    priceAJ[i] = before;
+    priceSaid.push(`row ${row}: ${usd(before)} kept as the old price (column ${OLD_PRICE_COL})`);
+  }
+
+  async function syncPrice(folder, ex) {
+    const inName  = parseFromFolderName(folder.name).price_usd || null;
+    const raw     = priceF[ex.sheetRowIndex - DATA_START_ROW];
+    const inSheet = typeof raw === 'number' && raw > 0 ? Math.round(raw) : null;
+    const seen = priceMemory[folder.id];
+    // Column F went down since the last run: the price it had becomes the old price
+    if (seen && seen.sheet > 0 && inSheet && inSheet < seen.sheet) await oldPrice(ex.sheetRowIndex, seen.sheet);
+    if (!inName || !inSheet) return;
+    const keep = (name, sheet) => { priceMemory[folder.id] = { name, sheet }; };
+    if (inName === inSheet) { keep(inName, inSheet); return; }
+    if (!seen) {
+      keep(inName, inSheet);
+      priceSaid.push(`row ${ex.sheetRowIndex}: folder ${usd(inName)}, column F ${usd(inSheet)}: noted, the next change on one side goes to the other`);
+      return;
+    }
+    const nameMoved = inName !== seen.name, sheetMoved = inSheet !== seen.sheet;
+    if (nameMoved && !sheetMoved) {
+      console.log(`   💲 Folder price ${usd(inName)} → column F (was ${usd(inSheet)})`);
+      if (DRY) return;
+      await sheets.spreadsheets.values.update({ spreadsheetId: SHEET_ID, range: `${SHEET_NAME}!F${ex.sheetRowIndex}`, valueInputOption: 'RAW', requestBody: { values: [[inName]] } });
+      // The price lowered in the folder's name: the price F had becomes the old price
+      if (inName < inSheet) await oldPrice(ex.sheetRowIndex, inSheet);
+      keep(inName, inName);
+      priceSaid.push(`row ${ex.sheetRowIndex}: column F set to ${usd(inName)}, as in the folder's name`);
+    } else if (sheetMoved && !nameMoved) {
+      // A function, not a string: « $1,295,000 » as a replacement string would read « $1 » as a group
+      const next = folder.name.replace(/\$\.?[\d,]+/, () => usd(inSheet));
+      console.log(`   💲 Column F ${usd(inSheet)} → folder's name (was ${usd(inName)})`);
+      if (DRY) return;
+      const can = (await drive.files.get({ fileId: folder.id, fields: 'capabilities(canRename)', supportsAllDrives: true })).data.capabilities?.canRename;
+      if (!can) { priceSaid.push(`row ${ex.sheetRowIndex}: folder still ${usd(inName)}, column F ${usd(inSheet)}: the key may not rename this folder (share "For Sale" with it as Editor)`); return; }
+      await drive.files.update({ fileId: folder.id, supportsAllDrives: true, requestBody: { name: next } });
+      keep(inSheet, inSheet);
+      priceSaid.push(`row ${ex.sheetRowIndex}: folder renamed with ${usd(inSheet)}, as in column F`);
+    } else {
+      priceSaid.push(`row ${ex.sheetRowIndex}: folder ${usd(inName)} and column F ${usd(inSheet)} both changed: nothing touched, set them equal`);
+    }
+  }
 
   // 4. Build work list: { driveEntry (folder or file), contentFile (file to read), label }
   const workList = [];
@@ -752,10 +877,25 @@ async function main() {
 
     // Check lock BEFORE any API call — Verified/Off Market rows cost nothing
     const driveLink0  = driveEntry.webViewLink;
-    const existing0   = driveLinkToRow.get(driveLink0);
+    const existing0   = driveLinkToRow.get(driveLink0) || rowByListing(driveEntry.name);
+    // The price first, on the rows left as they are below, and only for the folder of column Y (see syncPrice)
+    const ownRow = driveLinkToRow.get(driveLink0);
+    if (ownRow && (NIGHT || ['Verified', 'Off Market'].includes(ownRow.existingStatus))) {
+      try { await syncPrice(driveEntry, ownRow); }
+      catch (err) { priceSaid.push(`row ${ownRow.sheetRowIndex}: price not compared (${err.message})`); }
+    }
     if (existing0 && ['Verified', 'Off Market'].includes(existing0.existingStatus)) {
       console.log(`   🔒 Status "${existing0.existingStatus}" — skipping (row ${existing0.sheetRowIndex})\n`);
       locked++;
+      continue;
+    }
+    if (existing0 && NIGHT) {
+      console.log(`   🌙 Already in the sheet (row ${existing0.sheetRowIndex}): left as it is\n`);
+      locked++;
+      continue;
+    }
+    if (DRY) {
+      console.log(existing0 ? `   🧪 Would analyze and update row ${existing0.sheetRowIndex} (${existing0.existingStatus || 'no status'})\n` : '   🧪 Would analyze and ADD a new row\n');
       continue;
     }
 
@@ -858,7 +998,7 @@ async function main() {
 
     // Use the property FOLDER's link as the unique key (stable across doc edits)
     const driveLink  = driveEntry.webViewLink;
-    const existing   = driveLinkToRow.get(driveLink);
+    const existing   = driveLinkToRow.get(driveLink) || existing0;
     const isNew      = !existing;
 
     const row = buildRow(extracted, driveEntry, {
@@ -885,7 +1025,7 @@ async function main() {
   ]);
 
   const githubOnly = Object.entries(localListingMap)
-    .filter(([, url]) => !handledSigLinks.has(url));
+    .filter(([slug, url]) => !handledSigLinks.has(url) && (!filterArg || slug.includes(filterArg)));
 
   if (githubOnly.length > 0) {
     console.log(`\n📦 ${githubOnly.length} GitHub listing(s) not yet in sheet — scanning…\n`);
@@ -898,6 +1038,7 @@ async function main() {
         continue;
       }
 
+      if (DRY) { console.log('   🧪 Would ADD a new row from the listing\n'); continue; }
       const listing = await fetchSignatureListing(url);
       if (!listing) { console.log(`   ⚠ Could not fetch listing page — skipping\n`); continue; }
       console.log(`   ✓ Listing: beds=${listing.beds}, baths=${listing.baths}, constr=${listing.construction}, type=${listing.property_type || '?'}`);
@@ -938,6 +1079,9 @@ async function main() {
     await writeRows(sheets, updates, appends);
   }
 
+  // The prices seen this run, for the next one (a dry run keeps nothing)
+  if (!DRY) { fs.mkdirSync(PRICE_DIR, { recursive: true }); fs.writeFileSync(PRICE_MEMORY, JSON.stringify(priceMemory, null, 1)); }
+
   // 8. Summary
   console.log('─'.repeat(50));
   console.log(`✅ Done.`);
@@ -945,6 +1089,7 @@ async function main() {
   console.log(`   ${updates.length}  updated`);
   console.log(`   ${locked}  locked (Verified / Off Market — not touched)`);
   console.log(`   ${skipped}  skipped (errors)`);
+  if (priceSaid.length) { console.log('   💲 Prices, folder and column F:'); priceSaid.forEach(s => console.log(`      ${s}`)); }
 }
 
 main().catch(err => {
