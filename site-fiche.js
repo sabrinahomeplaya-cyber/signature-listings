@@ -348,12 +348,14 @@
   /* ---------- Préparer la fiche avec Claude (20/11/2026, son « excellente ! ») ----------
    * Claude lit le texte du listing, regarde ses photos et rend toute la section remplie, comme les dix fiches écrites le
    * 18/11/2026. Rien ne part avant « Publier », et « Revenir à avant la proposition » rend ce qui était écrit.
-   * ⚠️ Les photos passent RÉDUITES par l'App (/_next/image, 828 px) : ses originaux vont jusqu'à 4 000 px, et au-delà de
+   * ⚠️ Les photos passent RÉDUITES par l'App (/_next/image, 640 px) : ses originaux vont jusqu'à 4 000 px, et au-delà de
    * 20 images l'API refuse toute photo de plus de 3 000 px. Celles d'un listing pas encore publié (le site de l'agence)
    * ne passent pas par l'App : 20 au plus, réparties sur le listing.
    * ⚠️ Claude désigne une photo par son NUMÉRO dans la demande, jamais par son nom : deux agences nomment pareil. */
-  var MODEL = 'claude-opus-5-5', busy = false, prev = null, say = ''
-  var SMALL = 'https://property.management.signature-sc.com/_next/image?w=828&q=75&url='
+  /* Claude Sonnet 5, le modèle du reste du générateur, photos à 640 px, réflexion moyenne : environ 0,10 USD par clic,
+   * son « Oui » du 23/11/2026 (Opus 5.5 et 828 px coûtaient 0,20 à 0,35 USD, construits avant qu'elle ait lu le prix). */
+  var MODEL = 'claude-sonnet-5', busy = false, prev = null, say = ''
+  var SMALL = 'https://property.management.signature-sc.com/_next/image?w=640&q=75&url='
   var OURS = /^https:\/\/listing\.signature-sc\.com\/for-sale\//
   var EXAMPLES = JSON.stringify([
     { tagline: 'An exceptional waterfront villa at the most strategic point of the marina.', renovated: '2022',
@@ -473,7 +475,7 @@
     var base = { model: MODEL, max_tokens: 16000, noFetch: true, system: SYSTEM + catalogue(), messages: [{ role: 'user', content: content }] }
     busy = true; say = ''; render()
     try {
-      var res = await ask(Object.assign({ output_config: { format: { type: 'json_schema', schema: schema(sent.length) } }, fallbacks: 'default' }, base))
+      var res = await ask(Object.assign({ output_config: { format: { type: 'json_schema', schema: schema(sent.length) }, effort: 'medium' } }, base))
       /* Une option que l'API refuserait (la forme de la réponse, le repli) ne doit pas priver de la proposition */
       if (res.status === 400) res = await ask(base)
       if (my !== turn) return
