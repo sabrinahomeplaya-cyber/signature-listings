@@ -1090,6 +1090,13 @@ async function main() {
   console.log(`   ${locked}  locked (Verified / Off Market — not touched)`);
   console.log(`   ${skipped}  skipped (errors)`);
   if (priceSaid.length) { console.log('   💲 Prices, folder and column F:'); priceSaid.forEach(s => console.log(`      ${s}`)); }
+
+  // 9. At night: the price in the link preview of each listing follows her sheet (apercu-prix.js, her yes of 25/11/2026).
+  //    Whatever happens there never fails the sync.
+  if (NIGHT) {
+    try { const { apercus } = await import('./apercu-prix.js'); await apercus({ dry: DRY }); }
+    catch (e) { console.log('Link previews not checked: ' + e.message); }
+  }
 }
 
 main().catch(err => {
