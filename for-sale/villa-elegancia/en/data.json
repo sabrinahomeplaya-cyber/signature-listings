@@ -8,7 +8,7 @@
   "price": "$2,450,000",
   "currency": "USD",
   "priceOld": "$2,600,000",
-  "description": "The Riviera Maya sun does not simply pass through the windows here, it settles in, unhurried, as though it had always belonged. From the moment one steps inside, a cascade of light falls across the double height living room, warming every marble surface and softening the edges of the day. Outside, the palms sway in a breeze carried straight from the Caribbean, and the tropical garden beyond the terrace doors seems to exhale in quiet welcome. It is the kind of light that makes mornings feel unhurried and evenings feel earned.\n\nInside, the architecture favors openness and ease. A wrought iron staircase curves down to a light wood kitchen where the sea breeze arrives just as the coffee finishes brewing, and a central island invites the kind of breakfasts that turn into long conversations. Five bedrooms, each with its own private bathroom, offer a rare measure of independence under one roof, whether for family, guests, or the quiet pleasure of simply having room to breathe. Marble floors, considered finishes, and a flow between rooms that never feels forced define the character of this home.\n\nThe true soul of the property, however, lives outdoors. The private pool, a vivid blue beneath the Caribbean sun, is anchored by its own white waterslide, equal parts playful and freeing. A palapa with a traditional thatched roof offers shaded refuge for long afternoons, while the hot tub comes into its own as dusk turns the sky amber and then indigo. A dedicated BBQ area, covered parking for up to five vehicles, and a closed circuit security system round out a space built for both celebration and calm, all set within a lushly planted garden that keeps the outside world at a comfortable distance.\n\nLife here extends well beyond the property line. Puerto Aventuras offers the reassurance of a gated, 24 hour secured community, with its marina and some thirty restaurants reachable on foot in ten minutes. The untouched shores of Bahia Xcacel lie close enough that the scent of salt drifts in on the afternoon breeze, while Playa del Carmen sits just 23 kilometers away and Cozumel International Airport a short ride beyond that. It is a setting that rewards those seeking both privacy and proximity, a region where the ordinary rhythms of life give way, quite naturally, to something closer to ease.",
+  "description": "The Riviera Maya sun does not simply pass through the windows here, it settles in, unhurried, as though it had always belonged. From the moment one steps inside, a cascade of light falls across the double height living room, warming every marble surface and softening the edges of the day. Outside, the palms sway in a breeze carried straight from the Caribbean, and the tropical garden beyond the terrace doors seems to exhale in quiet welcome. It is the kind of light that makes mornings feel unhurried and evenings feel earned.\n\nInside, the architecture favors openness and ease. A wrought iron staircase curves down to a light wood kitchen where the sea breeze arrives just as the coffee finishes brewing, and a central island invites the kind of breakfasts that turn into long conversations. Five bedrooms, each with its own private bathroom, offer a rare measure of independence under one roof, whether for family, guests, or the quiet pleasure of simply having room to breathe. Marble floors, considered finishes, and a flow between rooms that never feels forced define the character of this home.\n\nThe true soul of the property, however, lives outdoors. The private pool, a vivid blue beneath the Caribbean sun, is anchored by its own white waterslide, equal parts playful and freeing. A palapa with a traditional thatched roof offers shaded refuge for long afternoons, while the hot tub comes into its own as dusk turns the sky amber and then indigo. A dedicated BBQ area, a two-car garage, and a closed circuit security system round out a space built for both celebration and calm, all set within a lushly planted garden that keeps the outside world at a comfortable distance.\n\nLife here extends well beyond the property line. Puerto Aventuras offers the reassurance of a gated, 24 hour secured community, with its marina and some thirty restaurants reachable on foot in ten minutes. The untouched shores of Bahia Xcacel lie close enough that the scent of salt drifts in on the afternoon breeze, while Playa del Carmen sits just 23 kilometers away and Cozumel International Airport a short ride beyond that. It is a setting that rewards those seeking both privacy and proximity, a region where the ordinary rhythms of life give way, quite naturally, to something closer to ease.",
   "highlights": [
     "Double height living room",
     "Marble flooring throughout",
@@ -18,7 +18,7 @@
     "Palapa lounge area",
     "Private hot tub",
     "BBQ area",
-    "Covered parking for 5 cars",
+    "Two-car garage",
     "Closed circuit security",
     "Gated 24/7 community",
     "Marina and beach nearby"
@@ -81,8 +81,8 @@
     "hero": "DSC00043.jpg",
     "keys": [
       {
-        "n": "5",
-        "t": "Covered parking spaces"
+        "n": "2",
+        "t": "Cars in the garage"
       }
     ],
     "story": {
@@ -178,7 +178,7 @@
       "palapa",
       "bbq_area",
       "garden",
-      "covered_parking",
+      "garage",
       "cctv",
       "gated_community",
       "security_24_7",
