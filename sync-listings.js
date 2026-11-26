@@ -1096,6 +1096,10 @@ async function main() {
   if (NIGHT) {
     try { const { apercus } = await import('./apercu-prix.js'); await apercus({ dry: DRY }); }
     catch (e) { console.log('Link previews not checked: ' + e.message); }
+    // 10. At night too: the listing of a home that is on the site names its fiche there for the search engines
+    //     (reference-site.js, chantier 37 step 3.5). Off until she turns it on in her sheet, the day the site opens.
+    try { const { references } = await import('./reference-site.js'); await references({ dry: DRY }); }
+    catch (e) { console.log('Reference for the search engines not checked: ' + e.message); }
   }
 }
 
